@@ -1,117 +1,75 @@
-# Codebase Cleanup and Documentation Organization Implementation Plan
+# Codebase Cleanup and Documentation Organization Implementation Plan (Refined)
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Clean up redundant files (scripts, logs) and organize all markdown documentation into the `docs/` directory.
+**Goal:** Clean up redundant files and organize documentation into thematic subdirectories within `docs/`.
 
-**Architecture:** Surgical deletion of unnecessary files and relocation of documentation with path updates in project configuration and metadata files.
-
-**Tech Stack:** Shell (rm, mv), Markdown.
+**Architecture:** Use thematic subfolders (`learning`, `guides`, `visuals`, `meta`, `explanations`) for clear categorization.
 
 ---
 
-### Task 1: Delete Redundant Files
+### Task 1: Cleanup (DONE)
+- [x] Delete `app.log`, `src_explanation.html`, `.py` scripts.
+
+### Task 2: Granular Documentation Organization
 
 **Files:**
-- Delete: `app.log`
-- Delete: `src_explanation.html`
-- Delete: `restore_skill.py`
-- Delete: `simplify_metadata.py`
-- Delete: `update_metadata.py`
-- Delete: `update_metadata_v2.py`
+- Move to `docs/learning/`: `docs/LEARN.md`, `docs/ENTERPRISE_BACKEND_ROADMAP.md`, `docs/NESTJS_MENTAL_MODEL.md`, `docs/NESTJS_RESTAURANT_METAPHOR.md`
+- Move to `docs/guides/`: `docs/RTK.md`, `docs/PRISMA_EXPLANATION.md`, `docs/REDIS_GUIDE.md`, `docs/SUPABASE_PRISMA_GUIDE.md`
+- Move to `docs/visuals/`: `docs/nestjs-restaurant.html`, `docs/nestjs-system-design.html`, `docs/restaurant_flow_illustration.png`
+- Move to `docs/meta/`: `docs/CODE_REVIEW_GRAPH.md`
 
-- [ ] **Step 1: Delete identified files**
+- [ ] **Step 1: Create new directories**
 
-Run: `rm app.log src_explanation.html restore_skill.py simplify_metadata.py update_metadata.py update_metadata_v2.py`
+Run: `mkdir -p docs/learning docs/guides docs/visuals docs/meta`
 
-- [ ] **Step 2: Verify deletion**
-
-Run: `ls app.log src_explanation.html restore_skill.py simplify_metadata.py update_metadata.py update_metadata_v2.py`
-Expected: "No such file or directory" error for all files.
-
-- [ ] **Step 3: Commit**
-
-Run: `rtk git add . && rtk git commit -m "cleanup: remove redundant log and utility scripts"`
-
----
-
-### Task 2: Move and Rename Markdown Files
-
-**Files:**
-- Move: `learn` -> `docs/LEARN.md`
-- Move: `src_explanation.md` -> `docs/explanations/src_explanation.md`
-- Move: `RTK.md` -> `docs/RTK.md`
-- Move: `SUPABASE_PRISMA_GUIDE.md` -> `docs/SUPABASE_PRISMA_GUIDE.md`
-- Move: `CODE_REVIEW_GRAPH.md` -> `docs/CODE_REVIEW_GRAPH.md`
-
-- [ ] **Step 1: Create directories if missing**
-
-Run: `mkdir -p docs/explanations`
-
-- [ ] **Step 2: Move and rename files**
+- [ ] **Step 2: Move files into thematic directories**
 
 Run:
 ```bash
-mv learn docs/LEARN.md
-mv src_explanation.md docs/explanations/src_explanation.md
-mv RTK.md docs/RTK.md
-mv SUPABASE_PRISMA_GUIDE.md docs/SUPABASE_PRISMA_GUIDE.md
-mv CODE_REVIEW_GRAPH.md docs/CODE_REVIEW_GRAPH.md
+mv docs/LEARN.md docs/learning/
+mv docs/ENTERPRISE_BACKEND_ROADMAP.md docs/learning/
+mv docs/NESTJS_MENTAL_MODEL.md docs/learning/
+mv docs/NESTJS_RESTAURANT_METAPHOR.md docs/learning/
+mv docs/RTK.md docs/guides/
+mv docs/PRISMA_EXPLANATION.md docs/guides/
+mv docs/REDIS_GUIDE.md docs/guides/
+mv docs/SUPABASE_PRISMA_GUIDE.md docs/guides/
+mv docs/nestjs-restaurant.html docs/visuals/
+mv docs/nestjs-system-design.html docs/visuals/
+mv docs/restaurant_flow_illustration.png docs/visuals/
+mv docs/CODE_REVIEW_GRAPH.md docs/meta/
 ```
 
-- [ ] **Step 3: Verify movement**
+- [ ] **Step 3: Verify structure**
 
-Run: `ls docs/LEARN.md docs/explanations/src_explanation.md docs/RTK.md docs/SUPABASE_PRISMA_GUIDE.md docs/CODE_REVIEW_GRAPH.md`
-Expected: All files listed.
+Run: `ls -R docs/`
+Expected: Files are in their respective new subfolders.
 
 - [ ] **Step 4: Commit**
 
-Run: `rtk git add . && rtk git commit -m "docs: organize root markdown files into docs folder"`
+Run: `rtk git add docs/ && rtk git commit -m "docs: reorganize documentation into thematic subdirectories"`
 
 ---
 
-### Task 3: Update Internal References
-
-**Files:**
-- Modify: `GEMINI.md`
-- Modify: `AGENTS.md`
-- Modify: `docs/superpowers/plans/2026-05-12-nestjs-learning-dashboard.md`
-- Modify: `docs/superpowers/specs/2026-05-12-nestjs-learning-dashboard-design.md`
-- Modify: `docs/superpowers/specs/2026-05-20-cocoindex-codebase-analyzer-design.md`
-- Modify: `docs/superpowers/plans/2026-05-20-cocoindex-codebase-analyzer.md`
+### Task 3: Comprehensive Reference Update
 
 - [ ] **Step 1: Update GEMINI.md**
 
-Update `learn` to `docs/LEARN.md`.
-
-```markdown
-<<<<
-    - `learn`: The source Markdown file containing the 12-week enterprise roadmap, mindset, and detailed lessons.
-====
-    - `docs/LEARN.md`: The source Markdown file containing the 12-week enterprise roadmap, mindset, and detailed lessons.
->>>>
-```
+Update references to `learn` (now `docs/learning/LEARN.md`).
 
 - [ ] **Step 2: Update AGENTS.md**
 
-Update `@RTK.md` to `@docs/RTK.md`.
+Update `@RTK.md` to `@docs/guides/RTK.md`.
 
-```markdown
-<<<<
-@RTK.md
-====
-@docs/RTK.md
->>>>
-```
+- [ ] **Step 3: Update all internal .md links**
 
-- [ ] **Step 3: Update Learning Dashboard files**
+Search for links like `[text](file.md)` or `[text](./file.md)` and update them to the new paths. Especially check `README.md` and files inside `docs/superpowers/`.
 
-Update all occurrences of `learn` to `docs/LEARN.md` in `docs/superpowers/plans/2026-05-12-nestjs-learning-dashboard.md` and `docs/superpowers/specs/2026-05-12-nestjs-learning-dashboard-design.md`.
+- [ ] **Step 4: Update Plan/Spec paths**
 
-- [ ] **Step 4: Update CocoIndex files**
-
-Update `src_explanation.md` to `docs/explanations/src_explanation.md` in `docs/superpowers/specs/2026-05-20-cocoindex-codebase-analyzer-design.md` and `docs/superpowers/plans/2026-05-20-cocoindex-codebase-analyzer.md`.
+Check `docs/superpowers/plans/` and `docs/superpowers/specs/` for hardcoded paths to moved files.
 
 - [ ] **Step 5: Commit**
 
-Run: `rtk git add . && rtk git commit -m "docs: update internal references to reflect new file locations"`
+Run: `rtk git add . && rtk git commit -m "docs: update all internal references to reflect refined documentation structure"`

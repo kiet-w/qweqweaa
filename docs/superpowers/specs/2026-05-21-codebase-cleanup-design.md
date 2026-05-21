@@ -23,13 +23,32 @@ The following files are identified as temporary or unnecessary and will be delet
 - `update_metadata.py`: One-off utility script.
 - `update_metadata_v2.py`: One-off utility script.
 
-### 3.2 File Reorganization
-Files will be moved and renamed as follows:
-- `learn` -> `docs/LEARN.md` (Adding extension for better tooling support).
-- `src_explanation.md` -> `docs/explanations/src_explanation.md`.
-- `RTK.md` -> `docs/RTK.md`.
-- `SUPABASE_PRISMA_GUIDE.md` -> `docs/SUPABASE_PRISMA_GUIDE.md`.
-- `CODE_REVIEW_GRAPH.md` -> `docs/CODE_REVIEW_GRAPH.md`.
+### 3.2 File Reorganization (Refined)
+Files will be organized into thematic subdirectories within `docs/`:
+
+**`docs/learning/`** (Roadmaps & Mindset):
+- `learn` -> `docs/learning/LEARN.md`
+- `ENTERPRISE_BACKEND_ROADMAP.md` -> `docs/learning/ENTERPRISE_BACKEND_ROADMAP.md`
+- `NESTJS_MENTAL_MODEL.md` -> `docs/learning/NESTJS_MENTAL_MODEL.md`
+- `NESTJS_RESTAURANT_METAPHOR.md` -> `docs/learning/NESTJS_RESTAURANT_METAPHOR.md`
+
+**`docs/guides/`** (Technical Guides):
+- `RTK.md` -> `docs/guides/RTK.md`
+- `PRISMA_EXPLANATION.md` -> `docs/guides/PRISMA_EXPLANATION.md`
+- `REDIS_GUIDE.md` -> `docs/guides/REDIS_GUIDE.md`
+- `SUPABASE_PRISMA_GUIDE.md` -> `docs/guides/SUPABASE_PRISMA_GUIDE.md`
+
+**`docs/visuals/`** (Visual Assets & HTML):
+- `nestjs-restaurant.html` -> `docs/visuals/nestjs-restaurant.html`
+- `nestjs-system-design.html` -> `docs/visuals/nestjs-system-design.html`
+- `restaurant_flow_illustration.png` -> `docs/visuals/restaurant_flow_illustration.png`
+
+**`docs/meta/`** (Project Metadata):
+- `CODE_REVIEW_GRAPH.md` -> `docs/meta/CODE_REVIEW_GRAPH.md`
+
+**`docs/explanations/`** (Source Explanations):
+- `src_explanation.md` -> `docs/explanations/src_explanation.md`
+- (Existing module-specific explanations remain here)
 
 ### 3.3 Reference Updates
 - **`GEMINI.md`**: Update reference to the `learn` file.

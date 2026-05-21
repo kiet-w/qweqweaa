@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a standalone dark-mode `index.html` that turns the local `learn` roadmap into a structured NestJS learning dashboard with priorities, tasks, backend flow, production checklist, and debugging playbooks.
+**Goal:** Build a standalone dark-mode `index.html` that turns the local `docs/LEARN.md` roadmap into a structured NestJS learning dashboard with priorities, tasks, backend flow, production checklist, and debugging playbooks.
 
 **Architecture:** The page is a single static document with embedded CSS and JavaScript. Course content is represented as a JavaScript data array, rendered into reusable HTML sections, with progress stored in `localStorage`.
 
@@ -14,7 +14,7 @@
 
 - Create: `index.html`
   - Owns all markup, styles, course data, rendering logic, filters, tabs, progress persistence, and reset behavior.
-- Existing input: `learn`
+- Existing input: `docs/LEARN.md`
   - Used as the source material for section topics and production concepts.
 - Existing spec: `docs/superpowers/specs/2026-05-12-nestjs-learning-dashboard-design.md`
   - Defines accepted scope and visual requirements.
