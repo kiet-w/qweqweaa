@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Giải Thích Chuyên Sâu - Module Prisma</title>
+  <title>Giải Thích Chuyên Sâu - Module Prisma (src/prisma)</title>
   <style>
-/* === CSS BLOCK === */
+/* === VSCode Dark Theme — NestJS Doc Renderer === */
 :root {
   --bg:            #1e1e1e;
   --bg-sidebar:    #252526;
@@ -111,7 +111,7 @@ body {
 
 .content {
   flex: 1;
-  max-width: 960px;
+  max-width: 100% !important;
   padding: 48px 52px 100px;
   min-width: 0;
 }
@@ -206,16 +206,39 @@ th { color: var(--text-bright); font-weight: 600; text-align: left; padding: 9px
 td { padding: 7px 14px; border: 1px solid var(--border); }
 tr:hover td { background: var(--bg-hover); }
 
-/* ── SUMMARY TABLE ── */
-.summary-table .lc-node {
-  min-width: 100px;
-  padding: 6px 10px;
-  font-size: 11px;
+/* ── DECORATOR CARD ── */
+.dec-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--dec);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  font-size: 13px;
 }
+.dec-card-name { font-family: monospace; font-size: 13px; color: var(--dec); font-weight: 600; min-width: 130px; }
+.dec-card-body { flex: 1; }
+.dec-card-desc { color: var(--text); margin-bottom: 4px; }
+.dec-card-effect { font-size: 12px; color: var(--text-muted); }
+.dec-card-effect b { color: var(--prop); font-weight: normal; }
 
-/* ═══════════════════════════════════════════
-   REQUEST LIFECYCLE CONTAINER
-   ═══════════════════════════════════════════ */
+/* ── MODULE PANEL ── */
+.module-panel { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 1.5em 0; }
+.module-panel-header { background: var(--bg-surface2); padding: 14px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+.module-panel-icon { font-size: 18px; }
+.module-panel-name { font-size: 15px; font-weight: 600; color: var(--text-bright); }
+.module-panel-path { font-size: 11px; font-family: monospace; color: var(--text-muted); margin-left: auto; }
+.file-tabs { display: flex; background: var(--bg-surface2); border-bottom: 1px solid var(--border); overflow-x: auto; }
+.file-tab { padding: 8px 18px; font-size: 12px; font-family: monospace; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all .15s; user-select: none; }
+.file-tab:hover { color: var(--text); background: var(--bg-hover); }
+.file-tab.active { color: var(--text-bright); border-bottom-color: var(--accent); background: var(--bg-surface); }
+.file-pane { display: none; padding: 20px 24px; }
+.file-pane.active { display: block; }
+
+/* ── LIFECYCLE ── */
 .lifecycle-container {
   display: flex;
   flex-direction: column;
@@ -227,10 +250,7 @@ tr:hover td { background: var(--bg-hover); }
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
 }
 @media (min-width: 992px) {
-  .lifecycle-container {
-    flex-direction: row;
-    height: 480px;
-  }
+  .lifecycle-container { flex-direction: row; height: 500px; }
 }
 .lc-flow-panel {
   flex: 1.3;
@@ -241,10 +261,7 @@ tr:hover td { background: var(--bg-hover); }
   border-bottom: 1px solid var(--border);
 }
 @media (min-width: 992px) {
-  .lc-flow-panel {
-    border-bottom: none;
-    border-right: 1px solid var(--border);
-  }
+  .lc-flow-panel { border-bottom: none; border-right: 1px solid var(--border); }
 }
 .lifecycle-title {
   font-size: 11px;
@@ -290,62 +307,35 @@ tr:hover td { background: var(--bg-hover); }
 }
 .lc-node:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
 .lc-node.active { transform: scale(1.05); border-width: 2px; }
-.lc-node.guard  { background: var(--node-guard);  border-color: var(--node-guard-b); }
-.lc-node.pipe   { background: var(--node-pipe);   border-color: var(--node-pipe-b); }
-.lc-node.ctrl   { background: var(--node-ctrl);   border-color: var(--node-ctrl-b); }
-.lc-node.svc    { background: var(--node-svc);    border-color: var(--node-svc-b); }
-.lc-node.db     { background: var(--node-db);     border-color: var(--node-db-b); }
-.lc-node.cache  { background: var(--node-cache);  border-color: var(--node-cache-b); }
-.lc-node.err    { background: var(--node-err);    border-color: var(--node-err-b); }
 .lc-node.client { background: var(--bg-surface2); border-color: var(--border); }
-
+.lc-node.svc { background: var(--node-svc); border-color: var(--node-svc-b); }
+.lc-node.db { background: var(--node-db); border-color: var(--node-db-b); }
 .lc-node-label { font-size: 12px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
-.lc-node-code  { font-size: 10.5px; font-family: monospace; color: var(--text-muted); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lc-node-desc  { font-size: 10px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-.lc-node-ports { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.08); font-size: 9px; font-family: monospace; }
-.lc-port { padding: 1px 4px; border-radius: 3px; }
-.lc-port.in { background: rgba(78, 201, 176, 0.1); color: var(--green); }
-.lc-port.out { background: rgba(0, 122, 204, 0.15); color: var(--kw); }
-
+.lc-node-code { font-size: 10.5px; font-family: monospace; color: var(--text-muted); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lc-node-desc { font-size: 10px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .lc-connector { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 4px; }
 .lc-line { height: 2px; width: 40px; background: linear-gradient(90deg, var(--border), var(--accent)); position: relative; overflow: hidden; }
 .lc-line::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0,122,204,.8), transparent); animation: flow 2s infinite; }
-@keyframes flow { 0% { left: -100%; } 100% { left: 100%; } }
 .lc-arrow { width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 6px solid var(--accent); margin-left: -1px; }
 
 .lc-detail-panel { flex: 1; background: var(--bg-sidebar); padding: 24px; display: flex; flex-direction: column; overflow: auto; }
 .lc-detail-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-muted); text-align: center; font-style: italic; font-size: 13px; }
+.lc-detail-body { display: none; }
 .lc-detail-header { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
-.lc-detail-type { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+.lc-detail-type { font-size: 10px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
 .lc-detail-title { font-size: 16px; font-weight: 600; color: var(--text-bright); }
 .lc-detail-file { font-size: 11px; font-family: monospace; color: var(--text-muted); margin-top: 4px; }
 .lc-flow-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 12px; }
-.lc-flow-card-title { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
+.lc-flow-card-title { font-size: 10px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
 .lc-flow-card-code { font-family: monospace; font-size: 12px; color: var(--text-bright); margin-bottom: 4px; }
 .lc-flow-card-desc { font-size: 11.5px; color: var(--text); line-height: 1.5; }
 
-/* ── MODULE PANEL ── */
-.module-panel { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 1.5em 0; }
-.module-panel-header { background: var(--bg-surface2); padding: 14px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
-.module-panel-icon { font-size: 18px; }
-.module-panel-name { font-size: 15px; font-weight: 600; color: var(--text-bright); }
-.module-panel-path { font-size: 11px; font-family: monospace; color: var(--text-muted); margin-left: auto; }
-.file-tabs { display: flex; background: var(--bg-surface2); border-bottom: 1px solid var(--border); overflow-x: auto; }
-.file-tab { padding: 8px 18px; font-size: 12px; font-family: monospace; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all .15s; user-select: none; }
-.file-tab:hover { color: var(--text); background: var(--bg-hover); }
-.file-tab.active { color: var(--text-bright); border-bottom-color: var(--accent); background: var(--bg-surface); }
-.file-pane { display: none; padding: 20px 24px; }
-.file-pane.active { display: block; }
-
-/* ── DECORATOR CARD ── */
-.dec-card { display: flex; gap: 12px; align-items: flex-start; background: var(--bg-surface2); border: 1px solid var(--border); border-left: 3px solid var(--dec); border-radius: 6px; padding: 12px 16px; margin: 10px 0; font-size: 13px; }
-.dec-card-name { font-family: monospace; font-size: 13px; color: var(--dec); font-weight: 600; min-width: 130px; }
-.dec-card-body { flex: 1; }
-.dec-card-desc { color: var(--text); margin-bottom: 4px; }
-.dec-card-effect { font-size: 12px; color: var(--text-muted); }
-.dec-card-effect b { color: var(--prop); font-weight: normal; }
-
+/* ── SUMMARY TABLE ── */
+.summary-table .lc-node {
+  min-width: 100px;
+  padding: 6px 10px;
+  font-size: 11px;
+}
   </style>
 </head>
 <body>
@@ -368,17 +358,17 @@ tr:hover td { background: var(--bg-hover); }
       <tbody>
         <tr>
           <td><strong>1. Kiến Trúc Toàn Cục</strong></td>
-          <td><div class="lc-node guard">Global Module</div></td>
+          <td><div class="lc-node svc" style="min-width: 80px; padding: 4px;">Global</div></td>
           <td><a href="#1-kien-truc-toan-cuc">Xem chi tiết</a></td>
         </tr>
         <tr>
           <td><strong>2. PrismaService</strong></td>
-          <td><div class="lc-node db">Prisma Service</div></td>
+          <td><div class="lc-node db" style="min-width: 80px; padding: 4px;">Service</div></td>
           <td><a href="#2-di-sau-vao-prismaservice">Xem chi tiết</a></td>
         </tr>
         <tr>
           <td><strong>3. Luồng dữ liệu</strong></td>
-          <td><div class="lc-node svc">Data Flow</div></td>
+          <td><div class="lc-node svc" style="min-width: 80px; padding: 4px;">Flow</div></td>
           <td><a href="#3-luong-tra-ve-du-lieu">Xem chi tiết</a></td>
         </tr>
       </tbody>
@@ -392,18 +382,18 @@ tr:hover td { background: var(--bg-hover); }
       <div class="dec-card-body">
         <div class="dec-card-desc">Đánh dấu module là toàn cục trong ứng dụng.</div>
         <div class="dec-card-effect">
-          <b>Tác động:</b> Khi <code>PrismaModule</code> được import một lần duy nhất vào <code>AppModule</code>, <code>PrismaService</code> sẽ tự động có mặt (injectable) ở khắp mọi nơi trong dự án mà không cần phải lặp lại <code>imports</code> ở từng module con.
+          <b>Tác động:</b> Khi <code>PrismaModule</code> được import một lần duy nhất vào <code>AppModule</code>, <code>PrismaService</code> sẽ tự động có mặt (injectable) ở khắp mọi nơi trong dự án (User, Catalog, Cart, Orders...) mà không cần phải lặp lại <code>imports: [PrismaModule]</code> ở từng module con.
         </div>
       </div>
     </div>
 
     <ul>
-      <li><strong>Tái sử dụng liền mạch</strong>: Giúp inject PrismaService ở khắp mọi nơi (User, Catalog, Cart, Orders...) dễ dàng.</li>
-      <li><strong>Single Source of Truth</strong>: Giảm thiểu việc khởi tạo nhiều instance không cần thiết, quản lý vòng đời kết nối DB tại một nơi.</li>
+      <li><strong>Tái sử dụng liền mạch</strong>: Giúp giảm thiểu boilerplate code khi cần truy cập Database.</li>
+      <li><strong>Single Source of Truth</strong>: Giảm thiểu việc khởi tạo nhiều instance không cần thiết, giúp quản lý vòng đời (lifecycle) của kết nối Database tại một nơi duy nhất.</li>
     </ul>
 
     <h2 id="2-di-sau-vao-prismaservice">2. Đi Sâu Vào <code>PrismaService</code> (<code>prisma.service.ts</code>)</h2>
-    <p><code>PrismaService</code> kế thừa trực tiếp từ <code>PrismaClient</code> và triển khai interface <code>OnModuleInit</code>. Đây là trung tâm đầu não của việc giao tiếp với cơ sở dữ liệu PostgreSQL.</p>
+    <p><code>PrismaService</code> kế thừa trực tiếp từ <code>PrismaClient</code> và triển khai interface <code>OnModuleInit</code>. Đây là trung tâm đầu não của việc giao tiếp với cơ sở dữ liệu PostgreSQL. Dưới đây là danh sách chi tiết tất cả các phương thức được định nghĩa bên trong Service này:</p>
 
     <div class="module-panel">
       <div class="module-panel-header">
@@ -417,28 +407,45 @@ tr:hover td { background: var(--bg-hover); }
       </div>
       
       <div class="file-pane active" id="prisma-svc">
-        <h3>2.1. Constructor: <code>Pool</code> & <code>Driver Adapter</code></h3>
-        <p>Thay vì sử dụng Prisma Engine mặc định, dự án này thiết lập kiến trúc <strong>Driver Adapter</strong> tiên tiến để tối ưu kết nối:</p>
+        <h3>2.1. Phương thức khởi tạo: <code>constructor</code></h3>
+        <p>Đây là thành phần đầu tiên được gọi khi một instance của <code>PrismaService</code> được khởi tạo.</p>
         
-        <pre><div class="pre-header"><span class="pre-lang">typescript</span><span class="pre-filename">src/prisma/prisma.service.ts</span></div><code><span class="kw">const</span> <span class="prop">pool</span> = <span class="kw">new</span> <span class="typ">Pool</span>({
-  <span class="prop">connectionString</span>: <span class="prop">databaseUrl</span>,
-});
-<span class="kw">const</span> <span class="prop">adapter</span> = <span class="kw">new</span> <span class="typ">PrismaPg</span>(<span class="prop">pool</span>);
-<span class="kw">super</span>({ <span class="prop">adapter</span> });</code></pre>
+        <pre><div class="pre-header"><span class="pre-lang">typescript</span><span class="pre-filename">src/prisma/prisma.service.ts</span></div><code><span class="kw">constructor</span>(<span class="kw">private readonly</span> <span class="prop">configService</span>: <span class="typ">ConfigService</span>) {
+  <span class="kw">const</span> <span class="prop">databaseUrl</span> = <span class="kw">this</span>.<span class="prop">configService</span>.<span class="fn">get</span>(<span class="str">'DATABASE_URL'</span>);
+  <span class="kw">if</span> (!<span class="prop">databaseUrl</span>) {
+    <span class="kw">throw new</span> <span class="typ">InternalServerErrorException</span>(<span class="str">'DATABASE_URL is not defined'</span>);
+  }
 
+  <span class="kw">const</span> <span class="prop">pool</span> = <span class="kw">new</span> <span class="typ">Pool</span>({
+    <span class="prop">connectionString</span>: <span class="prop">databaseUrl</span>,
+  });
+  <span class="kw">const</span> <span class="prop">adapter</span> = <span class="kw">new</span> <span class="typ">PrismaPg</span>(<span class="prop">pool</span>);
+  <span class="kw">super</span>({ <span class="prop">adapter</span> });
+}</code></pre>
+
+        <p><strong>Chi tiết luồng xử lý:</strong></p>
         <ul>
-          <li><strong><code>pg</code> (node-postgres) Pool</strong>: Duy trì một tập hợp các kết nối mở sẵn. Request mới "mượn" kết nối thay vì tạo mới, ngăn chặn cạn kiệt kết nối (connection exhaustion).</li>
-          <li><strong>Adapter <code>@prisma/adapter-pg</code></strong>: Cầu nối ủy quyền việc thực thi SQL cho <code>pg</code> Pool.</li>
+          <li><strong>Lấy cấu hình</strong>: Truy xuất biến môi trường <code>DATABASE_URL</code> thông qua <code>ConfigService</code>.</li>
+          <li><strong>Kiểm tra tính hợp lệ</strong>: Ném ra lỗi <code>InternalServerErrorException</code> nếu thiếu biến môi trường, chặn lỗi sớm.</li>
+          <li><strong>Tối Ưu Kết Nối Với Driver Adapter</strong>:
+            <ul>
+              <li><strong><code>pg</code> Pool</strong>: Duy trì một "hồ bơi" kết nối mở sẵn, giúp ngăn chặn triệt để cạn kiệt kết nối (connection exhaustion).</li>
+              <li><strong>Adapter <code>@prisma/adapter-pg</code></strong>: Cầu nối ủy quyền thực thi SQL cho <code>pg</code> Pool thay vì Prisma Engine mặc định.</li>
+            </ul>
+          </li>
         </ul>
 
-        <h3>2.2. Lifecycle Hook: <code>onModuleInit()</code></h3>
-        <p>Hàm này tự động gọi ngay sau khi module khởi tạo, trước khi app nhận request đầu tiên.</p>
+        <h3>2.2. Phương thức công khai: <code>onModuleInit()</code></h3>
+        <p>Hàm này tự động được gọi sau khi module khởi tạo, nhưng <strong>trước khi</strong> ứng dụng nhận request HTTP đầu tiên.</p>
+        
         <pre><div class="pre-header"><span class="pre-lang">typescript</span></div><code><span class="kw">async</span> <span class="fn">onModuleInit</span>() {
   <span class="kw">await</span> <span class="kw">this</span>.<span class="prop">$connect</span>();
 }</code></pre>
+
+        <p><strong>Vai trò và cơ chế hoạt động:</strong></p>
         <ul>
-          <li><strong>Eager Connection</strong>: Ép Prisma tạo sẵn kết nối ngay lúc boot, tránh "cold start" làm chậm request đầu.</li>
-          <li><strong>An toàn hệ thống</strong>: Phát hiện sớm lỗi <code>DATABASE_URL</code> hoặc DB sập ngay lúc khởi động.</li>
+          <li><strong>Eager Connection</strong>: Ép Prisma tạo sẵn kết nối ngay lúc boot server (thay vì Lazy Connection mặc định), tránh làm chậm request đầu (cold start).</li>
+          <li><strong>An toàn hệ thống</strong>: Nếu cấu hình sai, server báo lỗi và từ chối khởi động ngay lập tức, ngăn chặn "silent failures" khi runtime.</li>
         </ul>
       </div>
 
@@ -455,22 +462,22 @@ tr:hover td { background: var(--bg-hover); }
     <h3 id="lifecycle-diagram">Sơ đồ luồng khởi tạo Prisma</h3>
     <div class="lifecycle-container">
       <div class="lc-flow-panel">
-        <div class="lifecycle-title">Lifecycle — Prisma Startup</div>
+        <div class="lifecycle-title">Lifecycle — Prisma Connection Startup</div>
         <div class="lc-flow-scroll">
           <div class="lc-flow">
             <div class="lc-step">
               <div class="lc-node client active" 
-                   data-node-name="App Boot" 
+                   data-node-name="App Startup" 
                    data-node-type="Process" 
                    data-node-file="main.ts"
                    data-flow-in="N/A"
-                   data-why-in="Ứng dụng bắt đầu khởi động."
-                   data-flow-out="NestFactory.create()"
-                   data-why-out="Khởi tạo IoC Container.">
-                <div class="lc-node-label">App Boot</div>
-                <div class="lc-node-code">Startup</div>
+                   data-why-in="Ứng dụng bắt đầu quy trình bootstrap."
+                   data-flow-out="NestFactory.create(AppModule)"
+                   data-why-out="Khởi tạo cây Dependency Injection.">
+                <div class="lc-node-label">App Startup</div>
+                <div class="lc-node-code">Process Start</div>
               </div>
-              <div class="lc-step-num">①</div>
+              <div class="lc-step-num">① Start</div>
             </div>
             <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
             <div class="lc-step">
@@ -478,36 +485,36 @@ tr:hover td { background: var(--bg-hover); }
                    data-node-name="PrismaService"
                    data-node-type="Service"
                    data-node-file="prisma.service.ts"
-                   data-flow-in="ConfigService (DATABASE_URL)"
-                   data-why-in="Cần thông tin kết nối từ biến môi trường."
+                   data-flow-in="DATABASE_URL from ConfigService"
+                   data-why-in="Cần chuỗi kết nối để khởi tạo Driver Adapter."
                    data-flow-out="onModuleInit()"
-                   data-why-out="Kích hoạt hook khởi tạo kết nối.">
+                   data-why-out="Tự động kích hoạt hook kết nối ngay khi module sẵn sàng.">
                 <div class="lc-node-label">PrismaService</div>
-                <div class="lc-node-code">init</div>
+                <div class="lc-node-code">Instantiate</div>
               </div>
-              <div class="lc-step-num">②</div>
+              <div class="lc-step-num">② Connect</div>
             </div>
             <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
             <div class="lc-step">
               <div class="lc-node db"
-                   data-node-name="PostgreSQL"
+                   data-node-name="PostgreSQL DB"
                    data-node-type="Database"
-                   data-node-file="pg Pool"
-                   data-flow-in="this.$connect()"
-                   data-why-in="Yêu cầu mở kết nối từ Prisma."
-                   data-flow-out="Connection Pool"
-                   data-why-out="Duy trì danh sách kết nối sẵn sàng.">
+                   data-node-file="Postgres Pool"
+                   data-flow-in="this.$connect() via pg Pool"
+                   data-why-in="Thực hiện kết nối vật lý tới DB."
+                   data-flow-out="Connection Established"
+                   data-why-out="Sẵn sàng nhận các truy vấn CRUD từ hệ thống.">
                 <div class="lc-node-label">PostgreSQL</div>
-                <div class="lc-node-code">$connect()</div>
+                <div class="lc-node-code">Established</div>
               </div>
-              <div class="lc-step-num">③</div>
+              <div class="lc-step-num">③ Ready</div>
             </div>
           </div>
         </div>
       </div>
       <div class="lc-detail-panel">
         <div class="lc-detail-empty">Click vào một node để xem chi tiết luồng khởi tạo.</div>
-        <div class="lc-detail-body" style="display: none;">
+        <div class="lc-detail-body">
           <div class="lc-detail-header">
             <div class="lc-detail-type"></div>
             <div class="lc-detail-title"></div>
@@ -528,15 +535,15 @@ tr:hover td { background: var(--bg-hover); }
     </div>
 
     <h2 id="3-luong-tra-ve-du-lieu">3. Luồng Trả Về Dữ Liệu (Returns/Outputs)</h2>
-    <p>Khi thực thi các phương thức của <code>PrismaService</code>, kết quả trả về là các <code>Promise</code> chứa <strong>Dữ liệu thô (Raw Data / Entities)</strong>.</p>
+    <p>Khi thực thi các phương thức của <code>PrismaService</code> (ví dụ <code>this.prisma.user.findUnique(...)</code>), kết quả trả về là các <code>Promise</code> chứa <strong>Dữ liệu thô (Raw Data / Entities)</strong>.</p>
     
     <ul>
       <li><strong>Đích đến</strong>: Khối dữ liệu này tuyệt đối <strong>không</strong> được trả thẳng ra ngoài cho Controller (HTTP response).</li>
       <li>Nó sẽ đi ngược trở lại <strong>Domain Services</strong> (ví dụ <code>CatalogService</code>, <code>AuthService</code>, <code>UserService</code>...).</li>
-      <li>Tại các Domain Service, dữ liệu thô từ Prisma sẽ được xử lý logic nghiệp vụ trước khi được ánh xạ (map) sang các DTO.</li>
+      <li>Tại các Domain Service, dữ liệu thô từ Prisma sẽ được xử lý logic nghiệp vụ: tính toán giảm giá, lọc bỏ các trường nhạy cảm (như mật khẩu), kiểm tra quyền, v.v., trước khi được ánh xạ (map) sang các DTO.</li>
     </ul>
 
-    <p><em>Ghi chú: PrismaService đóng vai trò thuần túy là Data Access Layer, không can thiệp vào nghiệp vụ.</em></p>
+    <p><em>Ghi chú: PrismaService đóng vai trò thuần túy là Data Access Layer siêu phàm, không can thiệp vào nghiệp vụ.</em></p>
   </main>
 </div>
 

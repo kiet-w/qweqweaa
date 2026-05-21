@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NestJS E-commerce Backend - Cấu Trúc & Luồng Dữ Liệu</title>
   <style>
-/* === CSS BLOCK === */
+/* === VSCode Dark Theme — NestJS Doc Renderer === */
 :root {
   --bg:            #1e1e1e;
   --bg-sidebar:    #252526;
@@ -111,7 +111,7 @@ body {
 
 .content {
   flex: 1;
-  max-width: 960px;
+  max-width: 100% !important;
   padding: 48px 52px 100px;
   min-width: 0;
 }
@@ -175,8 +175,24 @@ pre {
 }
 pre code {
   display: block;
-  background: none; border: none; padding: 18px 20px; font-size: .875em; line-height: 1.65; color: var(--text); overflow-x: auto;
+  background: none;
+  border: none;
+  padding: 18px 20px;
+  font-size: .875em;
+  line-height: 1.65;
+  color: var(--text);
+  overflow-x: auto;
 }
+
+/* Syntax token colors */
+.kw  { color: var(--kw); }
+.fn  { color: var(--fn); }
+.str { color: var(--str); }
+.typ { color: var(--typ); }
+.cmt { color: var(--cmt); font-style: italic; }
+.num { color: var(--num); }
+.dec { color: var(--dec); }
+.prop{ color: var(--prop); }
 
 /* ── TABLES ── */
 table { width: 100%; border-collapse: collapse; margin: 1.2em 0; font-size: 13px; }
@@ -198,49 +214,82 @@ tr:hover td { background: var(--bg-hover); }
 .file-pane { display: none; padding: 20px 24px; }
 .file-pane.active { display: block; }
 
-/* ── DECORATOR CARD ── */
-.dec-card { display: flex; gap: 12px; align-items: flex-start; background: var(--bg-surface2); border: 1px solid var(--border); border-left: 3px solid var(--dec); border-radius: 6px; padding: 12px 16px; margin: 10px 0; font-size: 13px; }
-.dec-card-name { font-family: monospace; font-size: 13px; color: var(--dec); font-weight: 600; min-width: 130px; }
-.dec-card-body { flex: 1; }
-.dec-card-desc { color: var(--text); margin-bottom: 4px; }
-.dec-card-effect { font-size: 12px; color: var(--text-muted); }
-
-/* ── CRUD CARD ── */
-.crud-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; margin: 12px 0; overflow: hidden; }
-.crud-header { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--bg-surface2); border-bottom: 1px solid var(--border); }
-.crud-method { font-size: 11px; font-weight: 700; letter-spacing: .06em; padding: 3px 10px; border-radius: 4px; font-family: monospace; }
-.method-get    { background: #1a3a28; color: #4ec9b0; }
-.method-post   { background: #1a2d0d; color: #89d185; }
-.crud-path { font-family: monospace; font-size: 13px; color: var(--text); }
-.crud-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-.crud-col-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
-.crud-col-content { font-size: 12px; color: var(--text); line-height: 1.55; }
-
-/* ═══════════════════════════════════════════
-   REQUEST LIFECYCLE CONTAINER
-   ═══════════════════════════════════════════ */
-.lifecycle-container { display: flex; flex-direction: column; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; margin: 2em 0; overflow: hidden; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24); }
-@media (min-width: 992px) { .lifecycle-container { flex-direction: row; height: 500px; } }
-.lc-flow-panel { flex: 1.3; padding: 24px; overflow: auto; display: flex; flex-direction: column; border-bottom: 1px solid var(--border); }
-@media (min-width: 992px) { .lc-flow-panel { border-bottom: none; border-right: 1px solid var(--border); } }
-.lifecycle-title { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 24px; font-weight: 700; border-bottom: 1px dashed var(--border); padding-bottom: 12px; }
-.lc-flow-scroll { flex: 1; display: flex; align-items: center; overflow-x: auto; padding: 20px 0; }
-.lc-flow { display: flex; align-items: center; gap: 0; min-width: max-content; margin: auto; }
-.lc-step { display: flex; flex-direction: column; align-items: center; position: relative; }
-.lc-node { border-radius: 8px; padding: 14px 18px; min-width: 140px; max-width: 180px; text-align: center; border: 1px solid; position: relative; transition: all .25s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; user-select: none; }
+/* ── LIFECYCLE ── */
+.lifecycle-container {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin: 2em 0;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+}
+@media (min-width: 992px) {
+  .lifecycle-container { flex-direction: row; height: 500px; }
+}
+.lc-flow-panel {
+  flex: 1.3;
+  padding: 24px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border);
+}
+@media (min-width: 992px) {
+  .lc-flow-panel { border-bottom: none; border-right: 1px solid var(--border); }
+}
+.lifecycle-title {
+  font-size: 11px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  font-weight: 700;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 12px;
+}
+.lc-flow-scroll {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  padding: 20px 0;
+}
+.lc-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: max-content;
+  margin: auto;
+}
+.lc-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.lc-node {
+  border-radius: 8px;
+  padding: 14px 18px;
+  min-width: 140px;
+  max-width: 180px;
+  text-align: center;
+  border: 1px solid;
+  position: relative;
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+}
 .lc-node:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
 .lc-node.active { transform: scale(1.05); border-width: 2px; }
-.lc-node.guard  { background: var(--node-guard);  border-color: var(--node-guard-b); }
-.lc-node.pipe   { background: var(--node-pipe);   border-color: var(--node-pipe-b); }
-.lc-node.ctrl   { background: var(--node-ctrl);   border-color: var(--node-ctrl-b); }
-.lc-node.svc    { background: var(--node-svc);    border-color: var(--node-svc-b); }
-.lc-node.db     { background: var(--node-db);     border-color: var(--node-db-b); }
 .lc-node.client { background: var(--bg-surface2); border-color: var(--border); }
-
+.lc-node.guard { background: var(--node-guard); border-color: var(--node-guard-b); }
+.lc-node.ctrl { background: var(--node-ctrl); border-color: var(--node-ctrl-b); }
+.lc-node.svc { background: var(--node-svc); border-color: var(--node-svc-b); }
 .lc-node-label { font-size: 12px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
-.lc-node-code  { font-size: 10.5px; font-family: monospace; color: var(--text-muted); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lc-node-desc  { font-size: 10px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
+.lc-node-code { font-size: 10.5px; font-family: monospace; color: var(--text-muted); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lc-node-desc { font-size: 10px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .lc-connector { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 4px; }
 .lc-line { height: 2px; width: 40px; background: linear-gradient(90deg, var(--border), var(--accent)); position: relative; overflow: hidden; }
 .lc-line::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0,122,204,.8), transparent); animation: flow 2s infinite; }
@@ -248,6 +297,7 @@ tr:hover td { background: var(--bg-hover); }
 
 .lc-detail-panel { flex: 1; background: var(--bg-sidebar); padding: 24px; display: flex; flex-direction: column; overflow: auto; }
 .lc-detail-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-muted); text-align: center; font-style: italic; font-size: 13px; }
+.lc-detail-body { display: none; }
 .lc-detail-header { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
 .lc-detail-type { font-size: 10px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
 .lc-detail-title { font-size: 16px; font-weight: 600; color: var(--text-bright); }
@@ -257,6 +307,12 @@ tr:hover td { background: var(--bg-hover); }
 .lc-flow-card-code { font-family: monospace; font-size: 12px; color: var(--text-bright); margin-bottom: 4px; }
 .lc-flow-card-desc { font-size: 11.5px; color: var(--text); line-height: 1.5; }
 
+/* ── SUMMARY TABLE ── */
+.summary-table .lc-node {
+  min-width: 100px;
+  padding: 6px 10px;
+  font-size: 11px;
+}
   </style>
 </head>
 <body>
@@ -279,29 +335,29 @@ tr:hover td { background: var(--bg-hover); }
       <tbody>
         <tr>
           <td><strong>1. Cấu Trúc Tổng Quan</strong></td>
-          <td><div class="lc-node guard">Modular</div></td>
+          <td><div class="lc-node guard" style="min-width: 80px; padding: 4px;">Architecture</div></td>
           <td><a href="#1-cau-truc-tong-quan-architecture">Xem chi tiết</a></td>
         </tr>
         <tr>
           <td><strong>2. Các Thành Phần Chính</strong></td>
-          <td><div class="lc-node ctrl">Folders</div></td>
+          <td><div class="lc-node ctrl" style="min-width: 80px; padding: 4px;">Modules</div></td>
           <td><a href="#2-chi-tiet-cac-thanh-phan-chinh">Xem chi tiết</a></td>
         </tr>
         <tr>
-          <td><strong>3. Luồng Request Lifecycle</strong></td>
-          <td><div class="lc-node client">Lifecycle</div></td>
+          <td><strong>3. Luồng Request</strong></td>
+          <td><div class="lc-node client" style="min-width: 80px; padding: 4px;">Flow</div></td>
           <td><a href="#5-luong-di-cua-mot-request-request-lifecycle">Xem chi tiết</a></td>
         </tr>
       </tbody>
     </table>
 
     <h2 id="1-cau-truc-tong-quan-architecture">1. Cấu Trúc Tổng Quan (Architecture)</h2>
-    <p>Dự án được xây dựng trên framework <strong>NestJS</strong>, tuân thủ mô hình <strong>Modular Architecture</strong>.</p>
+    <p>Dự án được xây dựng trên framework <strong>NestJS</strong>, tuân thủ mô hình <strong>Modular Architecture</strong>. Mỗi tính năng lớn (Auth, Cart, Catalog, Orders) được đóng gói trong một Module riêng biệt bao gồm:</p>
     <ul>
-      <li><strong>Controller</strong>: Tiếp nhận Request, định nghĩa Route, validate DTO.</li>
-      <li><strong>Service</strong>: Chứa logic nghiệp vụ chính, tương tác DB qua Prisma.</li>
-      <li><strong>DTO</strong>: Quy định cấu trúc dữ liệu gửi/nhận.</li>
-      <li><strong>Module</strong>: Gắn kết Controller và Service.</li>
+      <li><strong>Controller</strong>: Tiếp nhận Request từ Client, định nghĩa Route và validate dữ liệu đầu vào (DTO).</li>
+      <li><strong>Service</strong>: Chứa logic nghiệp vụ chính (Business Logic), tương tác với Database thông qua Prisma.</li>
+      <li><strong>DTO (Data Transfer Object)</strong>: Quy định cấu trúc dữ liệu gửi lên và phản hồi về.</li>
+      <li><strong>Module</strong>: Gắn kết Controller và Service lại với nhau.</li>
     </ul>
 
     <h2 id="2-chi-tiet-cac-thanh-phan-chinh">2. Chi Tiết Các Thành Phần Chính</h2>
@@ -309,46 +365,60 @@ tr:hover td { background: var(--bg-hover); }
     <div class="module-panel">
       <div class="module-panel-header">
         <span class="module-panel-icon">📂</span>
-        <span class="module-panel-name">Core Modules</span>
+        <span class="module-panel-name">Folder Details</span>
       </div>
       <div class="file-tabs">
-        <div class="file-tab active" data-target="admin-pane">admin/</div>
-        <div class="file-tab" data-target="auth-pane">auth/</div>
-        <div class="file-tab" data-target="catalog-pane">catalog/</div>
-        <div class="file-tab" data-target="orders-pane">orders/</div>
+        <div class="file-tab active" data-target="admin-pane">src/admin</div>
+        <div class="file-tab" data-target="auth-pane">src/auth</div>
+        <div class="file-tab" data-target="catalog-pane">src/catalog</div>
+        <div class="file-tab" data-target="orders-pane">src/orders</div>
       </div>
       
       <div class="file-pane active" id="admin-pane">
-        <p><strong>Quản Trị Hệ Thống</strong>: Quản lý Danh mục, Sản phẩm, Đơn hàng.</p>
+        <p><strong>Quản Trị Hệ Thống</strong>: Cho phép Admin quản lý Danh mục, Sản phẩm và Đơn hàng.</p>
         <ul>
-          <li><strong>Auth</strong>: Dùng <code>@Roles(ADMIN)</code> và <code>RolesGuard</code>.</li>
-          <li><strong>Cache</strong>: Gọi <code>RedisService.reset()</code> để hủy cache Catalog khi sửa sản phẩm.</li>
+          <li><strong>Auth</strong>: Dùng <code>@Roles(UserRole.ADMIN)</code> và <code>RolesGuard</code>.</li>
+          <li><strong>Catalog & Redis</strong>: Khi cập nhật/xóa sản phẩm, gọi <code>RedisService.reset()</code> để hủy cache Catalog.</li>
           <li><strong>Prisma</strong>: Dùng <code>softDelete</code> và <code>include</code> phức tạp.</li>
         </ul>
       </div>
 
       <div class="file-pane" id="auth-pane">
-        <p><strong>Hệ Thống Xác Thực</strong>: Login, Register, Logout, Refresh Token.</p>
+        <p><strong>Hệ Thống Xác Thực</strong>: Đăng ký, Đăng nhập, Làm mới Token.</p>
         <ul>
-          <li><strong>User Interact</strong>: Inject <code>UserService</code> thông qua <code>forwardRef</code>.</li>
-          <li><strong>Security</strong>: <strong>HttpOnly Cookies</strong> chống XSS, JWT hash Refresh Token.</li>
+          <li><strong>User</strong>: Phụ thuộc <code>UserService</code>, dùng <code>forwardRef</code> để giải quyết dependency cycle.</li>
+          <li><strong>Security</strong>: Dùng <strong>HttpOnly Cookies</strong> chống XSS.</li>
         </ul>
       </div>
 
       <div class="file-pane" id="catalog-pane">
-        <p><strong>Danh Mục & Sản Phẩm</strong>: Xem, lọc, tìm kiếm.</p>
+        <p><strong>Danh Mục & Sản Phẩm</strong>: Xem danh sách, lọc, tìm kiếm.</p>
         <ul>
-          <li><strong>Tối ưu</strong>: Bọc <code>getOrSet</code> từ <code>RedisService</code> quanh Prisma query.</li>
+          <li><strong>Tối ưu</strong>: Bọc <code>getOrSet</code> quanh Prisma query để tăng tốc độ.</li>
         </ul>
       </div>
 
       <div class="file-pane" id="orders-pane">
         <p><strong>Đơn Hàng & Thanh Toán</strong>: Checkout giỏ hàng.</p>
         <ul>
-          <li><strong>ACID</strong>: Sử dụng <code>$transaction</code> để trừ kho và tạo đơn nguyên tử.</li>
+          <li><strong>ACID</strong>: Dùng <code>$transaction</code> để trừ kho và tạo đơn đồng thời.</li>
         </ul>
       </div>
     </div>
+
+    <h2 id="3-tuong-tac-giua-cac-folder-cross-module-communication">3. Tương Tác Giữa Các Folder (Cross-Module Communication)</h2>
+    <ul>
+      <li><strong>Hệ thống Guard & Decorator (<code>src/common</code>)</strong>: <code>AuthGuard</code> đính <code>request.user</code> để các folder khác dùng.</li>
+      <li><strong>Toàn cục hóa Service (<code>Global Modules</code>)</strong>: <code>PrismaModule</code> và <code>RedisModule</code> được đánh dấu <code>@Global()</code>.</li>
+      <li><strong>Hủy Cache (Cache Invalidation)</strong>: Folder <code>admin</code> tác động trực tiếp lên <code>catalog</code> qua Redis.</li>
+    </ul>
+
+    <h2 id="4-tuong-tac-voi-prisma-bao-toan-du-lieu">4. Tương Tác Với Prisma & Bảo Toàn Dữ Liệu</h2>
+    <ul>
+      <li><strong>Atomic Operations</strong>: Trừ kho bằng <code>updateMany</code> với điều kiện <code>gte</code> (lớn hơn hoặc bằng).</li>
+      <li><strong>Schema Relation</strong>: Xử lý <code>1-n</code> và <code>n-n</code> mượt mà qua <code>include</code>.</li>
+      <li><strong>Adapter-pg</strong>: Dùng <code>Pool</code> từ <code>pg</code> để quản lý kết nối hiệu quả cho Enterprise.</li>
+    </ul>
 
     <h2 id="5-luong-di-cua-mot-request-request-lifecycle">5. Luồng Đi Của Một Request (Request Lifecycle)</h2>
     <div class="lifecycle-container">
@@ -357,7 +427,7 @@ tr:hover td { background: var(--bg-hover); }
         <div class="lc-flow-scroll">
           <div class="lc-flow">
             <div class="lc-step">
-              <div class="lc-node client active" data-node-name="Client" data-node-type="Entry" data-node-file="Browser" data-flow-in="HTTP Request" data-why-in="User đặt hàng." data-flow-out="JSON Body" data-why-out="Gửi dữ liệu lên server.">
+              <div class="lc-node client active" data-node-name="Client" data-node-type="User" data-node-file="Browser" data-flow-in="HTTP Request" data-why-in="User gửi yêu cầu checkout." data-flow-out="JSON DTO" data-why-out="Dữ liệu giỏ hàng.">
                 <div class="lc-node-label">Client</div>
                 <div class="lc-node-code">Request</div>
               </div>
@@ -365,25 +435,25 @@ tr:hover td { background: var(--bg-hover); }
             </div>
             <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
             <div class="lc-step">
-              <div class="lc-node guard" data-node-name="AuthGuard" data-node-type="Security" data-node-file="src/auth/guards" data-flow-in="JWT Cookie" data-why-in="Cần xác thực người dùng." data-flow-out="req.user" data-why-out="Đính kèm user vào request.">
-                <div class="lc-node-label">AuthGuard</div>
-                <div class="lc-node-code">Validate</div>
+              <div class="lc-node guard" data-node-name="Guards" data-node-type="Security" data-node-file="AuthGuard / RolesGuard" data-flow-in="JWT Cookie" data-why-in="Kiểm tra danh tính." data-flow-out="Authorized" data-why-out="Cho phép request đi tiếp.">
+                <div class="lc-node-label">Guards</div>
+                <div class="lc-node-code">Auth/Roles</div>
               </div>
               <div class="lc-step-num">②</div>
             </div>
             <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
             <div class="lc-step">
-              <div class="lc-node ctrl" data-node-name="OrdersController" data-node-type="Router" data-node-file="orders.controller.ts" data-flow-in="req.user + DTO" data-why-in="Nhận dữ liệu sạch." data-flow-out="call Service" data-why-out="Ủy quyền xử lý nghiệp vụ.">
+              <div class="lc-node ctrl" data-node-name="Controller" data-node-type="Router" data-node-file="OrdersController" data-flow-in="Clean DTO" data-why-in="Tiếp nhận dữ liệu." data-flow-out="Call Service" data-why-out="Ủy quyền nghiệp vụ.">
                 <div class="lc-node-label">Controller</div>
-                <div class="lc-node-code">Route</div>
+                <div class="lc-node-code">Routing</div>
               </div>
               <div class="lc-step-num">③</div>
             </div>
             <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
             <div class="lc-step">
-              <div class="lc-node svc" data-node-name="OrdersService" data-node-type="Logic" data-node-file="orders.service.ts" data-flow-in="Business Data" data-why-in="Tiến hành tính toán." data-flow-out="$transaction" data-why-out="Ghi dữ liệu an toàn.">
+              <div class="lc-node svc" data-node-name="Service" data-node-type="Logic" data-node-file="OrdersService" data-flow-in="Business Data" data-why-in="Tính toán tiền, trừ kho." data-flow-out="$transaction" data-why-out="Lưu trữ database.">
                 <div class="lc-node-label">Service</div>
-                <div class="lc-node-code">Business</div>
+                <div class="lc-node-code">Business Logic</div>
               </div>
               <div class="lc-step-num">④</div>
             </div>
@@ -391,22 +461,33 @@ tr:hover td { background: var(--bg-hover); }
         </div>
       </div>
       <div class="lc-detail-panel">
-        <div class="lc-detail-empty">Click vào node để xem chi tiết Lifecycle.</div>
-        <div class="lc-detail-body" style="display: none;">
+        <div class="lc-detail-empty">Click vào một node để xem chi tiết Lifecycle.</div>
+        <div class="lc-detail-body">
           <div class="lc-detail-header">
-            <div class="lc-detail-type"></div><div class="lc-detail-title"></div><div class="lc-detail-file"></div>
+            <div class="lc-detail-type"></div>
+            <div class="lc-detail-title"></div>
+            <div class="lc-detail-file"></div>
           </div>
-          <div class="lc-flow-card"><div class="lc-flow-card-title">📥 Dữ liệu vào</div><div class="lc-flow-card-code"></div><div class="lc-flow-card-desc"></div></div>
-          <div class="lc-flow-card"><div class="lc-flow-card-title">📤 Dữ liệu ra</div><div class="lc-flow-card-code"></div><div class="lc-flow-card-desc"></div></div>
+          <div class="lc-flow-card">
+            <div class="lc-flow-card-title">📥 Dữ liệu vào (IN)</div>
+            <div class="lc-flow-card-code"></div>
+            <div class="lc-flow-card-desc"></div>
+          </div>
+          <div class="lc-flow-card">
+            <div class="lc-flow-card-title">📤 Dữ liệu ra (OUT)</div>
+            <div class="lc-flow-card-code"></div>
+            <div class="lc-flow-card-desc"></div>
+          </div>
         </div>
       </div>
     </div>
 
     <h2 id="7-cac-ky-thuat-noi-bat-code-highlights">7. Các Kỹ Thuật Nổi Bật (Code Highlights)</h2>
     <ul>
-      <li><strong>Transactional Integrity</strong>: ACID transaction bảo vệ dữ liệu.</li>
-      <li><strong>Performance Optimization</strong>: Kết hợp SQL (Prisma) và NoSQL (Redis).</li>
-      <li><strong>Clean Code</strong>: Dùng Decorators (`@Roles`, `@GetUser`) tối ưu mã nguồn.</li>
+      <li><strong>Transactional Integrity</strong>: Sử dụng ACID transaction để bảo vệ dữ liệu tài chính/kho bãi.</li>
+      <li><strong>Performance Optimization</strong>: Kết hợp giữa SQL (Prisma) và NoSQL (Redis) để đạt tốc độ phản hồi nhanh nhất.</li>
+      <li><strong>Security Best Practices</strong>: Hash mật khẩu bằng <code>bcrypt</code>, bảo mật Token bằng <code>httpOnly</code>.</li>
+      <li><strong>Clean Code</strong>: Sử dụng Decorators giúp code ngắn gọn và dễ đọc.</li>
     </ul>
   </main>
 </div>
@@ -416,31 +497,41 @@ function buildTOC() {
   const sidebar = document.getElementById('sidebar');
   const headings = document.querySelectorAll('h1, h2, h3');
   const title = document.createElement('div');
-  title.className = 'sidebar-title'; title.innerText = 'Nội dung'; sidebar.appendChild(title);
+  title.className = 'sidebar-title';
+  title.innerText = 'Nội dung';
+  sidebar.appendChild(title);
+
   headings.forEach(h => {
     const id = h.id || h.innerText.toLowerCase().replace(/\s+/g, '-');
     h.id = id;
-    const a = document.createElement('a'); a.href = '#' + id; a.innerText = h.innerText; a.className = 'toc-item toc-' + h.tagName.toLowerCase();
+    const a = document.createElement('a');
+    a.href = '#' + id;
+    a.innerText = h.innerText;
+    a.className = 'toc-item toc-' + h.tagName.toLowerCase();
     sidebar.appendChild(a);
   });
 }
+
 function initTabs() {
   document.querySelectorAll('.file-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       const panel = tab.closest('.module-panel');
       panel.querySelectorAll('.file-tab').forEach(t => t.classList.remove('active'));
       panel.querySelectorAll('.file-pane').forEach(p => p.classList.remove('active'));
-      tab.classList.add('active'); panel.querySelector('#' + tab.dataset.target).classList.add('active');
+      tab.classList.add('active');
+      panel.querySelector('#' + tab.dataset.target).classList.add('active');
     });
   });
 }
+
 function initLifecycle() {
   document.querySelectorAll('.lc-node').forEach(node => {
     node.addEventListener('click', () => {
       document.querySelectorAll('.lc-node').forEach(n => n.classList.remove('active'));
       node.classList.add('active');
       const panel = document.querySelector('.lc-detail-body');
-      panel.style.display = 'block'; document.querySelector('.lc-detail-empty').style.display = 'none';
+      panel.style.display = 'block';
+      document.querySelector('.lc-detail-empty').style.display = 'none';
       panel.querySelector('.lc-detail-title').innerText = node.dataset.nodeName;
       panel.querySelector('.lc-detail-type').innerText = node.dataset.nodeType;
       panel.querySelector('.lc-detail-file').innerText = node.dataset.nodeFile;
@@ -451,7 +542,12 @@ function initLifecycle() {
     });
   });
 }
-document.addEventListener('DOMContentLoaded', () => { buildTOC(); initTabs(); initLifecycle(); });
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildTOC();
+  initTabs();
+  initLifecycle();
+});
 </script>
 </body>
 </html>

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Module - Giải Thích Chuyên Sâu</title>
+  <title>Giải Thích Chuyên Sâu - Module User (src/user)</title>
   <style>
-/* === CSS BLOCK === */
+/* === VSCode Dark Theme — NestJS Doc Renderer === */
 :root {
   --bg:            #1e1e1e;
   --bg-sidebar:    #252526;
@@ -111,7 +111,7 @@ body {
 
 .content {
   flex: 1;
-  max-width: 960px;
+  max-width: 100% !important;
   padding: 48px 52px 100px;
   min-width: 0;
 }
@@ -180,7 +180,13 @@ pre {
 }
 pre code {
   display: block;
-  background: none; border: none; padding: 18px 20px; font-size: .875em; line-height: 1.65; color: var(--text); overflow-x: auto;
+  background: none;
+  border: none;
+  padding: 18px 20px;
+  font-size: .875em;
+  line-height: 1.65;
+  color: var(--text);
+  overflow-x: auto;
 }
 
 /* Syntax token colors */
@@ -200,6 +206,77 @@ th { color: var(--text-bright); font-weight: 600; text-align: left; padding: 9px
 td { padding: 7px 14px; border: 1px solid var(--border); }
 tr:hover td { background: var(--bg-hover); }
 
+/* ── DECORATOR CARD ── */
+.dec-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--dec);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  font-size: 13px;
+}
+.dec-card-name { font-family: monospace; font-size: 13px; color: var(--dec); font-weight: 600; min-width: 130px; }
+.dec-card-body { flex: 1; }
+.dec-card-desc { color: var(--text); margin-bottom: 4px; }
+.dec-card-effect { font-size: 12px; color: var(--text-muted); }
+.dec-card-effect b { color: var(--prop); font-weight: normal; }
+
+/* ── CRUD CARD ── */
+.crud-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 12px 0;
+  overflow: hidden;
+}
+.crud-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg-surface2);
+  border-bottom: 1px solid var(--border);
+}
+.crud-method {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+.method-get    { background: #1a3a28; color: #4ec9b0; }
+.method-post   { background: #1a2d0d; color: #89d185; }
+.method-patch  { background: #2d2207; color: #dcdcaa; }
+.method-delete { background: #2d0a0a; color: #f44747; }
+.crud-path { font-family: monospace; font-size: 13px; color: var(--text); }
+.crud-fn   { font-family: monospace; font-size: 12px; color: var(--fn); margin-left: auto; }
+.crud-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.crud-col-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+.crud-col-content { font-size: 12px; color: var(--text); line-height: 1.55; }
+.crud-effects { padding: 0 16px 14px; }
+.crud-effects-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; }
+.effect-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-family: monospace;
+  margin: 3px 4px 3px 0;
+  color: var(--text-muted);
+}
+.effect-tag.db-write  { border-color: var(--kw); color: var(--kw); }
+.effect-tag.db-read   { border-color: var(--green); color: var(--green); }
+.effect-tag.cache-inv { border-color: var(--yellow); color: var(--yellow); }
+
 /* ── MODULE PANEL ── */
 .module-panel { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 1.5em 0; }
 .module-panel-header { background: var(--bg-surface2); padding: 14px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
@@ -213,52 +290,80 @@ tr:hover td { background: var(--bg-hover); }
 .file-pane { display: none; padding: 20px 24px; }
 .file-pane.active { display: block; }
 
-/* ── DECORATOR CARD ── */
-.dec-card { display: flex; gap: 12px; align-items: flex-start; background: var(--bg-surface2); border: 1px solid var(--border); border-left: 3px solid var(--dec); border-radius: 6px; padding: 12px 16px; margin: 10px 0; font-size: 13px; }
-.dec-card-name { font-family: monospace; font-size: 13px; color: var(--dec); font-weight: 600; min-width: 130px; }
-.dec-card-body { flex: 1; }
-.dec-card-desc { color: var(--text); margin-bottom: 4px; }
-.dec-card-effect { font-size: 12px; color: var(--text-muted); }
-.dec-card-effect b { color: var(--prop); font-weight: normal; }
-
-/* ── CRUD CARD ── */
-.crud-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; margin: 12px 0; overflow: hidden; }
-.crud-header { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--bg-surface2); border-bottom: 1px solid var(--border); }
-.crud-method { font-size: 11px; font-weight: 700; letter-spacing: .06em; padding: 3px 10px; border-radius: 4px; font-family: monospace; }
-.method-get    { background: #1a3a28; color: #4ec9b0; }
-.method-post   { background: #1a2d0d; color: #89d185; }
-.method-patch  { background: #2d2207; color: #dcdcaa; }
-.method-delete { background: #2d0a0a; color: #f44747; }
-.crud-path { font-family: monospace; font-size: 13px; color: var(--text); }
-.crud-fn   { font-family: monospace; font-size: 12px; color: var(--fn); margin-left: auto; }
-.crud-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-.crud-col-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
-.crud-col-content { font-size: 12px; color: var(--text); line-height: 1.55; }
-.crud-effects { padding: 0 16px 14px; }
-.crud-effects-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; }
-.effect-tag { display: inline-flex; align-items: center; gap: 5px; background: var(--bg-surface2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 10px; font-size: 11.5px; font-family: monospace; margin: 3px 4px 3px 0; color: var(--text-muted); }
-.effect-tag.db-write { border-color: var(--kw); color: var(--kw); }
-.effect-tag.db-read { border-color: var(--green); color: var(--green); }
-.effect-tag.cache-inv { border-color: var(--yellow); color: var(--yellow); }
-
-/* ═══════════════════════════════════════════
-   REQUEST LIFECYCLE CONTAINER
-   ═══════════════════════════════════════════ */
-.lifecycle-container { display: flex; flex-direction: column; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; margin: 2em 0; overflow: hidden; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24); }
-@media (min-width: 992px) { .lifecycle-container { flex-direction: row; height: 500px; } }
-.lc-flow-panel { flex: 1.3; padding: 24px; overflow: auto; display: flex; flex-direction: column; border-bottom: 1px solid var(--border); }
-@media (min-width: 992px) { .lc-flow-panel { border-bottom: none; border-right: 1px solid var(--border); } }
-.lifecycle-title { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 24px; font-weight: 700; border-bottom: 1px dashed var(--border); padding-bottom: 12px; }
-.lc-flow-scroll { flex: 1; display: flex; align-items: center; overflow-x: auto; padding: 20px 0; }
-.lc-flow { display: flex; align-items: center; gap: 0; min-width: max-content; margin: auto; }
-.lc-step { display: flex; flex-direction: column; align-items: center; position: relative; }
-.lc-node { border-radius: 8px; padding: 14px 18px; min-width: 140px; max-width: 180px; text-align: center; border: 1px solid; position: relative; transition: all .25s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; user-select: none; }
+/* ── LIFECYCLE ── */
+.lifecycle-container {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin: 2em 0;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+}
+@media (min-width: 992px) {
+  .lifecycle-container { flex-direction: row; height: 500px; }
+}
+.lc-flow-panel {
+  flex: 1.3;
+  padding: 24px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border);
+}
+@media (min-width: 992px) {
+  .lc-flow-panel { border-bottom: none; border-right: 1px solid var(--border); }
+}
+.lifecycle-title {
+  font-size: 11px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  font-weight: 700;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 12px;
+}
+.lc-flow-scroll {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  padding: 20px 0;
+}
+.lc-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: max-content;
+  margin: auto;
+}
+.lc-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.lc-node {
+  border-radius: 8px;
+  padding: 14px 18px;
+  min-width: 140px;
+  max-width: 180px;
+  text-align: center;
+  border: 1px solid;
+  position: relative;
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+}
 .lc-node:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
 .lc-node.active { transform: scale(1.05); border-width: 2px; }
 .lc-node.ctrl { background: var(--node-ctrl); border-color: var(--node-ctrl-b); }
 .lc-node.svc { background: var(--node-svc); border-color: var(--node-svc-b); }
 .lc-node.db { background: var(--node-db); border-color: var(--node-db-b); }
 .lc-node.client { background: var(--bg-surface2); border-color: var(--border); }
+
 .lc-node-label { font-size: 12px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
 .lc-node-code { font-size: 10.5px; font-family: monospace; color: var(--text-muted); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lc-node-desc { font-size: 10px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -269,6 +374,7 @@ tr:hover td { background: var(--bg-hover); }
 
 .lc-detail-panel { flex: 1; background: var(--bg-sidebar); padding: 24px; display: flex; flex-direction: column; overflow: auto; }
 .lc-detail-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-muted); text-align: center; font-style: italic; font-size: 13px; }
+.lc-detail-body { display: none; }
 .lc-detail-header { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
 .lc-detail-type { font-size: 10px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
 .lc-detail-title { font-size: 16px; font-weight: 600; color: var(--text-bright); }
@@ -278,14 +384,20 @@ tr:hover td { background: var(--bg-hover); }
 .lc-flow-card-code { font-family: monospace; font-size: 12px; color: var(--text-bright); margin-bottom: 4px; }
 .lc-flow-card-desc { font-size: 11.5px; color: var(--text); line-height: 1.5; }
 
+/* ── SUMMARY TABLE ── */
+.summary-table .lc-node {
+  min-width: 100px;
+  padding: 6px 10px;
+  font-size: 11px;
+}
   </style>
 </head>
 <body>
 <div class="page-wrap">
   <nav class="sidebar" id="sidebar"></nav>
   <main class="content">
-    <h1>Giải Thích Chuyên Sâu - Module User</h1>
-    <p>Tài liệu này phân tích chi tiết cách hoạt động của <code>UserController</code> và <code>UserService</code>, trọng tâm là luồng dữ liệu từ network vào DB & Cache.</p>
+    <h1>Giải Thích Chuyên Sâu - Tương Tác Giữa Controller và Service Trong Module User</h1>
+    <p>Tài liệu này cung cấp một cái nhìn cực kỳ chi tiết (deep dive) vào cách hoạt động của <code>UserController</code> và <code>UserService</code> trong hệ thống NestJS của chúng ta. Trọng tâm là phân tích luồng dữ liệu từ network vào DB & Cache.</p>
 
     <!-- SUMMARY TABLE -->
     <h2 id="summary">Tóm tắt nội dung</h2>
@@ -300,34 +412,37 @@ tr:hover td { background: var(--bg-hover); }
       <tbody>
         <tr>
           <td><strong>1. Tầng Giao Diện Mạng</strong></td>
-          <td><div class="lc-node ctrl">Controller</div></td>
+          <td><div class="lc-node ctrl" style="min-width: 80px; padding: 4px;">Controller</div></td>
           <td><a href="#1-tang-giao-dien-mang-controllers-usercontroller">Xem chi tiết</a></td>
         </tr>
         <tr>
           <td><strong>2. Tầng Logic Nghiệp Vụ</strong></td>
-          <td><div class="lc-node svc">Service</div></td>
+          <td><div class="lc-node svc" style="min-width: 80px; padding: 4px;">Service</div></td>
           <td><a href="#2-tang-logic-nghiep-vu-services-userservice">Xem chi tiết</a></td>
         </tr>
         <tr>
           <td><strong>3. Luồng Kết Quả</strong></td>
-          <td><div class="lc-node client">Raw Flow</div></td>
+          <td><div class="lc-node client" style="min-width: 80px; padding: 4px;">Flow</div></td>
           <td><a href="#3-luong-ket-qua-outputs-returns-flow">Xem chi tiết</a></td>
         </tr>
         <tr>
           <td><strong>4. Phụ Thuộc Khéo Léo</strong></td>
-          <td><div class="lc-node guard">Auth Interact</div></td>
+          <td><div class="lc-node svc" style="min-width: 80px; padding: 4px;">Auth</div></td>
           <td><a href="#4-phu-thuoc-kheo-leo-dependencies-va-tuong-tac-voi-module-auth">Xem chi tiết</a></td>
         </tr>
       </tbody>
     </table>
 
     <h2 id="1-tang-giao-dien-mang-controllers-usercontroller">1. Tầng Giao Diện Mạng (Controllers): <code>UserController</code></h2>
-    <p>Điểm chặn (entry point) đầu tiên cho mọi HTTP request liên quan đến User.</p>
+    <p><code>UserController</code> (<code>src/user/user.controller.ts</code>) là điểm chặn (entry point) đầu tiên cho mọi HTTP request liên quan đến User.</p>
     
     <div class="dec-card">
       <div class="dec-card-name">@Controller('users')</div>
       <div class="dec-card-body">
-        <div class="dec-card-desc">Gắn tiền tố <code>/users</code> cho toàn bộ các route bên trong class.</div>
+        <div class="dec-card-desc">Decorator gắn tiền tố <code>/users</code> cho toàn bộ các route bên trong class.</div>
+        <div class="dec-card-effect">
+          <b>Tác động:</b> Giúp phân tách không gian tên (namespace) rõ ràng giữa các module khác nhau.
+        </div>
       </div>
     </div>
 
@@ -346,8 +461,8 @@ tr:hover td { background: var(--bg-hover); }
           </div>
           <div class="crud-body">
             <div><div class="crud-col-title">Input</div><div class="crud-col-content"><code>@Body() data: Prisma.UserCreateInput</code></div></div>
-            <div><div class="crud-col-title">Xử lý</div><div class="crud-col-content">Gọi <code>userService.create(data)</code></div></div>
-            <div><div class="crud-col-title">Output</div><div class="crud-col-content">User object mới</div></div>
+            <div><div class="crud-col-title">Xử lý</div><div class="crud-col-content">Controller gọi <code>userService.create(data)</code>.</div></div>
+            <div><div class="crud-col-title">Output</div><div class="crud-col-content">User object mới được tạo.</div></div>
           </div>
         </div>
 
@@ -359,20 +474,20 @@ tr:hover td { background: var(--bg-hover); }
           </div>
           <div class="crud-body">
             <div><div class="crud-col-title">Input</div><div class="crud-col-content"><code>@Param('id', ParseIntPipe)</code></div></div>
-            <div><div class="crud-col-title">Xử lý</div><div class="crud-col-content">Ép kiểu sang number, gọi <code>findById(id)</code></div></div>
-            <div><div class="crud-col-title">Output</div><div class="crud-col-content">User details hoặc 400 (nếu id sai định dạng)</div></div>
+            <div><div class="crud-col-title">Xử lý</div><div class="crud-col-content">Ép kiểu <code>string</code> sang <code>number</code> thông qua Pipe.</div></div>
+            <div><div class="crud-col-title">Output</div><div class="crud-col-content">Thông tin chi tiết của User.</div></div>
           </div>
         </div>
-        
-        <p><em>Và các endpoint khác: GET (list), PATCH (update), DELETE.</em></p>
       </div>
     </div>
 
     <h2 id="2-tang-logic-nghiep-vu-services-userservice">2. Tầng Logic Nghiệp Vụ (Services): <code>UserService</code></h2>
+    <p><code>UserService</code> phụ thuộc vào <code>PrismaService</code> (Database) và <code>RedisService</code> (Cache).</p>
+
     <div class="dec-card">
       <div class="dec-card-name">@Injectable()</div>
       <div class="dec-card-body">
-        <div class="dec-card-desc">Đăng ký class vào DI container, cho phép inject PrismaService và RedisService.</div>
+        <div class="dec-card-desc">Đăng ký class vào NestJS DI container như một Provider.</div>
       </div>
     </div>
 
@@ -383,70 +498,99 @@ tr:hover td { background: var(--bg-hover); }
         <span class="module-panel-path">src/user/user.service.ts</span>
       </div>
       <div class="file-pane active">
-        <h3>Phân Tích Các Hàm</h3>
+        <h3>Các phương thức cốt lõi:</h3>
         <ul>
           <li><strong><code>create</code></strong>: Ghi DB + <code>redisService.del('all_users')</code> (Cache Invalidation).</li>
-          <li><strong><code>findByEmail/findById</code></strong>: Sử dụng <code>findUnique</code> để đạt độ phức tạp $O(1)$.</li>
-          <li><strong><code>getAllUsers</code></strong>: Sử dụng <code>redisService.getOrSet</code> và <code>select</code> để bảo mật password hash.</li>
+          <li><strong><code>findByEmail/findById</code></strong>: Dùng <code>findUnique</code> (Độ phức tạp $O(1)$).</li>
+          <li><strong><code>getAllUsers</code></strong>: Sử dụng <code>redisService.getOrSet</code> và <code>select</code> để ẩn <code>password</code>.</li>
         </ul>
       </div>
     </div>
 
     <h2 id="3-luong-ket-qua-outputs-returns-flow">3. Luồng Kết Quả / Outputs (Returns Flow)</h2>
-    <p>Trong kiến trúc này, dữ liệu thô (raw Prisma models) chảy trực tiếp từ DB ra Client.</p>
+    <p>Dưới mui xe (under the hood), NestJS sẽ tự động serialize kết quả trả về từ Controller thành JSON.</p>
     
     <div class="lifecycle-container">
       <div class="lc-flow-panel">
-        <div class="lifecycle-title">Flow — Raw Data Transmission</div>
+        <div class="lifecycle-title">Lifecycle — Raw Data Flow</div>
         <div class="lc-flow-scroll">
           <div class="lc-flow">
             <div class="lc-step">
-              <div class="lc-node db active" data-node-name="Prisma DB" data-node-type="Source" data-node-file="PostgreSQL" data-flow-in="Query" data-why-in="Yêu cầu từ Service." data-flow-out="Raw Object" data-why-out="Trả về object chứa cả password hash.">
+              <div class="lc-node db active" 
+                   data-node-name="Prisma DB" 
+                   data-node-type="Source" 
+                   data-node-file="PostgreSQL"
+                   data-flow-in="SELECT * FROM user"
+                   data-why-in="Yêu cầu từ Service."
+                   data-flow-out="Raw Object"
+                   data-why-out="Trả về object thô chứa cả password hash.">
                 <div class="lc-node-label">Database</div>
-                <div class="lc-node-code">Raw Entity</div>
+                <div class="lc-node-code">Raw Object</div>
               </div>
-              <div class="lc-step-num">①</div>
+              <div class="lc-step-num">① DB</div>
             </div>
             <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
             <div class="lc-step">
-              <div class="lc-node svc" data-node-name="UserService" data-node-type="Logic" data-node-file="user.service.ts" data-flow-in="Raw Entity" data-why-in="Nhận dữ liệu từ DB." data-flow-out="Return raw" data-why-out="Chuyển tiếp nguyên bản về Controller.">
+              <div class="lc-node svc"
+                   data-node-name="UserService"
+                   data-node-type="Service"
+                   data-node-file="user.service.ts"
+                   data-flow-in="Raw User Entity"
+                   data-why-in="Nhận dữ liệu từ Prisma."
+                   data-flow-out="Return pass-through"
+                   data-why-out="Hàm Service trả về kết quả không biến đổi.">
                 <div class="lc-node-label">Service</div>
-                <div class="lc-node-code">Pass-through</div>
+                <div class="lc-node-code">Logic</div>
               </div>
-              <div class="lc-step-num">②</div>
+              <div class="lc-step-num">② Svc</div>
             </div>
             <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
             <div class="lc-step">
-              <div class="lc-node ctrl" data-node-name="UserController" data-node-type="Network" data-node-file="user.controller.ts" data-flow-in="Raw Entity" data-why-in="Nhận từ Service." data-flow-out="JSON.stringify" data-why-out="NestJS ngầm định serialize thành JSON.">
+              <div class="lc-node ctrl"
+                   data-node-name="UserController"
+                   data-node-type="Controller"
+                   data-node-file="user.controller.ts"
+                   data-flow-in="Raw Object"
+                   data-why-in="Nhận dữ liệu từ Service."
+                   data-flow-out="HTTP Response"
+                   data-why-out="NestJS tự động JSON.stringify() và gửi về client.">
                 <div class="lc-node-label">Controller</div>
-                <div class="lc-node-code">HTTP Response</div>
+                <div class="lc-node-code">Serialize</div>
               </div>
-              <div class="lc-step-num">③</div>
+              <div class="lc-step-num">③ Network</div>
             </div>
           </div>
         </div>
       </div>
       <div class="lc-detail-panel">
-        <div class="lc-detail-empty">Click vào node để xem luồng dữ liệu thô.</div>
-        <div class="lc-detail-body" style="display: none;">
+        <div class="lc-detail-empty">Click vào một node để xem luồng dữ liệu thô.</div>
+        <div class="lc-detail-body">
           <div class="lc-detail-header">
-            <div class="lc-detail-type"></div><div class="lc-detail-title"></div><div class="lc-detail-file"></div>
+            <div class="lc-detail-type"></div>
+            <div class="lc-detail-title"></div>
+            <div class="lc-detail-file"></div>
           </div>
-          <div class="lc-flow-card"><div class="lc-flow-card-title">📥 Dữ liệu vào</div><div class="lc-flow-card-code"></div><div class="lc-flow-card-desc"></div></div>
-          <div class="lc-flow-card"><div class="lc-flow-card-title">📤 Dữ liệu ra</div><div class="lc-flow-card-code"></div><div class="lc-flow-card-desc"></div></div>
+          <div class="lc-flow-card">
+            <div class="lc-flow-card-title">📥 Dữ liệu vào (IN)</div>
+            <div class="lc-flow-card-code"></div>
+            <div class="lc-flow-card-desc"></div>
+          </div>
+          <div class="lc-flow-card">
+            <div class="lc-flow-card-title">📤 Dữ liệu ra (OUT)</div>
+            <div class="lc-flow-card-code"></div>
+            <div class="lc-flow-card-desc"></div>
+          </div>
         </div>
       </div>
     </div>
 
     <h2 id="4-phu-thuoc-kheo-leo-dependencies-va-tuong-tac-voi-module-auth">4. Phụ Thuộc Khéo Léo (Dependencies) và Tương Tác với Module Auth</h2>
-    <p><code>UserService</code> được <code>AuthService</code> inject để gọi <code>findByEmail</code> đối chiếu mật khẩu.</p>
-    
     <div class="dec-card">
       <div class="dec-card-name">@Inject(forwardRef(() => AuthModule))</div>
       <div class="dec-card-body">
         <div class="dec-card-desc">Giải quyết <strong>Circular Dependency</strong> (Phụ thuộc vòng).</div>
         <div class="dec-card-effect">
-          <b>Cơ chế:</b> Hoãn việc tham chiếu cho đến khi cả hai module được khởi tạo xong trên bộ nhớ.
+          <b>Cơ chế:</b> Hoãn việc tham chiếu cho đến khi cả hai module được khởi tạo xong trên bộ nhớ. <code>AuthService</code> sử dụng <code>UserService.findByEmail</code> để xác thực mật khẩu qua <code>bcrypt</code>.
         </div>
       </div>
     </div>
@@ -458,11 +602,16 @@ function buildTOC() {
   const sidebar = document.getElementById('sidebar');
   const headings = document.querySelectorAll('h1, h2, h3');
   const title = document.createElement('div');
-  title.className = 'sidebar-title'; title.innerText = 'Nội dung'; sidebar.appendChild(title);
+  title.className = 'sidebar-title';
+  title.innerText = 'Nội dung';
+  sidebar.appendChild(title);
   headings.forEach(h => {
     const id = h.id || h.innerText.toLowerCase().replace(/\s+/g, '-');
     h.id = id;
-    const a = document.createElement('a'); a.href = '#' + id; a.innerText = h.innerText; a.className = 'toc-item toc-' + h.tagName.toLowerCase();
+    const a = document.createElement('a');
+    a.href = '#' + id;
+    a.innerText = h.innerText;
+    a.className = 'toc-item toc-' + h.tagName.toLowerCase();
     sidebar.appendChild(a);
   });
 }
@@ -472,7 +621,8 @@ function initLifecycle() {
       document.querySelectorAll('.lc-node').forEach(n => n.classList.remove('active'));
       node.classList.add('active');
       const panel = document.querySelector('.lc-detail-body');
-      panel.style.display = 'block'; document.querySelector('.lc-detail-empty').style.display = 'none';
+      panel.style.display = 'block';
+      document.querySelector('.lc-detail-empty').style.display = 'none';
       panel.querySelector('.lc-detail-title').innerText = node.dataset.nodeName;
       panel.querySelector('.lc-detail-type').innerText = node.dataset.nodeType;
       panel.querySelector('.lc-detail-file').innerText = node.dataset.nodeFile;

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Giải Thích Chuyên Sâu - Module Redis (src/redis)</title>
   <style>
-/* === CSS BLOCK === */
+/* === VSCode Dark Theme — NestJS Doc Renderer === */
 :root {
   --bg:            #1e1e1e;
   --bg-sidebar:    #252526;
@@ -111,7 +111,7 @@ body {
 
 .content {
   flex: 1;
-  max-width: 960px;
+  max-width: 100% !important;
   padding: 48px 52px 100px;
   min-width: 0;
 }
@@ -180,7 +180,13 @@ pre {
 }
 pre code {
   display: block;
-  background: none; border: none; padding: 18px 20px; font-size: .875em; line-height: 1.65; color: var(--text); overflow-x: auto;
+  background: none;
+  border: none;
+  padding: 18px 20px;
+  font-size: .875em;
+  line-height: 1.65;
+  color: var(--text);
+  overflow-x: auto;
 }
 
 /* Syntax token colors */
@@ -200,6 +206,79 @@ th { color: var(--text-bright); font-weight: 600; text-align: left; padding: 9px
 td { padding: 7px 14px; border: 1px solid var(--border); }
 tr:hover td { background: var(--bg-hover); }
 
+/* ── DECORATOR CARD ── */
+.dec-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--dec);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  font-size: 13px;
+}
+.dec-card-name { font-family: monospace; font-size: 13px; color: var(--dec); font-weight: 600; min-width: 130px; }
+.dec-card-body { flex: 1; }
+.dec-card-desc { color: var(--text); margin-bottom: 4px; }
+.dec-card-effect { font-size: 12px; color: var(--text-muted); }
+.dec-card-effect b { color: var(--prop); font-weight: normal; }
+
+/* ── CRUD CARD ── */
+.crud-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 12px 0;
+  overflow: hidden;
+}
+.crud-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg-surface2);
+  border-bottom: 1px solid var(--border);
+}
+.crud-method {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+.method-get    { background: #1a3a28; color: #4ec9b0; }
+.method-post   { background: #1a2d0d; color: #89d185; }
+.method-put,
+.method-patch  { background: #2d2207; color: #dcdcaa; }
+.method-delete { background: #2d0a0a; color: #f44747; }
+.crud-path { font-family: monospace; font-size: 13px; color: var(--text); }
+.crud-fn   { font-family: monospace; font-size: 12px; color: var(--fn); margin-left: auto; }
+.crud-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.crud-col-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+.crud-col-content { font-size: 12px; color: var(--text); line-height: 1.55; }
+.crud-effects { padding: 0 16px 14px; }
+.crud-effects-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; }
+.effect-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-family: monospace;
+  margin: 3px 4px 3px 0;
+  color: var(--text-muted);
+}
+.effect-tag.db-write  { border-color: var(--kw); color: var(--kw); }
+.effect-tag.db-read   { border-color: var(--green); color: var(--green); }
+.effect-tag.cache-inv { border-color: var(--yellow); color: var(--yellow); }
+.effect-tag.cache-set { border-color: var(--green); color: var(--green); }
+
 /* ── MODULE PANEL ── */
 .module-panel { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 1.5em 0; }
 .module-panel-header { background: var(--bg-surface2); padding: 14px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
@@ -213,41 +292,73 @@ tr:hover td { background: var(--bg-hover); }
 .file-pane { display: none; padding: 20px 24px; }
 .file-pane.active { display: block; }
 
-/* ── DECORATOR CARD ── */
-.dec-card { display: flex; gap: 12px; align-items: flex-start; background: var(--bg-surface2); border: 1px solid var(--border); border-left: 3px solid var(--dec); border-radius: 6px; padding: 12px 16px; margin: 10px 0; font-size: 13px; }
-.dec-card-name { font-family: monospace; font-size: 13px; color: var(--dec); font-weight: 600; min-width: 130px; }
-.dec-card-body { flex: 1; }
-.dec-card-desc { color: var(--text); margin-bottom: 4px; }
-.dec-card-effect { font-size: 12px; color: var(--text-muted); }
-.dec-card-effect b { color: var(--prop); font-weight: normal; }
-
-/* ── CRUD CARD ── */
-.crud-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; margin: 12px 0; overflow: hidden; }
-.crud-header { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--bg-surface2); border-bottom: 1px solid var(--border); }
-.crud-method { font-size: 11px; font-weight: 700; letter-spacing: .06em; padding: 3px 10px; border-radius: 4px; font-family: monospace; }
-.method-get { background: #1a3a28; color: #4ec9b0; }
-.crud-path { font-family: monospace; font-size: 13px; color: var(--text); }
-.crud-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-.crud-col-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
-.crud-col-content { font-size: 12px; color: var(--text); line-height: 1.55; }
-.crud-effects { padding: 0 16px 14px; }
-.crud-effects-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; }
-.effect-tag { display: inline-flex; align-items: center; gap: 5px; background: var(--bg-surface2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 10px; font-size: 11.5px; font-family: monospace; margin: 3px 4px 3px 0; color: var(--text-muted); }
-.effect-tag.db-read { border-color: var(--green); color: var(--green); }
-.effect-tag.cache-set { border-color: var(--green); color: var(--green); }
-
-/* ═══════════════════════════════════════════
-   REQUEST LIFECYCLE CONTAINER
-   ═══════════════════════════════════════════ */
-.lifecycle-container { display: flex; flex-direction: column; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; margin: 2em 0; overflow: hidden; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24); }
-@media (min-width: 992px) { .lifecycle-container { flex-direction: row; height: 500px; } }
-.lc-flow-panel { flex: 1.3; padding: 24px; overflow: auto; display: flex; flex-direction: column; border-bottom: 1px solid var(--border); }
-@media (min-width: 992px) { .lc-flow-panel { border-bottom: none; border-right: 1px solid var(--border); } }
-.lifecycle-title { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 24px; font-weight: 700; border-bottom: 1px dashed var(--border); padding-bottom: 12px; }
-.lc-flow-scroll { flex: 1; display: flex; align-items: center; overflow-x: auto; padding: 20px 0; }
-.lc-flow { display: flex; align-items: center; gap: 0; min-width: max-content; margin: auto; }
-.lc-step { display: flex; flex-direction: column; align-items: center; position: relative; }
-.lc-node { border-radius: 8px; padding: 14px 18px; min-width: 140px; max-width: 180px; text-align: center; border: 1px solid; position: relative; transition: all .25s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; user-select: none; }
+/* ── LIFECYCLE ── */
+.lifecycle-container {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin: 2em 0;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+}
+@media (min-width: 992px) {
+  .lifecycle-container { flex-direction: row; height: 500px; }
+}
+.lc-flow-panel {
+  flex: 1.3;
+  padding: 24px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border);
+}
+@media (min-width: 992px) {
+  .lc-flow-panel { border-bottom: none; border-right: 1px solid var(--border); }
+}
+.lifecycle-title {
+  font-size: 11px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  font-weight: 700;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 12px;
+}
+.lc-flow-scroll {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  padding: 20px 0;
+}
+.lc-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: max-content;
+  margin: auto;
+}
+.lc-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.lc-node {
+  border-radius: 8px;
+  padding: 14px 18px;
+  min-width: 140px;
+  max-width: 180px;
+  text-align: center;
+  border: 1px solid;
+  position: relative;
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+}
 .lc-node:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
 .lc-node.active { transform: scale(1.05); border-width: 2px; }
 .lc-node.svc { background: var(--node-svc); border-color: var(--node-svc-b); }
@@ -263,8 +374,9 @@ tr:hover td { background: var(--bg-hover); }
 
 .lc-detail-panel { flex: 1; background: var(--bg-sidebar); padding: 24px; display: flex; flex-direction: column; overflow: auto; }
 .lc-detail-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-muted); text-align: center; font-style: italic; font-size: 13px; }
+.lc-detail-body { display: none; }
 .lc-detail-header { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
-.lc-detail-type { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+.lc-detail-type { font-size: 10px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
 .lc-detail-title { font-size: 16px; font-weight: 600; color: var(--text-bright); }
 .lc-detail-file { font-size: 11px; font-family: monospace; color: var(--text-muted); margin-top: 4px; }
 .lc-flow-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 12px; }
@@ -272,6 +384,12 @@ tr:hover td { background: var(--bg-hover); }
 .lc-flow-card-code { font-family: monospace; font-size: 12px; color: var(--text-bright); margin-bottom: 4px; }
 .lc-flow-card-desc { font-size: 11.5px; color: var(--text); line-height: 1.5; }
 
+/* ── SUMMARY TABLE ── */
+.summary-table .lc-node {
+  min-width: 100px;
+  padding: 6px 10px;
+  font-size: 11px;
+}
   </style>
 </head>
 <body>
@@ -279,7 +397,7 @@ tr:hover td { background: var(--bg-hover); }
   <nav class="sidebar" id="sidebar"></nav>
   <main class="content">
     <h1>Giải Thích Chuyên Sâu - Module Redis (<code>src/redis</code>)</h1>
-    <p>Module Redis đóng vai trò là Lớp Bộ Nhớ Đệm (Caching Layer) toàn cục. Giúp tăng tốc độ phản hồi gấp hàng nghìn lần và giảm tải cho PostgreSQL.</p>
+    <p>Module Redis đóng vai trò là Lớp Bộ Nhớ Đệm (Caching Layer) toàn cục. Với khả năng lưu trữ dữ liệu trực tiếp trên RAM thay vì ổ cứng, Redis giúp tăng tốc độ phản hồi gấp hàng nghìn lần và giảm tải (load) cực lớn cho hệ cơ sở dữ liệu chính yếu (PostgreSQL), đặc biệt hữu dụng với các dữ liệu được đọc thường xuyên (như danh sách sản phẩm) nhưng ít thay đổi.</p>
 
     <!-- SUMMARY TABLE -->
     <h2 id="summary">Tóm tắt nội dung</h2>
@@ -294,37 +412,37 @@ tr:hover td { background: var(--bg-hover); }
       <tbody>
         <tr>
           <td><strong>1. Thư viện cache-manager</strong></td>
-          <td><div class="lc-node svc">Abstraction</div></td>
+          <td><div class="lc-node svc" style="min-width: 80px; padding: 4px;">Abstraction</div></td>
           <td><a href="#1-tich-hop-thu-vien-ben-thu-ba-cache-manager">Xem chi tiết</a></td>
         </tr>
         <tr>
           <td><strong>2. Các phương thức chính</strong></td>
-          <td><div class="lc-node cache">get/set/del/reset</div></td>
+          <td><div class="lc-node cache" style="min-width: 80px; padding: 4px;">CRUD Cache</div></td>
           <td><a href="#2-chi-tiet-cac-phuong-thuc-public-private-methods">Xem chi tiết</a></td>
         </tr>
         <tr>
           <td><strong>3. Sức mạnh getOrSet</strong></td>
-          <td><div class="lc-node svc">Cache Aside</div></td>
+          <td><div class="lc-node svc" style="min-width: 80px; padding: 4px;">Lazy Load</div></td>
           <td><a href="#2-2-suc-manh-cot-loi-ham-getorset">Xem chi tiết</a></td>
         </tr>
       </tbody>
     </table>
 
     <h2 id="1-tich-hop-thu-vien-ben-thu-ba-cache-manager">1. Tích Hợp Thư Viện Bên Thứ Ba: <code>cache-manager</code></h2>
-    <p>Dự án sử dụng <code>cache-manager</code> làm lớp trừu tượng tiêu chuẩn.</p>
-    
+    <p>Bên trong <code>redis.service.ts</code>, chúng ta không tương tác trực tiếp với các SDK thô của Redis (như <code>ioredis</code> hay <code>redis</code> client native). Thay vào đó, dự án sử dụng cầu nối tiêu chuẩn của hệ sinh thái NestJS thông qua thư viện <code>cache-manager</code> và module <code>@nestjs/cache-manager</code>.</p>
+
     <div class="dec-card">
       <div class="dec-card-name">@Inject(CACHE_MANAGER)</div>
       <div class="dec-card-body">
-        <div class="dec-card-desc">Inject instance quản lý bộ nhớ đệm từ IoC container.</div>
+        <div class="dec-card-desc">Chích (inject) instance quản lý cache vào service.</div>
         <div class="dec-card-effect">
-          <b>Lợi ích:</b> Logic code không bị trói buộc với nhà cung cấp (Agnostic Caching). Dễ dàng đổi từ Redis sang In-Memory mà không cần sửa code service.
+          <b>Lợi ích:</b> Cung cấp một lớp trừu tượng (abstraction layer). Logic code không bị trói buộc với nhà cung cấp cụ thể (Redis, In-Memory, v.v.), giúp dễ dàng thay đổi hạ tầng mà không cần sửa code nghiệp vụ.
         </div>
       </div>
     </div>
 
     <h2 id="2-chi-tiet-cac-phuong-thuc-public-private-methods">2. Chi Tiết Các Phương Thức (Public & Private Methods)</h2>
-    <p><code>RedisService</code> cung cấp các public methods bọc mỏng (thin wrappers) gọi xuống <code>cache-manager</code>.</p>
+    <p><code>RedisService</code> cung cấp một tập hợp các public methods để thao tác với bộ nhớ đệm. Không có private helper methods nào được khai báo riêng trong class này, toàn bộ logic được thực thi trực tiếp bên trong các public methods.</p>
 
     <div class="module-panel">
       <div class="module-panel-header">
@@ -336,67 +454,107 @@ tr:hover td { background: var(--bg-hover); }
         <div class="file-tab active" data-target="redis-svc">redis.service.ts</div>
         <div class="file-tab" data-target="redis-mod">redis.module.ts</div>
       </div>
+      
       <div class="file-pane active" id="redis-svc">
-        <h3>2.1. Các Lớp Bọc Cơ Bản</h3>
+        <h3>2.1. Các Lớp Bọc Cơ Bản: <code>get</code>, <code>set</code>, <code>del</code>, <code>reset</code></h3>
+        <p>Các hàm này đóng vai trò là những lớp bọc mỏng (thin wrappers) gọi thẳng xuống thư viện <code>cache-manager</code>:</p>
         <ul>
-          <li><strong><code>get(key)</code></strong>: Tra cứu dữ liệu từ RAM.</li>
-          <li><strong><code>set(key, value, ttl)</code></strong>: Lưu trữ dữ liệu với thời gian sống (mặc định 30s).</li>
-          <li><strong><code>del(key)</code></strong>: Vô hiệu hóa (invalidate) cache.</li>
-          <li><strong><code>reset()</code></strong>: Xóa sạch toàn bộ cache an toàn.</li>
+          <li><strong><code>get(key: string)</code></strong>: Lấy giá trị từ Redis dựa trên khoá.</li>
+          <li><strong><code>set(key: string, value: any, ttl: number = 30000)</code></strong>: Lưu trữ một giá trị vào Redis với thời gian sống (TTL) mặc định 30 giây.</li>
+          <li><strong><code>del(key: string)</code></strong>: Xoá một giá trị cụ thể khỏi Redis, dùng khi cần vô hiệu hoá (invalidate) dữ liệu cũ.</li>
+          <li><strong><code>reset()</code></strong>: Xóa toàn bộ dữ liệu đang có trong cache, hỗ trợ fallback an toàn giữa các phiên bản thư viện.</li>
         </ul>
 
         <h3 id="2-2-suc-manh-cot-loi-ham-getorset">2.2. Sức Mạnh Cốt Lõi: Hàm <code>getOrSet</code></h3>
-        <p>Thực hiện mẫu thiết kế <strong>Cache Aside Pattern</strong>: "Kiểm tra cache -> Hit (trả về) -> Miss (truy vấn DB -> lưu cache -> trả về)".</p>
+        <p>Hàm này là hiện thân hoàn hảo của mẫu thiết kế <strong>Cache Aside Pattern</strong> (Mẫu Bộ Đệm Nằm Ngoài). Nó tự động hóa vòng đời truy xuất dữ liệu một cách thông minh.</p>
         
-        <pre><div class="pre-header"><span class="pre-lang">typescript</span></div><code><span class="kw">async</span> <span class="fn">getOrSet</span>(<span class="prop">key</span>: <span class="typ">string</span>, <span class="prop">fetchFunction</span>: () => <span class="typ">Promise</span><<span class="typ">any</span>>, <span class="prop">ttl</span>: <span class="typ">number</span> = <span class="num">30000</span>)</code></pre>
+        <pre><div class="pre-header"><span class="pre-lang">typescript</span></div><code><span class="kw">async</span> <span class="fn">getOrSet</span>(
+  <span class="prop">key</span>: <span class="typ">string</span>,
+  <span class="prop">fetchFunction</span>: () => <span class="typ">Promise</span><<span class="typ">any</span>>,
+  <span class="prop">ttl</span>: <span class="typ">number</span> = <span class="num">30000</span>,
+)</code></pre>
 
-        <p>Tham số <code>fetchFunction</code> là một Callback cho phép <strong>trì hoãn (defer)</strong> việc tiêu tốn tài nguyên truy vấn DB cho tới khi thực sự cần thiết.</p>
+        <p><strong>Cơ Chế Hoạt Động Của Callback (<code>fetchFunction</code>):</strong></p>
+        <ul>
+          <li><strong>Trì hoãn (Defer)</strong>: <code>fetchFunction</code> cho phép <code>RedisService</code> chỉ tiêu tốn tài nguyên truy vấn DB khi thực sự bắt buộc.</li>
+          <li><strong>Lazy Execution</strong>: 
+            <ol>
+              <li>Kiểm tra cache: Nếu <strong>Hit</strong> -> Trả về ngay, bỏ qua callback.</li>
+              <li>Nếu <strong>Miss</strong> -> Kích hoạt <code>fetchFunction()</code>, đổ truy vấn xuống PostgreSQL, sau đó lưu lại vào Redis.</li>
+            </ol>
+          </li>
+        </ul>
       </div>
+
       <div class="file-pane" id="redis-mod">
-        <pre><div class="pre-header"><span class="pre-lang">typescript</span></div><code><span class="dec">@Global</span>()
+        <pre><div class="pre-header"><span class="pre-lang">typescript</span><span class="pre-filename">src/redis/redis.module.ts</span></div><code><span class="dec">@Global</span>()
 <span class="dec">@Module</span>({
-  <span class="prop">imports</span>: [<span class="typ">CacheModule</span>.<span class="fn">register</span>({ ... })],
+  <span class="prop">imports</span>: [
+    <span class="typ">CacheModule</span>.<span class="fn">registerAsync</span>({ ... })
+  ],
   <span class="prop">providers</span>: [<span class="typ">RedisService</span>],
   <span class="prop">exports</span>: [<span class="typ">RedisService</span>],
-})</code></pre>
+})
+<span class="kw">export class</span> <span class="typ">RedisModule</span> {}</code></pre>
       </div>
     </div>
 
-    <h3 id="lifecycle-getorset">Sơ đồ luồng: Cache Aside (<code>getOrSet</code>)</h3>
+    <h3 id="lifecycle-diagram">Sơ đồ luồng: Cache Aside (getOrSet)</h3>
     <div class="lifecycle-container">
       <div class="lc-flow-panel">
-        <div class="lifecycle-title">Flow — getOrSet(key, fetchFn)</div>
+        <div class="lifecycle-title">Lifecycle — Cache Aside Pattern</div>
         <div class="lc-flow-scroll">
           <div class="lc-flow">
             <div class="lc-step">
-              <div class="lc-node svc active" data-node-name="Domain Service" data-node-type="Caller" data-node-file="catalog.service.ts" data-flow-in="key + fetchFn" data-why-in="Cần dữ liệu nhưng muốn tối ưu qua cache." data-flow-out="Promise<Data>" data-why-out="Nhận dữ liệu cuối cùng.">
-                <div class="lc-node-label">Service</div>
-                <div class="lc-node-code">getOrSet()</div>
+              <div class="lc-node svc active" 
+                   data-node-name="CatalogService" 
+                   data-node-type="Caller" 
+                   data-node-file="catalog.service.ts"
+                   data-flow-in="getOrSet('all_products', fetchFn)"
+                   data-why-in="Cần lấy danh sách sản phẩm nhưng muốn ưu tiên cache."
+                   data-flow-out="Promise<Product[]>"
+                   data-why-out="Nhận kết quả dữ liệu cuối cùng.">
+                <div class="lc-node-label">Domain Service</div>
+                <div class="lc-node-code">Request Data</div>
               </div>
-              <div class="lc-step-num">①</div>
+              <div class="lc-step-num">① Request</div>
             </div>
             <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
             <div class="lc-step">
-              <div class="lc-node cache" data-node-name="Redis Cache" data-node-type="Lookup" data-node-file="Redis RAM" data-flow-in="key" data-why-in="Kiểm tra dữ liệu đã có trong RAM chưa." data-flow-out="Hit / Miss" data-why-out="Nếu Hit: trả về ngay. Nếu Miss: chạy fetchFn.">
-                <div class="lc-node-label">Cache check</div>
-                <div class="lc-node-code">.get(key)</div>
+              <div class="lc-node cache"
+                   data-node-name="Redis Cache"
+                   data-node-type="Cache"
+                   data-node-file="Redis Memory"
+                   data-flow-in="cacheManager.get(key)"
+                   data-why-in="Tra cứu trên RAM tốc độ cao."
+                   data-flow-out="Hit (Return) / Miss (Go to DB)"
+                   data-why-out="Nếu có dữ liệu sẽ trả về ngay lập tức (1-2ms).">
+                <div class="lc-node-label">Redis Cache</div>
+                <div class="lc-node-code">Lookup</div>
               </div>
-              <div class="lc-step-num">②</div>
+              <div class="lc-step-num">② Check</div>
             </div>
             <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
             <div class="lc-step">
-              <div class="lc-node db" data-node-name="Prisma DB" data-node-type="Fallback" data-node-file="PostgreSQL" data-flow-in="fetchFunction()" data-why-in="Cache trống, buộc phải truy vấn DB." data-flow-out="freshData" data-why-out="Dữ liệu mới từ đĩa cứng.">
-                <div class="lc-node-label">Database</div>
-                <div class="lc-node-code">fetchFn()</div>
+              <div class="lc-node db"
+                   data-node-name="Prisma DB"
+                   data-node-type="Database"
+                   data-node-file="PostgreSQL"
+                   data-flow-in="await fetchFunction()"
+                   data-why-in="Cache miss, buộc phải truy vấn xuống ổ cứng."
+                   data-flow-out="Fresh Data Entities"
+                   data-why-out="Dữ liệu gốc từ database được trả về để lưu vào cache.">
+                <div class="lc-node-label">PostgreSQL</div>
+                <div class="lc-node-code">Fallback</div>
               </div>
-              <div class="lc-step-num">③</div>
+              <div class="lc-step-num">③ DB Query</div>
             </div>
           </div>
         </div>
       </div>
       <div class="lc-detail-panel">
         <div class="lc-detail-empty">Click vào một node để xem chi tiết luồng Cache Aside.</div>
-        <div class="lc-detail-body" style="display: none;">
+        <div class="lc-detail-body">
           <div class="lc-detail-header">
             <div class="lc-detail-type"></div>
             <div class="lc-detail-title"></div>
@@ -419,33 +577,44 @@ tr:hover td { background: var(--bg-hover); }
     <div class="crud-card">
       <div class="crud-header">
         <span class="crud-method method-get">CORE</span>
-        <span class="crud-path">getOrSet(key, fetchFn)</span>
+        <span class="crud-path">getOrSet(key, fetchFunction, ttl)</span>
+        <span class="crud-fn">Smart Invalidation</span>
       </div>
       <div class="crud-body">
         <div>
-          <div class="crud-col-title">Input</div>
-          <div class="crud-col-content"><code>key</code>: string<br><code>fetchFn</code>: callback</div>
+          <div class="crud-col-title">Input (vào)</div>
+          <div class="crud-col-content">
+            <code>key: string</code><br>
+            <code>fetchFn: () => Promise</code>
+          </div>
         </div>
         <div>
-          <div class="crud-col-title">Xử lý</div>
-          <div class="crud-col-content">1. Check cache<br>2. Nếu trống: gọi fetchFn()<br>3. Set cache mới</div>
+          <div class="crud-col-title">Xử lý (logic)</div>
+          <div class="crud-col-content">
+            1. Tìm key trong Redis<br>
+            2. Nếu thấy: trả về ngay<br>
+            3. Nếu không: chạy fetchFn, lưu cache 30s
+          </div>
         </div>
         <div>
-          <div class="crud-col-title">Output</div>
-          <div class="crud-col-content">Tập dữ liệu JSON nguyên vẹn</div>
+          <div class="crud-col-title">Output (ra)</div>
+          <div class="crud-col-content">
+            Dữ liệu JSON nguyên bản y hệt DB trả ra.
+          </div>
         </div>
       </div>
       <div class="crud-effects">
-        <div class="crud-effects-title">Tác động</div>
-        <span class="effect-tag db-read">fetchFunction execution</span>
-        <span class="effect-tag cache-set">cacheManager.set(key, data)</span>
+        <div class="crud-effects-title">Tác động sang file khác</div>
+        <span class="effect-tag db-read">this.prisma.query (nếu Miss)</span>
+        <span class="effect-tag cache-set">redis.set(key, freshData)</span>
       </div>
     </div>
 
     <h2 id="3-luong-tra-ve-va-dich-den-returns-outputs">3. Luồng Trả Về Và Đích Đến (Returns/Outputs)</h2>
+    <p>Bản thân <code>RedisService</code> đóng vai trò là một "kho trung chuyển".</p>
     <ul>
-      <li><strong>Kho trung chuyển</strong>: Người gọi hoàn toàn "mù mờ" (transparency) về việc dữ liệu đến từ RAM hay DB.</li>
-      <li><strong>Đích đến</strong>: Chảy về Domain Service để biến đổi thành DTO trước khi Controller trả về JSON Response.</li>
+      <li><strong>Kết quả trả về</strong>: Đối với người gọi (Domain Service), họ hoàn toàn "mù mờ" (transparency) - họ không cần biết dữ liệu đến từ RAM tốc độ ánh sáng hay từ đĩa cứng PostgreSQL.</li>
+      <li><strong>Đích đến</strong>: Sau khi ra khỏi <code>RedisService</code>, tập dữ liệu chảy ngược về cho <strong>Domain Service</strong> (như <code>CatalogService</code>) để xử lý logic hoặc ánh xạ sang DTO trước khi trả về client.</li>
     </ul>
   </main>
 </div>
@@ -458,6 +627,7 @@ function buildTOC() {
   title.className = 'sidebar-title';
   title.innerText = 'Nội dung';
   sidebar.appendChild(title);
+
   headings.forEach(h => {
     const id = h.id || h.innerText.toLowerCase().replace(/\s+/g, '-');
     h.id = id;
@@ -468,6 +638,7 @@ function buildTOC() {
     sidebar.appendChild(a);
   });
 }
+
 function initTabs() {
   document.querySelectorAll('.file-tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -479,6 +650,7 @@ function initTabs() {
     });
   });
 }
+
 function initLifecycle() {
   document.querySelectorAll('.lc-node').forEach(node => {
     node.addEventListener('click', () => {
@@ -497,7 +669,12 @@ function initLifecycle() {
     });
   });
 }
-document.addEventListener('DOMContentLoaded', () => { buildTOC(); initTabs(); initLifecycle(); });
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildTOC();
+  initTabs();
+  initLifecycle();
+});
 </script>
 </body>
 </html>
