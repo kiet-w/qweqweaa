@@ -9,21 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { AddCartItemDto } from './dto/add-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
-
-type CartResponse = {
-  id: number;
-  items: Array<{
-    id: number;
-    productId: number;
-    name: string;
-    slug: string;
-    price: string;
-    quantity: number;
-    subtotal: string;
-  }>;
-  totalItems: number;
-  subtotal: string;
-};
+import { CartResponseDto } from './dto/cart-response.dto';
 
 @Injectable()
 export class CartService {
@@ -32,7 +18,7 @@ export class CartService {
     private readonly redisService: RedisService,
   ) {}
 
-  async getCart(userId: number): Promise<CartResponse> {
+  async getCart(userId: number): Promise<CartResponseDto> {
     return this.redisService.getOrSet(
       CACHE_KEYS.CART(userId),
       async () => {
@@ -43,7 +29,7 @@ export class CartService {
     );
   }
 
-  async addItem(userId: number, dto: AddCartItemDto): Promise<CartResponse> {
+  async addItem(userId: number, dto: AddCartItemDto): Promise<CartResponseDto> {
     const product = await this.validateProductAvailability(
       dto.productId,
       dto.quantity,
@@ -85,7 +71,7 @@ export class CartService {
     userId: number,
     itemId: number,
     dto: UpdateCartItemDto,
-  ): Promise<CartResponse> {
+  ): Promise<CartResponseDto> {
     const cartItem = await this.findOwnedCartItem(userId, itemId);
     await this.validateProductAvailability(cartItem.productId, dto.quantity);
 
@@ -97,7 +83,7 @@ export class CartService {
     return this.refreshCart(userId);
   }
 
-  async removeItem(userId: number, itemId: number): Promise<CartResponse> {
+  async removeItem(userId: number, itemId: number): Promise<CartResponseDto> {
     const cartItem = await this.findOwnedCartItem(userId, itemId);
 
     await this.prisma.cartItem.delete({
@@ -107,7 +93,7 @@ export class CartService {
     return this.refreshCart(userId);
   }
 
-  async clearCart(userId: number): Promise<CartResponse> {
+  async clearCart(userId: number): Promise<CartResponseDto> {
     const cart = await this.getOrCreateActiveCart(userId);
 
     await this.prisma.cartItem.deleteMany({
@@ -117,7 +103,7 @@ export class CartService {
     return this.refreshCart(userId);
   }
 
-  private async refreshCart(userId: number): Promise<CartResponse> {
+  private async refreshCart(userId: number): Promise<CartResponseDto> {
     await this.redisService.del(CACHE_KEYS.CART(userId));
     return this.getCart(userId);
   }
@@ -209,7 +195,7 @@ export class CartService {
         };
       };
     }>,
-  ): CartResponse {
+  ): CartResponseDto {
     const subtotal = cart.items.reduce(
       (sum, item) => sum.plus(item.product.price.mul(item.quantity)),
       new Prisma.Decimal(0),
