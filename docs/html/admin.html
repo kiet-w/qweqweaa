@@ -5,487 +5,693 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Giải Thích Chi Tiết - Module Admin (src/admin)</title>
   <style>
-    :root {
-      --bg: #0d1117;
-      --surface: #161b22;
-      --surface2: #21262d;
-      --border: #30363d;
-      --text: #c9d1d9;
-      --text-muted: #8b949e;
-      --heading: #f0f6fc;
-      --accent: #58a6ff;
-      --green: #3fb950;
-      --yellow: #d29922;
-      --red: #f85149;
-      --code-bg: #161b22;
-      --inline-code-bg: #1f2428;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 15px;
-      line-height: 1.75;
-    }
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 48px 32px 80px;
-    }
+/* === PASTE FULL CSS BLOCK BÊN DƯỚI === */
+/* ── VSCode Dark Theme ── */
+/* ═══════════════════════════════════════════
+   VSCode Dark Theme — NestJS Doc Renderer
+   ═══════════════════════════════════════════ */
+:root {
+  --bg:            #1e1e1e;
+  --bg-sidebar:    #252526;
+  --bg-surface:    #2d2d30;
+  --bg-surface2:   #3c3c3c;
+  --bg-hover:      #2a2d2e;
+  --bg-active:     #37373d;
+  --border:        #404040;
+  --border-light:  #3c3c3c;
 
-    /* Headings */
-    h1,h2,h3,h4,h5,h6 { color: var(--heading); font-weight: 600; line-height: 1.25; margin: 2em 0 0.6em; }
-    h1 { font-size: 2em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; margin-top: 0; }
-    h2 { font-size: 1.5em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
-    h3 { font-size: 1.25em; }
-    h4 { font-size: 1.05em; }
+  --text:          #d4d4d4;
+  --text-muted:    #858585;
+  --text-bright:   #ffffff;
+  --text-dim:      #6a6a6a;
 
-    /* Paragraphs & inline */
-    p { margin: 0.75em 0; }
-    strong { color: var(--heading); font-weight: 600; }
-    em { font-style: italic; }
-    del { color: var(--text-muted); text-decoration: line-through; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+  /* VSCode syntax colors */
+  --kw:   #569cd6;   /* keywords: export, const, async, return */
+  --fn:   #dcdcaa;   /* function names */
+  --str:  #ce9178;   /* strings */
+  --typ:  #4ec9b0;   /* types, classes, interfaces */
+  --cmt:  #6a9955;   /* comments */
+  --num:  #b5cea8;   /* numbers */
+  --dec:  #c586c0;   /* decorators @Get @Injectable */
+  --prop: #9cdcfe;   /* properties, params */
+  --op:   #d4d4d4;   /* operators */
 
-    /* Code */
-    code {
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-      font-size: 0.875em;
-      background: var(--inline-code-bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0.15em 0.4em;
-      color: #e6edf3;
-    }
-    pre {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 20px 24px;
-      overflow-x: auto;
-      margin: 1.25em 0;
-      position: relative;
-    }
-    pre code {
-      background: none;
-      border: none;
-      padding: 0;
-      font-size: 0.875em;
-      line-height: 1.6;
-      color: #e6edf3;
-    }
-    /* Language badge */
-    pre[data-lang]::before {
-      content: attr(data-lang);
-      position: absolute;
-      top: 8px; right: 12px;
-      font-size: 11px;
-      color: var(--text-muted);
-      font-family: monospace;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
+  /* Semantic accent colors */
+  --accent:  #007acc;
+  --green:   #4ec9b0;
+  --yellow:  #dcdcaa;
+  --orange:  #ce9178;
+  --red:     #f44747;
+  --purple:  #c586c0;
 
-    /* Syntax highlight — basic token colors */
-    .kw  { color: #ff7b72; }   /* keywords */
-    .fn  { color: #d2a8ff; }   /* functions */
-    .str { color: #a5d6ff; }   /* strings */
-    .typ { color: #79c0ff; }   /* types */
-    .cmt { color: #8b949e; font-style: italic; } /* comments */
-    .num { color: #79c0ff; }   /* numbers */
-    .dec { color: #ffa657; }   /* decorators */
+  /* Lifecycle node colors */
+  --node-guard:       #1a3a52;
+  --node-guard-b:     #007acc;
+  --node-pipe:        #1a3a28;
+  --node-pipe-b:      #4ec9b0;
+  --node-ctrl:        #2d2516;
+  --node-ctrl-b:      #dcdcaa;
+  --node-svc:         #2d1e35;
+  --node-svc-b:       #c586c0;
+  --node-db:          #1a2535;
+  --node-db-b:        #569cd6;
+  --node-cache:       #1a2a1a;
+  --node-cache-b:     #4ec9b0;
+  --node-err:         #3a1a1a;
+  --node-err-b:       #f44747;
+}
 
-    /* Lists */
-    ul, ol { padding-left: 2em; margin: 0.75em 0; }
-    li { margin: 0.3em 0; }
-    li > ul, li > ol { margin: 0.25em 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Tables */
-    table { width: 100%; border-collapse: collapse; margin: 1.25em 0; font-size: 14px; }
-    thead { background: var(--surface2); }
-    th { color: var(--heading); font-weight: 600; text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
-    td { padding: 8px 14px; border: 1px solid var(--border); }
-    tr:hover { background: var(--surface); }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
 
-    /* Blockquote */
-    blockquote {
-      margin: 1em 0;
-      padding: 12px 20px;
-      border-left: 4px solid var(--accent);
-      background: var(--surface);
-      border-radius: 0 6px 6px 0;
-      color: var(--text-muted);
-    }
-    blockquote p { margin: 0; }
+/* ── LAYOUT ── */
+.page-wrap { display: flex; min-height: 100vh; }
 
-    /* Horizontal rule */
-    hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 16px 0;
+}
+.sidebar-title {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0 16px 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.toc-item {
+  display: block;
+  padding: 5px 16px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all .15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toc-item:hover { background: var(--bg-hover); color: var(--text); }
+.toc-item.active { border-left-color: var(--accent); color: var(--text-bright); background: var(--bg-active); }
+.toc-h1 { font-weight: 600; color: var(--text); }
+.toc-h2 { padding-left: 24px; }
+.toc-h3 { padding-left: 36px; font-size: 11.5px; }
+.toc-h4 { padding-left: 48px; font-size: 11px; }
 
-    /* Callout badges (for custom labels like NOTE / WARNING / TIP) */
-    .badge {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      padding: 2px 8px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      margin-right: 6px;
-    }
-    .badge-note    { background: #1f3a5f; color: var(--accent); }
-    .badge-warn    { background: #3a2e0a; color: var(--yellow); }
-    .badge-danger  { background: #3a0f0f; color: var(--red); }
-    .badge-ok      { background: #0f2f1a; color: var(--green); }
+.content {
+  flex: 1;
+  max-width: 960px;
+  padding: 48px 52px 100px;
+  min-width: 0;
+}
 
-    /* Section divider label (for ## headings inside code docs) */
-    .section-tag {
-      font-family: monospace;
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: -1em;
-    }
-  </style>
+/* ── HEADINGS ── */
+h1,h2,h3,h4,h5,h6 {
+  color: var(--text-bright);
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 2.2em 0 0.6em;
+  scroll-margin-top: 20px;
+}
+h1 { font-size: 1.9em; border-bottom: 1px solid var(--border); padding-bottom: .4em; margin-top: 0; }
+h2 { font-size: 1.45em; border-bottom: 1px solid var(--border); padding-bottom: .3em; }
+h3 { font-size: 1.2em; color: var(--yellow); }
+h4 { font-size: 1.05em; color: var(--prop); }
+
+/* ── BODY TEXT ── */
+p { margin: .7em 0; }
+strong { color: var(--text-bright); font-weight: 600; }
+em { font-style: italic; color: var(--orange); }
+del { color: var(--text-muted); text-decoration: line-through; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+
+/* ── INLINE CODE ── */
+code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: .85em;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: .15em .45em;
+  color: var(--prop);
+}
+
+/* ── CODE BLOCKS ── */
+pre {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0;
+  margin: 1.2em 0;
+  overflow: hidden;
+  position: relative;
+}
+.pre-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface2);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 14px;
+}
+.pre-lang {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.pre-filename {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--yellow);
+}
+pre code {
+  display: block;
+  background: none;
+  border: none;
+  padding: 18px 20px;
+  font-size: .875em;
+  line-height: 1.65;
+  color: var(--text);
+  overflow-x: auto;
+}
+
+/* Syntax token colors */
+.kw  { color: var(--kw); }
+.fn  { color: var(--fn); }
+.str { color: var(--str); }
+.typ { color: var(--typ); }
+.cmt { color: var(--cmt); font-style: italic; }
+.num { color: var(--num); }
+.dec { color: var(--dec); }
+.prop{ color: var(--prop); }
+
+/* Decorator annotation tooltip */
+.dec-ann {
+  position: relative;
+  display: inline;
+}
+.dec-ann .ann-tip {
+  display: none;
+  position: absolute;
+  left: 0; top: 1.6em;
+  background: var(--bg-surface2);
+  border: 1px solid var(--dec);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 11.5px;
+  color: var(--text);
+  white-space: nowrap;
+  z-index: 99;
+  min-width: 200px;
+  line-height: 1.5;
+  font-style: normal;
+  font-family: -apple-system, sans-serif;
+  pointer-events: none;
+}
+.dec-ann:hover .ann-tip { display: block; }
+.dec-ann > .dec { border-bottom: 1px dashed var(--dec); cursor: help; }
+
+/* ── LISTS ── */
+ul, ol { padding-left: 1.8em; margin: .7em 0; }
+li { margin: .3em 0; }
+li > ul, li > ol { margin: .25em 0; }
+
+/* ── TABLES ── */
+table { width: 100%; border-collapse: collapse; margin: 1.2em 0; font-size: 13px; }
+thead { background: var(--bg-surface2); }
+th { color: var(--text-bright); font-weight: 600; text-align: left; padding: 9px 14px; border: 1px solid var(--border); }
+td { padding: 7px 14px; border: 1px solid var(--border); }
+tr:hover td { background: var(--bg-hover); }
+
+/* ── BLOCKQUOTE ── */
+blockquote {
+  margin: 1em 0;
+  padding: 12px 18px;
+  border-left: 3px solid var(--accent);
+  background: var(--bg-surface);
+  border-radius: 0 6px 6px 0;
+  color: var(--text-muted);
+}
+blockquote p { margin: 0; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 1.2em 0;
+  border-left: 4px solid;
+  font-size: 13.5px;
+}
+.callout-note    { background: #0d2137; border-color: var(--accent); }
+.callout-warn    { background: #2d2207; border-color: var(--yellow); }
+.callout-danger  { background: #2d0a0a; border-color: var(--red); }
+.callout-tip     { background: #0d2117; border-color: var(--green); }
+.callout-title   { font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+.callout-note .callout-title    { color: var(--accent); }
+.callout-warn .callout-title    { color: var(--yellow); }
+.callout-danger .callout-title  { color: var(--red); }
+.callout-tip .callout-title     { color: var(--green); }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>Giải Thích Chi Tiết - Module Admin (<code>src/admin</code>)</h1>
+  <div class="page-wrap">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+    
+<h1>Giải Thích Chi Tiết - Module Admin (src/admin)</h1>
+<p>Module <code>admin</code> đóng vai trò là "bộ não" quản trị (Back-office) của hệ thống. Đây là nơi cung cấp các API đặc quyền để Quản trị viên (Admin) vận hành cửa hàng, bao gồm việc quản lý danh mục (Category), sản phẩm (Product) và tiến trình xử lý đơn hàng (Order).</p>
+<p>Dưới đây là một phân tích <strong>chuyên sâu</strong> về cách các thành phần trong module này (Controller, Service) tương tác với nhau, luồng dữ liệu từ Client đến Database và cách trả về.</p>
 
-    <p><code>src/admin</code> là khu vực chứa các API chỉ dành cho quản trị viên. Module này không phục vụ khách hàng thông thường, mà tập trung vào các thao tác vận hành hệ thống như quản lý danh mục, quản lý sản phẩm và theo dõi đơn hàng.</p>
+<div style="margin: 2em 0; overflow-x: auto; background: var(--bg-surface); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+  <h3 style="margin-top: 0; font-size: 1.1em; margin-bottom: 12px;">Bảng Chỉ Mục Nhanh (Visual Index)</h3>
+  <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+    <thead>
+      <tr>
+        <th style="padding: 12px; background: var(--bg-surface2); border: 1px solid var(--border); width: 30%;">Thành phần</th>
+        <th style="padding: 12px; background: var(--bg-surface2); border: 1px solid var(--border); width: 50%;">Sơ đồ trực quan</th>
+        <th style="padding: 12px; background: var(--bg-surface2); border: 1px solid var(--border); width: 20%; text-align: center;">Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 12px; border: 1px solid var(--border); font-weight: 600; color: var(--text-bright);">1. Controller</td>
+        <td style="padding: 12px; border: 1px solid var(--border);">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--node-guard-b);background:var(--node-guard);">AuthGuard</div>
+            <span style="color:var(--text-muted)">➔</span>
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--node-pipe-b);background:var(--node-pipe);">ValidationPipe</div>
+            <span style="color:var(--text-muted)">➔</span>
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--node-ctrl-b);background:var(--node-ctrl);">AdminController</div>
+          </div>
+        </td>
+        <td style="padding: 12px; border: 1px solid var(--border); text-align: center;">
+          <a href="#controller" style="display: inline-block; padding: 6px 12px; background: var(--accent); color: white; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500; transition: opacity 0.2s;">Đọc chi tiết 👇</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 12px; border: 1px solid var(--border); font-weight: 600; color: var(--text-bright);">2. Service</td>
+        <td style="padding: 12px; border: 1px solid var(--border);">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--node-ctrl-b);background:var(--node-ctrl);">Controller</div>
+            <span style="color:var(--text-muted)">➔</span>
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--node-svc-b);background:var(--node-svc);">AdminService</div>
+            <span style="color:var(--text-muted)">➔</span>
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--node-db-b);background:var(--node-db);">Prisma DB</div>
+          </div>
+        </td>
+        <td style="padding: 12px; border: 1px solid var(--border); text-align: center;">
+          <a href="#service" style="display: inline-block; padding: 6px 12px; background: var(--accent); color: white; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500; transition: opacity 0.2s;">Đọc chi tiết 👇</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 12px; border: 1px solid var(--border); font-weight: 600; color: var(--text-bright);">3. Output & Return</td>
+        <td style="padding: 12px; border: 1px solid var(--border);">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--node-db-b);background:var(--node-db);">Raw Entity</div>
+            <span style="color:var(--text-muted)">➔</span>
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--node-svc-b);background:var(--node-svc);">Map DTO</div>
+            <span style="color:var(--text-muted)">➔</span>
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:var(--bg-surface2);">success()</div>
+          </div>
+        </td>
+        <td style="padding: 12px; border: 1px solid var(--border); text-align: center;">
+          <a href="#returns" style="display: inline-block; padding: 6px 12px; background: var(--accent); color: white; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500; transition: opacity 0.2s;">Đọc chi tiết 👇</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 12px; border: 1px solid var(--border); font-weight: 600; color: var(--text-bright);">4. Third-Party / Libs</td>
+        <td style="padding: 12px; border: 1px solid var(--border);">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--node-db-b);background:var(--node-db);">Prisma</div>
+            <span style="color:var(--text-muted)">+</span>
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--node-cache-b);background:var(--node-cache);">Redis</div>
+            <span style="color:var(--text-muted)">+</span>
+            <div class="lc-node" style="min-width:auto;padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:var(--bg-surface2);">Logger</div>
+          </div>
+        </td>
+        <td style="padding: 12px; border: 1px solid var(--border); text-align: center;">
+          <a href="#third-party" style="display: inline-block; padding: 6px 12px; background: var(--accent); color: white; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500; transition: opacity 0.2s;">Đọc chi tiết 👇</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<hr>
 
-    <h2>1. <code>admin.module.ts</code> - Điểm ghép module</h2>
-
-<pre data-lang="typescript"><code>
-<span class="dec">@Module</span>({
-  imports: [<span class="typ">AuthModule</span>],
-  controllers: [<span class="typ">AdminController</span>],
-  providers: [<span class="typ">AdminService</span>, <span class="typ">RolesGuard</span>],
-})
-<span class="kw">export class</span> <span class="typ">AdminModule</span> {}
-</code></pre>
-
-    <p>File này khai báo 3 ý chính:</p>
-
-    <ul>
-      <li><code>imports: [AuthModule]</code>: tái sử dụng phần xác thực đã có sẵn từ module <code>auth</code>.</li>
-      <li><code>controllers: [AdminController]</code>: mọi request <code>/admin/...</code> sẽ đi vào controller này.</li>
-      <li><code>providers: [AdminService, RolesGuard]</code>: đăng ký service xử lý nghiệp vụ và guard kiểm tra phân quyền.</li>
-    </ul>
-
-    <h2>2. <code>admin.controller.ts</code> - Cửa vào của Admin API</h2>
-
-<pre data-lang="typescript"><code>
-<span class="dec">@Controller</span>(<span class="str">'admin'</span>)
-<span class="dec">@UseGuards</span>(<span class="typ">AuthGuard</span>, <span class="typ">RolesGuard</span>)
-<span class="dec">@Roles</span>(<span class="typ">UserRole</span>.<span class="typ">ADMIN</span>)
-<span class="kw">export class</span> <span class="typ">AdminController</span> { ... }
-</code></pre>
-
-    <p>Đây là lớp đứng ở đầu luồng request:</p>
-
-    <ul>
-      <li><code>@Controller('admin')</code>: mọi route bên trong đều có tiền tố <code>/admin</code>.</li>
-      <li><code>@UseGuards(AuthGuard, RolesGuard)</code>: request phải vượt qua 2 lớp kiểm tra.</li>
-      <li><code>@Roles(UserRole.ADMIN)</code>: chỉ tài khoản có role <code>ADMIN</code> mới được phép dùng toàn bộ API trong controller này.</li>
-    </ul>
-
-    <p>Điều này có nghĩa là nếu user chưa đăng nhập thì bị chặn từ <code>AuthGuard</code>; nếu đã đăng nhập nhưng không phải admin thì <code>RolesGuard</code> sẽ trả về <code>403 Forbidden</code>.</p>
-
-    <h3>Các nhóm endpoint chính</h3>
-
-    <p>Controller hiện có 6 nhóm thao tác:</p>
-
-    <ol>
-      <li><code>POST /admin/categories</code>: tạo danh mục mới.</li>
-      <li><code>PATCH /admin/categories/:id</code>: cập nhật danh mục.</li>
-      <li><code>POST /admin/products</code>: tạo sản phẩm.</li>
-      <li><code>PATCH /admin/products/:id</code>: cập nhật sản phẩm.</li>
-      <li><code>DELETE /admin/products/:id</code>: xóa mềm sản phẩm.</li>
-      <li><code>GET /admin/orders</code> và <code>PATCH /admin/orders/:id/status</code>: xem danh sách đơn và đổi trạng thái đơn.</li>
-    </ol>
-
-    <p>Ví dụ route tạo sản phẩm:</p>
-
-<pre data-lang="typescript"><code>
-<span class="dec">@Post</span>(<span class="str">'products'</span>)
-<span class="kw">async</span> <span class="fn">createProduct</span>(
-  <span class="dec">@Req</span>() request: <span class="typ">Request</span> & { user: <span class="typ">JwtPayloadDto</span> },
-  <span class="dec">@Body</span>() dto: <span class="typ">CreateProductDto</span>,
-) {
-  <span class="kw">const</span> product = <span class="kw">await</span> <span class="kw">this</span>.adminService.<span class="fn">createProduct</span>(
-    request.user.userId,
-    dto,
-  );
-  <span class="kw">return</span> <span class="fn">success</span>(product);
+<h2 id="controller">1. Controller: "Người gác cổng" và Điều phối viên (admin.controller.ts)</h2>
+<p><code>AdminController</code> là điểm chạm đầu tiên của mọi request gửi đến các endpoint bắt đầu bằng <code>/admin</code>. Trước khi dữ liệu thực sự chạm đến logic xử lý, nó phải đi qua một loạt các trạm kiểm duyệt.</p>
+<h3>1.1. Hệ thống Decorator: Bảo vệ và Phân giải dữ liệu</h3>
+<p>Mỗi decorator trong NestJS có một nhiệm vụ cực kỳ cụ thể để đảm bảo an toàn và cấu trúc dữ liệu:</p>
+<ul>
+<li><strong><code>@Controller('admin')</code></strong>: Định tuyến tất cả request có prefix <code>/admin</code> vào class này.</li>
+<li><strong><code>@UseGuards(AuthGuard, RolesGuard)</code></strong>: Hai lớp khiên bảo vệ.<ul>
+<li><code>AuthGuard</code>: Kiểm tra JWT Token trong header <code>Authorization</code>. Nếu hợp lệ, nó sẽ giải mã và gắn thông tin người dùng (user payload) vào object <code>Request</code>.</li>
+<li><code>RolesGuard</code>: Chạy ngay sau <code>AuthGuard</code>. Nó sẽ đọc role của user và so sánh với quyền được yêu cầu.</li>
+</ul>
+</li>
+<li><strong><code>@Roles(UserRole.ADMIN)</code></strong>: Định nghĩa Metadata cho <code>RolesGuard</code> biết rằng: "Chỉ cho phép tài khoản có role là <code>ADMIN</code> đi qua".</li>
+<li><strong><code>@Req() request</code></strong>: Trích xuất toàn bộ object <code>Request</code> của Express. Ở đây, ta dùng nó để lấy <code>request.user.userId</code> (đã được <code>AuthGuard</code> nhét vào) nhằm mục đích ghi log (ai là người thực hiện hành động).</li>
+<li><strong><code>@Body() dto</code></strong>: Hứng dữ liệu JSON từ phần thân (body) của request, sau đó chuyển đổi và xác thực thông qua các DTO (<code>CreateCategoryDto</code>, <code>UpdateProductDto</code>...). Nếu dữ liệu sai định dạng (ví dụ thiếu <code>name</code> hoặc <code>price</code> không hợp lệ), NestJS tự động chặn lại và trả về lỗi 400 Bad Request ngay tại đây, không cho phép tiến vào Controller.</li>
+<li><strong><code>@Param('id', ParseIntPipe)</code></strong>: Lấy tham số <code>id</code> từ URL (ví dụ <code>/admin/products/5</code>) và tự động ép kiểu sang dạng <code>number</code> an toàn thông qua <code>ParseIntPipe</code>. Nếu <code>id</code> không phải là số, sẽ trả về lỗi 400.</li>
+<li><strong><code>@Query() query</code></strong>: Trích xuất các tham số trên URL (ví dụ <code>/admin/orders?page=2&status=PENDING</code>) và map vào <code>AdminOrderQueryDto</code>.</li>
+</ul>
+<h3>1.2. Phân tích chi tiết các Endpoint</h3>
+<ul>
+<li><strong>Quản lý Danh mục (<code>POST /admin/categories</code>, <code>PATCH /admin/categories/:id</code>)</strong>: Nhận <code>CreateCategoryDto</code> hoặc <code>UpdateCategoryDto</code>. Chuyển dữ liệu xuống Service. Kết quả trả về được bọc qua <code>success()</code> - một tiện ích chuẩn hóa cấu trúc JSON (<code>{ statusCode: 200, data: ... }</code>).</li>
+<li><strong>Quản lý Sản phẩm (<code>POST /admin/products</code>, <code>PATCH /admin/products/:id</code>, <code>DELETE /admin/products/:id</code>)</strong>: Nhận dữ liệu tạo/sửa hoặc <code>id</code> để xóa mềm. Luồng xử lý tương tự, đẩy việc nặng xuống Service và gói kết quả lại.</li>
+<li><strong>Quản lý Đơn hàng (<code>GET /admin/orders</code>, <code>PATCH /admin/orders/:id/status</code>)</strong>: API <code>GET</code> dùng để liệt kê, gọi <code>adminService.findOrders</code> và sử dụng hàm <code>paginated()</code> để định dạng kết quả phân trang chuẩn (<code>{ data: [], meta: { total, page, limit } }</code>). API <code>PATCH</code> cập nhật trạng thái đơn hàng.</li>
+</ul>
+<p><strong>Luồng dữ liệu đến Controller:</strong> Client -> HTTP Request -> Middleware -> Guard (<code>AuthGuard</code>, <code>RolesGuard</code>) -> Pipe (<code>ValidationPipe</code> trên DTO, <code>ParseIntPipe</code>) -> <strong>Controller Method</strong>.</p>
+<hr>
+<h2 id="service">2. Service: "Khối óc" xử lý nghiệp vụ (admin.service.ts)</h2>
+<p>Nếu Controller là lễ tân, thì <code>AdminService</code> chính là những chuyên gia phía sau xử lý logic cốt lõi. Nơi đây quyết định dữ liệu có được lưu trữ hay không. Thiết kế cốt lõi của Service là việc tách biệt các luồng thao tác chính thành các hàm public và các kiểm tra nghiệp vụ (business validation) thành các hàm private (helper methods).</p>
+<h3>2.1. Chi tiết các Public Methods (Luồng xử lý chính)</h3>
+<p>Các hàm public là những API được gọi trực tiếp từ Controller, đảm nhận toàn bộ vòng đời của một tác vụ quản trị.</p>
+<ul>
+<li><strong><code>createCategory(adminUserId, dto)</code></strong>:<ul>
+<li>Tạo danh mục mới.</li>
+<li>Kiểm tra <code>ensureUniqueCategorySlug</code> để tránh trùng lặp slug.</li>
+<li>Gọi Prisma tạo dữ liệu, sau đó chạy <code>invalidateCategoryCache</code> để xóa bộ nhớ đệm (cache) phía client và log lại hành động của Admin.</li>
+</ul>
+</li>
+<li><strong><code>updateCategory(adminUserId, id, dto)</code></strong>:<ul>
+<li>Cập nhật danh mục có sẵn.</li>
+<li>Đầu tiên kiểm tra <code>ensureCategoryExists</code>, sau đó nếu có thay đổi slug, kiểm tra tiếp <code>ensureUniqueCategorySlug</code> (bỏ qua id hiện tại).</li>
+<li>Cập nhật database, dọn dẹp cache và lưu log.</li>
+</ul>
+</li>
+<li><strong><code>createProduct(adminUserId, dto)</code></strong>:<ul>
+<li>Thêm một sản phẩm mới vào hệ thống.</li>
+<li>Phải vượt qua các chốt chặn <code>ensureCategoryExists</code> và <code>ensureUniqueProductSlug</code> trước khi gọi database.</li>
+<li>Xử lý mảng <code>images</code> bằng toán tử tạo liên kết (<code>create</code>) của Prisma.</li>
+<li>Xóa cache sản phẩm theo slug và lưu log kiểm toán.</li>
+</ul>
+</li>
+<li><strong><code>updateProduct(adminUserId, id, dto)</code></strong>:<ul>
+<li>Cập nhật thông tin sản phẩm. DTO đưa vào có thể chỉ chứa một vài trường cần cập nhật (do tính <code>Partial</code>).</li>
+<li>Đi qua các vòng kiểm tra: <code>ensureProductExists</code>, <code>ensureCategoryExists</code> (nếu đổi danh mục) và <code>ensureUniqueProductSlug</code> (nếu đổi slug).</li>
+<li>Tách các trường qua toán tử spread (<code>...rest</code>).</li>
+<li>Xử lý ảnh là một chiến thuật đặc biệt: thay vì đối chiếu tìm xem ảnh nào xóa/thêm/sửa, Service xóa toàn bộ ảnh cũ và tạo mới danh sách ảnh (<code>deleteMany: {}</code> tiếp theo là <code>create</code>). Đây là cách đồng bộ nhanh chóng, đẩy trách nhiệm quản lý danh sách ảnh về phía Frontend.</li>
+<li>Cuối cùng, tiến hành dọn cache bằng cách gọi <code>invalidateProductCache</code> với cả slug cũ và slug mới, rồi lưu log.</li>
+</ul>
+</li>
+<li><strong><code>softDeleteProduct(adminUserId, id)</code></strong>:<ul>
+<li>Xóa mềm (soft delete) sản phẩm thay vì xóa hoàn toàn khỏi database.</li>
+<li>Gọi <code>ensureProductExists</code> để kiểm tra.</li>
+<li>Cập nhật trường <code>deletedAt</code> thành thời gian hiện tại (<code>new Date()</code>).</li>
+<li>Xóa cache theo slug của sản phẩm và lưu log.</li>
+</ul>
+</li>
+<li><strong><code>findOrders(query)</code></strong>:<ul>
+<li>Lấy danh sách đơn hàng có phân trang và lọc theo trạng thái (<code>query.status</code>).</li>
+<li>Sử dụng <code>Promise.all([findMany, count])</code> để tối ưu hóa hiệu suất. Thay vì chờ lấy danh sách xong mới đếm tổng, hai query này chạy song song bằng Prisma, giảm đáng kể thời gian phản hồi.</li>
+<li>Data trả về từ database được làm sạch qua lớp <code>AdminOrderResponseDto</code> trước khi trả về cho Controller.</li>
+</ul>
+</li>
+<li><strong><code>updateOrderStatus(adminUserId, orderId, dto)</code></strong>:<ul>
+<li>Cập nhật trạng thái của đơn hàng (ví dụ từ PENDING sang SHIPPED).</li>
+<li>Kiểm tra sự tồn tại của đơn hàng bằng một truy vấn <code>findUnique</code>. Nếu không có, ném ra lỗi <code>NotFoundException</code>.</li>
+<li>Cập nhật trạng thái mới, tự động include danh sách sản phẩm và thông tin user để định dạng lại phản hồi.</li>
+<li>Trả về đối tượng đã map qua <code>AdminOrderResponseDto</code> và lưu log kiểm toán (chi tiết trạng thái cũ chuyển sang mới).</li>
+</ul>
+</li>
+</ul>
+<h3>2.2. Chi tiết các Private Helpers (Hàm hỗ trợ và kiểm tra nghiệp vụ)</h3>
+<p>Các helper methods giúp tách biệt các logic kiểm tra phức tạp, làm cho các hàm public ngắn gọn, tập trung hoàn toàn vào luồng chính (Happy Path). Nếu có lỗi, helper sẽ chủ động ném Exception để hệ thống báo về client.</p>
+<ul>
+<li><strong><code>ensureCategoryExists(id)</code></strong>:<ul>
+<li>Truy vấn database để tìm <code>category</code>. Nếu không tồn tại, ném <code>NotFoundException(404)</code> ("Danh mục không tồn tại"). Trả về đối tượng category nếu thành công.</li>
+</ul>
+</li>
+<li><strong><code>ensureProductExists(id)</code></strong>:<ul>
+<li>Tương tự như danh mục, tìm <code>product</code> trong DB. Ném lỗi <code>NotFoundException(404)</code> ("Sản phẩm không tồn tại") nếu ID không hợp lệ, ngược lại trả về thông tin sản phẩm.</li>
+</ul>
+</li>
+<li><strong><code>ensureUniqueCategorySlug(slug, excludeId?)</code></strong>:<ul>
+<li>Đảm bảo tính duy nhất của slug danh mục.</li>
+<li>Nhận tham số <code>excludeId</code> tùy chọn (rất hữu ích khi update, bỏ qua bản ghi đang thao tác). Nếu phát hiện slug đã có trong DB, ném ra <code>ConflictException(409)</code> ("Slug danh mục đã tồn tại").</li>
+</ul>
+</li>
+<li><strong><code>ensureUniqueProductSlug(slug, excludeId?)</code></strong>:<ul>
+<li>Đảm bảo tính duy nhất của slug sản phẩm.</li>
+<li>Hoạt động tương tự <code>ensureUniqueCategorySlug</code>, ném <code>ConflictException(409)</code> ("Slug sản phẩm đã tồn tại") nếu có sự trùng lặp ngoài sản phẩm đang xét.</li>
+</ul>
+</li>
+<li><strong><code>invalidateCategoryCache()</code></strong>:<ul>
+<li>Xóa khóa cache tập trung của danh sách danh mục (<code>CACHE_KEYS.CATEGORIES</code>) thông qua <code>RedisService</code>.</li>
+<li>Đồng thời gọi <code>reset()</code> để dọn dẹp các cache key liên quan.</li>
+</ul>
+</li>
+<li><strong><code>invalidateProductCache(oldSlug?, newSlug?)</code></strong>:<ul>
+<li>Chịu trách nhiệm vô hiệu hóa bộ nhớ đệm (cache) liên quan đến sản phẩm để dữ liệu mới cập nhật có thể hiển thị cho người dùng (End-user).</li>
+<li>Gọi hàm <code>reset()</code> tổng thể.</li>
+<li>Nếu sản phẩm có slug cũ (<code>oldSlug</code>), xóa key cache trực tiếp dựa trên <code>oldSlug</code>.</li>
+<li>Nếu sản phẩm cập nhật sang slug mới (<code>newSlug</code> và khác <code>oldSlug</code>), tiếp tục xóa key cache của <code>newSlug</code> để đảm bảo hệ thống lấy lại dữ liệu sạch nhất trong các lần truy cập sau.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="returns">3. Quản lý Kết quả trả về (Outputs & Returns)</h2>
+<p>Hành trình của dữ liệu từ khi xử lý xong ở cơ sở dữ liệu cho đến khi hiển thị trên màn hình của Quản trị viên tuân theo một luồng nghiêm ngặt và đồng nhất. Quá trình này không chỉ liên quan đến bản thân module Admin mà còn tạo ra các tác động chéo (cross-module impacts) đến các module khác trong hệ thống.</p>
+<h3>3.1. Hành trình chi tiết của Dữ liệu (Luồng Return)</h3>
+<ol>
+<li><strong>Từ Cơ sở dữ liệu (Prisma) về Service</strong>:<ul>
+<li>Sau khi thực thi các lệnh như <code>update</code>, <code>create</code> hay <code>findMany</code>, Prisma trả về một object nguyên thủy (Raw Entity).</li>
+<li>Ở giai đoạn này, dữ liệu là các Prisma Models "thô". Nó có thể chứa các kiểu dữ liệu đặc thù của database chưa thân thiện với JSON, ví dụ như kiểu <code>Decimal</code> cho các trường tiền tệ (giá sản phẩm, tổng tiền đơn hàng).</li>
+</ul>
+</li>
+<li><strong>Xử lý bên trong Service (Mapping & Side Effects)</strong>:<ul>
+<li><strong>Mapping</strong>: Đối với các entities cơ bản (như Product, Category), Service có thể trả về nguyên bản. Tuy nhiên, với các đối tượng phức tạp như Order, Service sẽ chủ động tạo ra một instance mới của DTO (<code>new AdminOrderResponseDto()</code>). Quá trình mapping này đóng vai trò quan trọng: nó chuyển đổi các trường <code>Decimal</code> thành <code>string</code> (để tránh sai số float trên trình duyệt) và loại bỏ các trường không cần thiết.</li>
+<li><strong>Tác động chéo (Cross-module Impact)</strong>: Trước khi trả dữ liệu về Controller, Service tiến hành <strong>xóa bộ nhớ đệm</strong> bằng cách gọi <code>RedisService</code> (ví dụ <code>invalidateProductCache</code>). Hành động này có tính hệ thống cao: Admin cập nhật một sản phẩm -> Cache của sản phẩm đó bị xóa -> Khi End-user truy cập vào module Catalog, <code>CatalogService</code> không tìm thấy cache -> Bắt buộc truy cập lại vào Database để lấy thông tin mới nhất.</li>
+</ul>
+</li>
+<li><strong>Từ Service về Controller</strong>:<ul>
+<li><code>AdminService</code> hoàn tất quá trình xử lý và truyền dữ liệu (đã mapping thành DTO hoặc Raw Entity) về cho <code>AdminController</code> thông qua lệnh <code>return</code>. <code>AdminController</code> sẽ đón nhận kết quả này (thường qua các lời gọi <code>await</code>). Dữ liệu lúc này đã sẵn sàng để trình bày nhưng cấu trúc vẫn là dạng object thuần của JavaScript.</li>
+</ul>
+</li>
+<li><strong>Đóng gói tại Controller và trả về Client (Formatting)</strong>:<ul>
+<li>Object từ Service <strong>không được trả trực tiếp</strong> về cho NestJS Core để gửi đi. Thay vào đó, <code>AdminController</code> đóng vai trò là lớp bọc cuối cùng.</li>
+<li>Controller sử dụng các hàm tiện ích như <code>success(data)</code> (dành cho object đơn) hoặc <code>paginated(data, meta)</code> (dành cho danh sách phân trang) được định nghĩa tại <code>src/common/utils/api-response.util.ts</code>.</li>
+<li>Lớp NestJS Core nhận JSON đã được đóng gói chuẩn từ Controller, tự động chuyển đổi thành HTTP Response, gán HTTP Status Code (ví dụ: 200 OK hoặc 201 Created) và truyền tải qua mạng về cho Client (Trình duyệt/App).</li>
+</ul>
+</li>
+</ol>
+<p><strong>Tại sao phải bọc (wrapped) bằng hàm <code>success()</code>?</strong></p>
+<p>Điều này tạo ra sự đồng nhất (consistency) cho toàn bộ API. Bất kể client gọi API lấy user, đơn hàng hay sản phẩm, cấu trúc JSON trả về luôn có một định dạng duy nhất:</p>
+<pre><code>{
+  "statusCode": 200,
+  "message": "Success",
+  "data": { "id": 1, "name": "..." }
 }
 </code></pre>
+<p>Việc này giúp phía Frontend cực kỳ nhàn nhã: họ chỉ cần viết đúng một hàm xử lý (interceptor) chung để kiểm tra <code>statusCode</code> và lấy thông tin từ trường <code>data</code>, không phải viết lại logic parse JSON cho từng endpoint riêng biệt.</p>
+<h3>3.2. Sơ đồ Luồng Dữ liệu và Tác động Chéo (Cross-Module Impacts)</h3>
+<p>Dưới đây là sơ đồ chi tiết biểu diễn hành trình khép kín của dữ liệu, từ lúc Client gửi request cho đến lúc nhận được kết quả, cũng như tác động của nó đến module Catalog.</p>
+<pre><code>flowchart TD
+    %% Định nghĩa Client và Request
+    Client[Admin Client (Trình duyệt/App)] -- "1. HTTP Request\n(VD: PATCH /admin/products/1)" --> Controller[AdminController]
+    
+    subgraph NestJS Backend
+        %% Luồng đi xuống
+        Controller -- "2. Truyền DTO vào Method" --> Service[AdminService]
+        Service -- "3. Thực thi Query thay đổi dữ liệu" --> Prisma[(Prisma Database)]
+        
+        %% Luồng trả về
+        Prisma -- "4. Trả về dữ liệu thô (Raw Entity)" --> Service
+        
+        %% Xử lý tại Service
+        Service -- "5. Mapping dữ liệu thành Response DTO\n(Chuyển Decimal sang String, format lại...)" --> Service
+        
+        %% Tương tác với Redis (Side Effect)
+        Service -- "6. Gọi hàm Invalidate Cache\n(Xóa cache của sản phẩm)" --> Redis[(Redis Cache)]
+        
+        %% Trả về Controller
+        Service -- "7. Trả dữ liệu đã xử lý qua lệnh return" --> Controller
+        
+        %% Đóng gói tại Controller
+        Controller -- "8. Gói dữ liệu qua Utils\n(success, paginated)" --> Formatter[Response Formatter\n(api-response.util.ts)]
+        Formatter -- "9. Trả về JSON định dạng chuẩn" --> Controller
+    end
 
-    <p>Điểm đáng chú ý:</p>
+    %% Tác động chéo đến Module khác
+    subgraph Cross-Module Impacts
+        Redis -. "10. Cache trống (Key bị xóa)" .-> CatalogService[CatalogService (Module End-user)]
+        CatalogService -. "11. Bắt buộc lấy data thật từ DB\nthay vì dùng Cache cũ" .-> EndUser[Khách hàng (End-user)]
+    end
 
-    <ul>
-      <li><code>request.user.userId</code> được lấy từ token đã được giải mã trước đó.</li>
-      <li><code>@Body() dto</code> buộc dữ liệu gửi lên phải đúng schema của DTO.</li>
-      <li>Kết quả luôn được bọc qua <code>success(...)</code> hoặc <code>paginated(...)</code> để response đồng nhất với phần còn lại của hệ thống.</li>
-    </ul>
-
-    <h2>3. <code>admin.service.ts</code> - Nơi xử lý nghiệp vụ thật</h2>
-
-<pre data-lang="typescript"><code>
-<span class="fn">constructor</span>(
-  <span class="kw">private readonly</span> prisma: <span class="typ">PrismaService</span>,
-  <span class="kw">private readonly</span> redisService: <span class="typ">RedisService</span>,
-) {}
+    %% Gửi Response về Client
+    Controller -- "12. NestJS Core tạo HTTP Response\n({ statusCode: 200, data: ... })" --> Client
+    
+    %% Style adjustments
+    classDef database fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef cache fill:#ffb,stroke:#333,stroke-width:2px;
+    classDef client fill:#bbf,stroke:#333,stroke-width:2px;
+    
+    class Prisma database;
+    class Redis cache;
+    class Client,EndUser client;
 </code></pre>
-
-    <p><code>AdminService</code> nhận 2 phụ thuộc chính:</p>
-
-    <ul>
-      <li><code>PrismaService</code>: đọc/ghi dữ liệu vào database.</li>
-      <li><code>RedisService</code>: xóa cache khi dữ liệu sản phẩm hoặc danh mục thay đổi.</li>
-    </ul>
-
-    <p>Ngoài ra service còn dùng <code>Logger</code> để lưu lại dấu vết thao tác của admin, ví dụ admin nào vừa tạo sản phẩm hoặc vừa đổi trạng thái đơn hàng.</p>
-
-    <h3>3.1. Quản lý danh mục</h3>
-
-    <p>Khi tạo hoặc cập nhật danh mục, service luôn kiểm tra <code>slug</code> có bị trùng hay không bằng <code>ensureUniqueCategorySlug(...)</code>.</p>
-
-<pre data-lang="typescript"><code>
-<span class="kw">async</span> <span class="fn">createCategory</span>(adminUserId: <span class="typ">number</span>, dto: <span class="typ">CreateCategoryDto</span>) {
-  <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">ensureUniqueCategorySlug</span>(dto.slug);
-
-  <span class="kw">const</span> category = <span class="kw">await</span> <span class="kw">this</span>.prisma.category.<span class="fn">create</span>({
-    data: dto,
-  });
-
-  <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">invalidateCategoryCache</span>();
-  <span class="kw">this</span>.logger.<span class="fn">log</span>(<span class="str">`Admin ${adminUserId} created category ${category.id}`</span>);
-
-  <span class="kw">return</span> category;
-}
-</code></pre>
-
-    <p>Luồng xử lý ở đây là:</p>
-
-    <ol>
-      <li>Chặn trường hợp <code>slug</code> trùng.</li>
-      <li>Tạo dữ liệu trong bảng <code>category</code>.</li>
-      <li>Xóa cache danh mục để frontend không dùng dữ liệu cũ.</li>
-      <li>Ghi log thao tác của admin.</li>
-    </ol>
-
-    <h3>3.2. Quản lý sản phẩm</h3>
-
-    <p>Tạo sản phẩm có nhiều bước kiểm tra hơn:</p>
-
-<pre data-lang="typescript"><code>
-<span class="kw">async</span> <span class="fn">createProduct</span>(adminUserId: <span class="typ">number</span>, dto: <span class="typ">CreateProductDto</span>) {
-  <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">ensureCategoryExists</span>(dto.categoryId);
-  <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">ensureUniqueProductSlug</span>(dto.slug);
-
-  <span class="kw">const</span> product = <span class="kw">await</span> <span class="kw">this</span>.prisma.product.<span class="fn">create</span>({
-    data: {
-      name: dto.name,
-      slug: dto.slug,
-      description: dto.description,
-      price: <span class="kw">new</span> <span class="typ">Prisma</span>.<span class="typ">Decimal</span>(dto.price),
-      stock: dto.stock,
-      categoryId: dto.categoryId,
-      status: dto.status ?? <span class="typ">ProductStatus</span>.<span class="typ">ACTIVE</span>,
-      images: dto.images?.length
-        ? {
-            create: dto.images.<span class="fn">map</span>((image) => ({
-              url: image.url,
-              alt: image.alt,
-            })),
-          }
-        : <span class="kw">undefined</span>,
-    },
-    include: {
-      images: <span class="kw">true</span>,
-      category: <span class="kw">true</span>,
-    },
-  });
-
-  <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">invalidateProductCache</span>(product.slug);
-  <span class="kw">return</span> product;
-}
-</code></pre>
-
-    <p>Những điểm quan trọng:</p>
-
-    <ul>
-      <li><code>ensureCategoryExists(dto.categoryId)</code>: không cho tạo sản phẩm nếu danh mục không tồn tại.</li>
-      <li><code>ensureUniqueProductSlug(dto.slug)</code>: tránh 2 sản phẩm dùng cùng một đường dẫn.</li>
-      <li><code>new Prisma.Decimal(dto.price)</code>: giá tiền được chuyển sang kiểu số thập phân chính xác để tránh lỗi làm tròn.</li>
-      <li><code>status ?? ProductStatus.ACTIVE</code>: nếu admin không gửi trạng thái, sản phẩm mặc định là <code>ACTIVE</code>.</li>
-      <li><code>images?.length ? { create: ... } : undefined</code>: chỉ tạo bản ghi ảnh khi thật sự có ảnh gửi lên.</li>
-    </ul>
-
-    <p>Khi cập nhật sản phẩm, service còn xử lý thêm 2 trường hợp:</p>
-
-    <ul>
-      <li>Nếu đổi <code>categoryId</code> thì kiểm tra danh mục mới có tồn tại không.</li>
-      <li>Nếu gửi <code>images</code>, toàn bộ ảnh cũ sẽ bị <code>deleteMany: {}</code> rồi tạo lại từ dữ liệu mới.</li>
-    </ul>
-
-    <p>Điều này đơn giản hóa logic đồng bộ ảnh, đổi lại là mỗi lần cập nhật ảnh sẽ thay toàn bộ danh sách thay vì sửa từng ảnh lẻ.</p>
-
-    <h3>3.3. Xóa mềm sản phẩm</h3>
-
-<pre data-lang="typescript"><code>
-<span class="kw">async</span> <span class="fn">softDeleteProduct</span>(adminUserId: <span class="typ">number</span>, id: <span class="typ">number</span>) {
-  <span class="kw">const</span> existing = <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">ensureProductExists</span>(id);
-  <span class="kw">const</span> product = <span class="kw">await</span> <span class="kw">this</span>.prisma.product.<span class="fn">update</span>({
-    where: { id },
-    data: {
-      deletedAt: <span class="kw">new</span> <span class="typ">Date</span>(),
-    },
-  });
-
-  <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">invalidateProductCache</span>(existing.slug, product.slug);
-  <span class="kw">return</span> product;
-}
-</code></pre>
-
-    <p>Đây không phải xóa cứng khỏi database. Thay vào đó, code gắn <code>deletedAt</code> bằng thời điểm hiện tại. Kiểu xóa này gọi là <strong>soft delete</strong>:</p>
-
-    <ul>
-      <li>dữ liệu vẫn còn để truy vết hoặc khôi phục;</li>
-      <li>tầng đọc dữ liệu có thể chủ động bỏ qua các sản phẩm đã bị xóa mềm.</li>
-    </ul>
-
-    <h3>3.4. Quản lý đơn hàng</h3>
-
-    <p>Admin có thể xem danh sách đơn hàng với phân trang và lọc theo trạng thái:</p>
-
-<pre data-lang="typescript"><code>
-<span class="kw">async</span> <span class="fn">findOrders</span>(query: <span class="typ">AdminOrderQueryDto</span>) {
-  <span class="kw">const</span> page = query.page ?? <span class="num">1</span>;
-  <span class="kw">const</span> limit = query.limit ?? <span class="num">10</span>;
-  <span class="kw">const</span> skip = (page - <span class="num">1</span>) * limit;
-  <span class="kw">const</span> where: <span class="typ">Prisma</span>.<span class="typ">OrderWhereInput</span> = {
-    ...(query.status ? { status: query.status } : {}),
-  };
-
-  <span class="kw">const</span> [orders, total] = <span class="kw">await</span> <span class="typ">Promise</span>.<span class="fn">all</span>([
-    <span class="kw">this</span>.prisma.order.<span class="fn">findMany</span>({ ... }),
-    <span class="kw">this</span>.prisma.order.<span class="fn">count</span>({ where }),
-  ]);
-
-  <span class="kw">return</span> {
-    data: orders.<span class="fn">map</span>((order) => <span class="kw">new</span> <span class="typ">AdminOrderResponseDto</span>(order)),
-    total,
-    page,
-    limit,
-  };
-}
-</code></pre>
-
-    <p>Ở đây có vài kỹ thuật đáng chú ý:</p>
-
-    <ul>
-      <li><code>page</code>, <code>limit</code>, <code>skip</code>: tạo phân trang cơ bản.</li>
-      <li><code>where</code>: chỉ thêm điều kiện <code>status</code> khi admin thực sự truyền bộ lọc.</li>
-      <li><code>Promise.all([...])</code>: lấy danh sách đơn và tổng số lượng song song để giảm thời gian chờ.</li>
-      <li><code>AdminOrderResponseDto</code>: chuyển đổi dữ liệu Prisma sang dạng response ổn định hơn, đặc biệt là biến các số kiểu Decimal thành chuỗi.</li>
-    </ul>
-
-    <p>Khi cập nhật trạng thái đơn hàng, service sẽ kiểm tra đơn có tồn tại trước rồi mới <code>update</code>.</p>
-
-    <h2>4. DTO (<code>src/admin/dto</code>) - Hàng rào kiểm tra dữ liệu</h2>
-
-    <p>DTO giúp chặn dữ liệu bẩn ngay từ lớp controller trước khi chạm vào service.</p>
-
-    <h3><code>product.dto.ts</code></h3>
-
-<pre data-lang="typescript"><code>
-<span class="kw">export class</span> <span class="typ">CreateProductDto</span> {
-  <span class="dec">@IsString</span>()
-  name!: <span class="typ">string</span>;
-
-  <span class="dec">@IsString</span>()
-  price!: <span class="typ">string</span>;
-
-  <span class="dec">@Type</span>(() => <span class="typ">Number</span>)
-  <span class="dec">@IsInt</span>()
-  <span class="dec">@Min</span>(<span class="num">0</span>)
-  stock!: <span class="typ">number</span>;
-}
-</code></pre>
-
-    <p>Một số chi tiết cần để ý:</p>
-
-    <ul>
-      <li><code>price</code> đang được nhận dưới dạng <code>string</code>, không phải <code>number</code>. Sau đó service mới chuyển sang <code>Prisma.Decimal</code>.</li>
-      <li><code>stock</code> dùng <code>@Type(() => Number)</code> để ép kiểu từ dữ liệu HTTP sang số trước khi validate.</li>
-      <li><code>categoryId</code> phải là số nguyên dương.</li>
-      <li><code>status</code> chỉ chấp nhận giá trị thuộc enum <code>ProductStatus</code>.</li>
-      <li><code>images</code> là mảng object lồng nhau nên cần <code>@ValidateNested({ each: true })</code>.</li>
-    </ul>
-
-    <h3><code>category.dto.ts</code></h3>
-
-    <p>DTO danh mục đơn giản hơn, chỉ gồm <code>name</code>, <code>slug</code>, <code>description</code>, trong đó <code>description</code> là tùy chọn.</p>
-
-    <h3><code>order.dto.ts</code></h3>
-
-    <p>File này phục vụ 3 mục tiêu:</p>
-
-    <ul>
-      <li><code>AdminOrderQueryDto</code>: nhận query filter và kế thừa phân trang.</li>
-      <li><code>UpdateOrderStatusDto</code>: chỉ cho phép đổi sang giá trị hợp lệ của <code>OrderStatus</code>.</li>
-      <li><code>AdminOrderResponseDto</code>: chuẩn hóa dữ liệu trả về cho API quản trị đơn hàng.</li>
-    </ul>
-
-    <h2>5. Cache và tính nhất quán dữ liệu</h2>
-
-    <p>Khi admin thay đổi danh mục hoặc sản phẩm, service sẽ chủ động xóa cache:</p>
-
-<pre data-lang="typescript"><code>
-<span class="kw">private async</span> <span class="fn">invalidateCategoryCache</span>() {
-  <span class="kw">await</span> <span class="kw">this</span>.redisService.<span class="fn">del</span>(<span class="typ">CACHE_KEYS</span>.<span class="typ">CATEGORIES</span>);
-  <span class="kw">await</span> <span class="kw">this</span>.redisService.<span class="fn">reset</span>();
-}
-</code></pre>
-
-<pre data-lang="typescript"><code>
-<span class="kw">private async</span> <span class="fn">invalidateProductCache</span>(oldSlug?: <span class="typ">string</span>, newSlug?: <span class="typ">string</span>) {
-  <span class="kw">await</span> <span class="kw">this</span>.redisService.<span class="fn">reset</span>();
-
-  <span class="kw">if</span> (oldSlug) {
-    <span class="kw">await</span> <span class="kw">this</span>.redisService.<span class="fn">del</span>(<span class="typ">CACHE_KEYS</span>.<span class="fn">PRODUCT</span>(oldSlug));
-  }
-
-  <span class="kw">if</span> (newSlug && newSlug !== oldSlug) {
-    <span class="kw">await</span> <span class="kw">this</span>.redisService.<span class="fn">del</span>(<span class="typ">CACHE_KEYS</span>.<span class="fn">PRODUCT</span>(newSlug));
-  }
-}
-</code></pre>
-
-    <p>Ý nghĩa của việc này:</p>
-
-    <ul>
-      <li>tránh việc frontend đọc lại dữ liệu cũ sau khi admin vừa sửa;</li>
-      <li>nếu slug sản phẩm đổi, cache theo slug cũ và slug mới đều được dọn;</li>
-      <li><code>reset()</code> cho thấy hệ thống ưu tiên tính đúng đắn dữ liệu hơn là giữ cache quá lâu.</li>
-    </ul>
-
-    <h2>6. Tóm tắt luồng hoạt động</h2>
-
-    <p>Luồng tổng quát của module admin là:</p>
-
-    <ol>
-      <li>Request đi vào <code>AdminController</code>.</li>
-      <li><code>AuthGuard</code> xác thực người dùng, <code>RolesGuard</code> kiểm tra role admin.</li>
-      <li>DTO validate dữ liệu đầu vào.</li>
-      <li><code>AdminService</code> xử lý nghiệp vụ với Prisma.</li>
-      <li>Nếu dữ liệu ảnh hưởng đến catalog, Redis cache sẽ bị xóa.</li>
-      <li>Response trả về theo format chung bằng <code>success(...)</code> hoặc <code>paginated(...)</code>.</li>
-    </ol>
-
-    <p>Nói ngắn gọn, <code>src/admin</code> chính là lớp điều khiển vận hành cho phần backoffice: chỉ admin mới được vào, mọi thay đổi quan trọng đều được kiểm tra, ghi log, và đồng bộ lại cache để phần khách hàng nhìn thấy dữ liệu mới nhất. </p>
+<hr>
+<h2 id="third-party">4. Vai trò của Third-Party & Thư viện</h2>
+<p>Module này hoạt động trơn tru nhờ sự phối hợp của ba công cụ đắc lực:</p>
+<ul>
+<li><strong>Prisma (<code>PrismaService</code>)</strong>: Là cầu nối giao tiếp với cơ sở dữ liệu. Nó đóng vai trò ORM, dịch các object JavaScript (như <code>{ where: { id }, data: dto }</code>) thành câu lệnh SQL an toàn. Prisma trả về các object có đầy đủ type-safe (an toàn kiểu dữ liệu), giúp IDE cảnh báo ngay nếu truy xuất sai tên cột.</li>
+<li><strong>Redis (<code>RedisService</code>)</strong>: Đóng vai trò là hệ thống tăng tốc (Cache).<ul>
+<li>Admin là người thay đổi dữ liệu (ví dụ: đổi giá sản phẩm). Khách hàng (End-user) là người xem.</li>
+<li>Nếu admin update sản phẩm nhưng bộ nhớ tạm (Cache) của khách hàng không được xóa đi, họ sẽ vẫn thấy giá cũ.</li>
+<li>Do đó, sau mỗi lệnh <code>create/update/delete</code> thành công trên Prisma, service bắt buộc phải gọi các hàm như <code>this.invalidateProductCache(product.slug)</code>. Redis sẽ dọn dẹp các cache key liên quan (ví dụ <code>product:dien-thoai-iphone</code>), buộc hệ thống phải lấy dữ liệu mới ở lần truy cập tiếp theo của khách hàng.</li>
+</ul>
+</li>
+<li><strong>Logging (<code>Logger</code>)</strong>: <code>this.logger.log(...)</code> được gọi mỗi khi có thao tác thay đổi dữ liệu.<ul>
+<li>Nó ghi lại chuỗi như <code>"Admin 1 updated order 5 status PENDING -> SHIPPED"</code>.</li>
+<li>Trong các hệ thống Enterprise, điều này là cốt lõi để tạo ra <strong>Audit Trail</strong> (dấu vết kiểm toán). Nếu đơn hàng bị hủy sai quy định hoặc giá bán bị thay đổi, quản trị viên cấp cao có thể dựa vào log này để biết chính xác <code>adminUserId</code> nào đã làm việc đó vào lúc nào.</li>
+</ul>
+</li>
+</ul>
+    </main>
   </div>
+  <script>
+/* === PASTE FULL JS BLOCK BÊN DƯỚI === */
+// ── TOC builder ──
+function buildTOC() {
+  const sidebar = document.getElementById('sidebar');
+  const content = document.querySelector('.content');
+  const headings = content.querySelectorAll('h1, h2, h3, h4');
+  
+  const title = document.createElement('div');
+  title.className = 'sidebar-title';
+  title.innerText = 'Nội dung';
+  sidebar.appendChild(title);
+
+  headings.forEach((h, i) => {
+    const slug = h.innerText.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    h.id = slug;
+    
+    const item = document.createElement('a');
+    item.className = 'toc-item toc-' + h.tagName.toLowerCase();
+    item.href = '#' + slug;
+    item.innerText = h.innerText;
+    sidebar.appendChild(item);
+  });
+}
+
+// ── Tab switcher ──
+function initTabs() {
+  document.querySelectorAll('.file-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const parent = tab.closest('.module-panel');
+      parent.querySelectorAll('.file-tab').forEach(t => t.classList.remove('active'));
+      parent.querySelectorAll('.file-pane').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.target).classList.add('active');
+    });
+  });
+}
+
+// ── Lifecycle Interaction ──
+function initLifecycle() {
+  document.querySelectorAll('.lc-node').forEach(node => {
+    node.addEventListener('click', () => {
+      // Highlight active node
+      document.querySelectorAll('.lc-node').forEach(n => n.classList.remove('active'));
+      node.classList.add('active');
+      
+      // Update Detail Panel
+      const panel = node.closest('.lifecycle-container').querySelector('.lc-detail-panel');
+      const body = panel.querySelector('.lc-detail-body');
+      panel.querySelector('.lc-detail-empty').style.display = 'none';
+      body.style.display = 'block';
+      
+      body.querySelector('.lc-detail-type').innerText = node.dataset.nodeType;
+      body.querySelector('.lc-detail-title').innerText = node.dataset.nodeName;
+      body.querySelector('.lc-detail-file').innerText = node.dataset.nodeFile;
+      
+      body.querySelector('.in-card .lc-flow-card-code').innerText = node.dataset.flowIn;
+      body.querySelector('.in-card .lc-flow-card-desc').innerText = node.dataset.whyIn;
+      
+      body.querySelector('.out-card .lc-flow-card-code').innerText = node.dataset.flowOut;
+      body.querySelector('.out-card .lc-flow-card-desc').innerText = node.dataset.whyOut;
+      
+      // Decorators
+      const decCont = body.querySelector('.lc-detail-decorators-container');
+      decCont.innerHTML = '';
+      if(node.dataset.decorators) {
+        const decs = JSON.parse(node.dataset.decorators);
+        decs.forEach(d => {
+          const div = document.createElement('div');
+          div.className = 'dec-card';
+          div.innerHTML = `<div class="dec-card-name">${d.name}</div><div class="dec-card-body"><div class="dec-card-desc">${d.desc}</div></div>`;
+          decCont.appendChild(div);
+        });
+      }
+      
+      // Action button
+      const btn = body.querySelector('.lc-detail-btn');
+      const targetId = node.dataset.targetId;
+      const targetTab = node.dataset.targetTab;
+      
+      btn.onclick = () => {
+        if (targetTab) {
+          const tab = document.querySelector(`.file-tab[data-target="${targetTab}"]`);
+          if (tab) tab.click();
+        }
+        
+        if (targetId) {
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) {
+            setTimeout(() => {
+              targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              targetEl.classList.remove('code-flash-highlight');
+              void targetEl.offsetWidth; // reflow
+              targetEl.classList.add('code-flash-highlight');
+            }, 150);
+          }
+        }
+      };
+    });
+  });
+}
+
+// ── Stagger animation on load ──
+function animateIn() {
+  const items = document.querySelectorAll('.lc-node, .dec-card, .crud-card, .module-panel, .lifecycle-container');
+  items.forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(12px)';
+    el.style.transition = `opacity .4s ${i*0.05}s, transform .4s ${i*0.05}s`;
+    setTimeout(() => {
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, 80 + i * 40);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildTOC();
+  initTabs();
+  initLifecycle();
+  animateIn();
+});
+  </script>
 </body>
 </html>

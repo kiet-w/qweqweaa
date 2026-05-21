@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giải Thích Chuyên Sâu - Module Redis (src/redis)</title>
+  <style>
+/* === PASTE FULL CSS BLOCK BÊN DƯỚI === */
+/* ── VSCode Dark Theme ── */
+/* ═══════════════════════════════════════════
+   VSCode Dark Theme — NestJS Doc Renderer
+   ═══════════════════════════════════════════ */
+:root {
+  --bg:            #1e1e1e;
+  --bg-sidebar:    #252526;
+  --bg-surface:    #2d2d30;
+  --bg-surface2:   #3c3c3c;
+  --bg-hover:      #2a2d2e;
+  --bg-active:     #37373d;
+  --border:        #404040;
+  --border-light:  #3c3c3c;
+
+  --text:          #d4d4d4;
+  --text-muted:    #858585;
+  --text-bright:   #ffffff;
+  --text-dim:      #6a6a6a;
+
+  /* VSCode syntax colors */
+  --kw:   #569cd6;   /* keywords: export, const, async, return */
+  --fn:   #dcdcaa;   /* function names */
+  --str:  #ce9178;   /* strings */
+  --typ:  #4ec9b0;   /* types, classes, interfaces */
+  --cmt:  #6a9955;   /* comments */
+  --num:  #b5cea8;   /* numbers */
+  --dec:  #c586c0;   /* decorators @Get @Injectable */
+  --prop: #9cdcfe;   /* properties, params */
+  --op:   #d4d4d4;   /* operators */
+
+  /* Semantic accent colors */
+  --accent:  #007acc;
+  --green:   #4ec9b0;
+  --yellow:  #dcdcaa;
+  --orange:  #ce9178;
+  --red:     #f44747;
+  --purple:  #c586c0;
+
+  /* Lifecycle node colors */
+  --node-guard:       #1a3a52;
+  --node-guard-b:     #007acc;
+  --node-pipe:        #1a3a28;
+  --node-pipe-b:      #4ec9b0;
+  --node-ctrl:        #2d2516;
+  --node-ctrl-b:      #dcdcaa;
+  --node-svc:         #2d1e35;
+  --node-svc-b:       #c586c0;
+  --node-db:          #1a2535;
+  --node-db-b:        #569cd6;
+  --node-cache:       #1a2a1a;
+  --node-cache-b:     #4ec9b0;
+  --node-err:         #3a1a1a;
+  --node-err-b:       #f44747;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── LAYOUT ── */
+.page-wrap { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 16px 0;
+}
+.sidebar-title {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0 16px 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.toc-item {
+  display: block;
+  padding: 5px 16px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all .15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toc-item:hover { background: var(--bg-hover); color: var(--text); }
+.toc-item.active { border-left-color: var(--accent); color: var(--text-bright); background: var(--bg-active); }
+.toc-h1 { font-weight: 600; color: var(--text); }
+.toc-h2 { padding-left: 24px; }
+.toc-h3 { padding-left: 36px; font-size: 11.5px; }
+.toc-h4 { padding-left: 48px; font-size: 11px; }
+
+.content {
+  flex: 1;
+  max-width: 960px;
+  padding: 48px 52px 100px;
+  min-width: 0;
+}
+
+/* ── HEADINGS ── */
+h1,h2,h3,h4,h5,h6 {
+  color: var(--text-bright);
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 2.2em 0 0.6em;
+  scroll-margin-top: 20px;
+}
+h1 { font-size: 1.9em; border-bottom: 1px solid var(--border); padding-bottom: .4em; margin-top: 0; }
+h2 { font-size: 1.45em; border-bottom: 1px solid var(--border); padding-bottom: .3em; }
+h3 { font-size: 1.2em; color: var(--yellow); }
+h4 { font-size: 1.05em; color: var(--prop); }
+
+/* ── BODY TEXT ── */
+p { margin: .7em 0; }
+strong { color: var(--text-bright); font-weight: 600; }
+em { font-style: italic; color: var(--orange); }
+del { color: var(--text-muted); text-decoration: line-through; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+
+/* ── INLINE CODE ── */
+code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: .85em;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: .15em .45em;
+  color: var(--prop);
+}
+
+/* ── CODE BLOCKS ── */
+pre {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0;
+  margin: 1.2em 0;
+  overflow: hidden;
+  position: relative;
+}
+.pre-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface2);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 14px;
+}
+.pre-lang {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.pre-filename {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--yellow);
+}
+pre code {
+  display: block;
+  background: none;
+  border: none;
+  padding: 18px 20px;
+  font-size: .875em;
+  line-height: 1.65;
+  color: var(--text);
+  overflow-x: auto;
+}
+
+/* Syntax token colors */
+.kw  { color: var(--kw); }
+.fn  { color: var(--fn); }
+.str { color: var(--str); }
+.typ { color: var(--typ); }
+.cmt { color: var(--cmt); font-style: italic; }
+.num { color: var(--num); }
+.dec { color: var(--dec); }
+.prop{ color: var(--prop); }
+
+/* Decorator annotation tooltip */
+.dec-ann {
+  position: relative;
+  display: inline;
+}
+.dec-ann .ann-tip {
+  display: none;
+  position: absolute;
+  left: 0; top: 1.6em;
+  background: var(--bg-surface2);
+  border: 1px solid var(--dec);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 11.5px;
+  color: var(--text);
+  white-space: nowrap;
+  z-index: 99;
+  min-width: 200px;
+  line-height: 1.5;
+  font-style: normal;
+  font-family: -apple-system, sans-serif;
+  pointer-events: none;
+}
+.dec-ann:hover .ann-tip { display: block; }
+.dec-ann > .dec { border-bottom: 1px dashed var(--dec); cursor: help; }
+
+/* ── LISTS ── */
+ul, ol { padding-left: 1.8em; margin: .7em 0; }
+li { margin: .3em 0; }
+li > ul, li > ol { margin: .25em 0; }
+
+/* ── TABLES ── */
+table { width: 100%; border-collapse: collapse; margin: 1.2em 0; font-size: 13px; }
+thead { background: var(--bg-surface2); }
+th { color: var(--text-bright); font-weight: 600; text-align: left; padding: 9px 14px; border: 1px solid var(--border); }
+td { padding: 7px 14px; border: 1px solid var(--border); }
+tr:hover td { background: var(--bg-hover); }
+
+/* ── BLOCKQUOTE ── */
+blockquote {
+  margin: 1em 0;
+  padding: 12px 18px;
+  border-left: 3px solid var(--accent);
+  background: var(--bg-surface);
+  border-radius: 0 6px 6px 0;
+  color: var(--text-muted);
+}
+blockquote p { margin: 0; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 1.2em 0;
+  border-left: 4px solid;
+  font-size: 13.5px;
+}
+.callout-note    { background: #0d2137; border-color: var(--accent); }
+.callout-warn    { background: #2d2207; border-color: var(--yellow); }
+.callout-danger  { background: #2d0a0a; border-color: var(--red); }
+.callout-tip     { background: #0d2117; border-color: var(--green); }
+.callout-title   { font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+.callout-note .callout-title    { color: var(--accent); }
+.callout-warn .callout-title    { color: var(--yellow); }
+.callout-danger .callout-title  { color: var(--red); }
+.callout-tip .callout-title     { color: var(--green); }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+      <h1>Giải Thích Chuyên Sâu - Module Redis (src/redis)</h1>
+      <p>Module Redis đóng vai trò là Lớp Bộ Nhớ Đệm (Caching Layer) toàn cục. Với khả năng lưu trữ dữ liệu trực tiếp trên RAM thay vì ổ cứng, Redis giúp tăng tốc độ phản hồi gấp hàng nghìn lần và giảm tải (load) cực lớn cho hệ cơ sở dữ liệu chính yếu (PostgreSQL), đặc biệt hữu dụng với các dữ liệu được đọc thường xuyên (như danh sách sản phẩm) nhưng ít thay đổi.</p>
+
+      <!-- Tóm tắt trực quan -->
+      <table style="width:100%; margin: 2em 0; border-collapse: collapse; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+        <thead>
+          <tr style="background: var(--bg-surface2);">
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border);">Thành phần</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border);">Sơ đồ trực quan</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border);">Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);"><strong>1. Tích hợp cache-manager</strong></td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="padding:4px 8px; background:var(--accent); border-radius:4px; color:white; font-size:10px;">App</div>
+                <span style="color:var(--text-muted);">➔</span>
+                <div style="padding:4px 8px; background:var(--green); border-radius:4px; color:white; font-size:10px;">CacheManager</div>
+                <span style="color:var(--text-muted);">➔</span>
+                <div style="padding:4px 8px; background:var(--orange); border-radius:4px; color:white; font-size:10px;">Redis</div>
+              </div>
+            </td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">
+              <a href="#1-tich-hop-thu-vien-ben-thu-ba-cache-manager" style="padding: 6px 12px; background: var(--accent); color: white; border-radius: 4px; text-decoration: none; font-size: 12px;">Tới phần chi tiết 👇</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);"><strong>2. Các phương thức</strong></td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="padding:4px 8px; background:var(--fn); color:var(--bg); border-radius:4px; font-size:10px; font-weight:bold;">GET</div>
+                <div style="padding:4px 8px; background:var(--fn); color:var(--bg); border-radius:4px; font-size:10px; font-weight:bold;">SET</div>
+                <div style="padding:4px 8px; background:var(--fn); color:var(--bg); border-radius:4px; font-size:10px; font-weight:bold;">DEL</div>
+              </div>
+            </td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">
+              <a href="#2-chi-tiet-cac-phuong-thuc-public-private-methods" style="padding: 6px 12px; background: var(--accent); color: white; border-radius: 4px; text-decoration: none; font-size: 12px;">Tới phần chi tiết 👇</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 12px;"><strong>3. Luồng trả về</strong></td>
+            <td style="padding: 12px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="padding:4px 8px; background:var(--orange); border-radius:4px; color:white; font-size:10px;">Redis</div>
+                <span style="color:var(--text-muted);">➔</span>
+                <div style="padding:4px 8px; background:var(--purple); border-radius:4px; color:white; font-size:10px;">Domain Svc</div>
+                <span style="color:var(--text-muted);">➔</span>
+                <div style="padding:4px 8px; background:var(--accent); border-radius:4px; color:white; font-size:10px;">JSON API</div>
+              </div>
+            </td>
+            <td style="padding: 12px;">
+              <a href="#3-luong-tra-ve-va-dich-den-returns-outputs" style="padding: 6px 12px; background: var(--accent); color: white; border-radius: 4px; text-decoration: none; font-size: 12px;">Tới phần chi tiết 👇</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>1. Tích Hợp Thư Viện Bên Thứ Ba: <code>cache-manager</code></h2>
+      <p>Bên trong <code>redis.service.ts</code>, chúng ta không tương tác trực tiếp với các SDK thô của Redis (như <code>ioredis</code> hay <code>redis</code> client native). Thay vào đó, dự án sử dụng cầu nối tiêu chuẩn của hệ sinh thái NestJS thông qua thư viện <code>cache-manager</code> và module <code>@nestjs/cache-manager</code>.</p>
+
+      <pre>
+        <div class="pre-header">
+          <span class="pre-lang">typescript</span>
+          <span class="pre-filename">src/redis/redis.service.ts</span>
+        </div>
+        <code><span class="kw">constructor</span>(@<span class="dec">Inject</span>(<span class="typ">CACHE_MANAGER</span>) <span class="kw">private</span> cacheManager: <span class="typ">Cache</span>) {}</code>
+      </pre>
+
+      <ul>
+        <li><strong>Lợi ích cốt lõi</strong>: <code>cache-manager</code> cung cấp một lớp trừu tượng (abstraction layer). Bằng cách chích (inject) <code>CACHE_MANAGER</code>, chúng ta có được các hàm giao tiếp chuẩn hóa như <code>.get()</code>, <code>.set()</code>, <code>.del()</code>.</li>
+        <li><strong>Tính linh hoạt (Agnostic Caching)</strong>: Cấu trúc này giải phóng logic code khỏi việc bị trói buộc với một nhà cung cấp cụ thể. Nếu trong tương lai có yêu cầu đổi từ Redis sang In-Memory Cache (RAM cục bộ của Node.js) hoặc Memcached, bạn chỉ cần thay đổi cấu hình kết nối tại <code>AppModule</code> hoặc <code>RedisModule</code>. Toàn bộ file <code>RedisService</code> và các Domain Services đang sử dụng nó sẽ <strong>không cần phải sửa đổi dù chỉ một dòng code</strong>.</li>
+      </ul>
+
+      <h2>2. Chi Tiết Các Phương Thức (Public & Private Methods)</h2>
+      <p><code>RedisService</code> cung cấp một tập hợp các public methods để thao tác với bộ nhớ đệm. Không có private helper methods nào được khai báo riêng trong class này, toàn bộ logic được thực thi trực tiếp bên trong các public methods.</p>
+
+      <h3>2.1. Các Lớp Bọc Cơ Bản: <code>get</code>, <code>set</code>, <code>del</code>, <code>reset</code></h3>
+      <p>Các hàm này đóng vai trò là những lớp bọc mỏng (thin wrappers) gọi thẳng xuống thư viện <code>cache-manager</code>:</p>
+      <ul>
+        <li><strong><code>get(key: string)</code></strong>: Lấy giá trị từ Redis dựa trên khoá (<code>key</code>). Trả về dữ liệu nếu có, ngược lại trả về <code>undefined</code> hoặc <code>null</code>.</li>
+        <li><strong><code>set(key: string, value: any, ttl: number = 30000)</code></strong>: Lưu trữ một giá trị (<code>value</code>) vào Redis với một khoá (<code>key</code>). Thời gian sống (TTL - Time To Live) mặc định được thiết lập là 30000 milliseconds (30 giây).</li>
+        <li><strong><code>del(key: string)</code></strong>: Xoá một giá trị cụ thể khỏi Redis thông qua khoá (<code>key</code>). Hàm này thường được gọi khi cần vô hiệu hoá (invalidate) dữ liệu cũ ngay lập tức (ví dụ: khi sản phẩm vừa được cập nhật).</li>
+        <li><strong><code>reset()</code></strong>: Xóa toàn bộ dữ liệu đang có trong cache. Phương thức này xử lý tính tương thích an toàn giữa các phiên bản của <code>cache-manager</code> bằng cách ưu tiên gọi hàm <code>clear()</code> trước, nếu không tồn tại mới rơi (fallback) về hàm <code>reset()</code>.</li>
+      </ul>
+
+      <h3>2.2. Sức Mạnh Cốt Lõi: Hàm <code>getOrSet</code></h3>
+      <p>Trong khi các hàm cơ bản chỉ hỗ trợ thao tác đơn lẻ, sức mạnh nghiệp vụ thực sự của module này hội tụ hoàn toàn ở hàm <code>getOrSet</code>. Nó là hiện thân hoàn hảo của một mẫu thiết kế kinh điển mang tên <strong>Cache Aside Pattern</strong> (Mẫu Bộ Đệm Nằm Ngoài). Logic nội bộ của hàm này tự động hóa vòng đời của việc truy xuất: "Kiểm tra cache -> Trả về nếu có -> Tính toán/Truy vấn DB nếu thiếu -> Lưu lại vào cache -> Trả về kết quả".</p>
+
+      <h4>Cơ Chế Hoạt Động Của Callback (<code>fetchFunction</code>)</h4>
+      <p>Hãy phân tích chữ ký hàm:</p>
+      <pre>
+        <code>
+<span class="kw">async</span> <span class="fn">getOrSet</span>(
+  key: <span class="typ">string</span>,
+  fetchFunction: () => <span class="typ">Promise</span><<span class="typ">any</span>>,
+  ttl: <span class="typ">number</span> = 30000,
+)
+        </code>
+      </pre>
+      <p>Điều khiến <code>getOrSet</code> mạnh mẽ là tham số <code>fetchFunction</code>. Đây không phải là một biến chứa dữ liệu tĩnh, mà là một <strong>Hàm Callback</strong>. Tham số này cho phép <code>RedisService</code> <strong>trì hoãn (defer)</strong> việc tiêu tốn tài nguyên truy vấn DB cho tới giây phút thực sự bắt buộc phải làm vậy.</p>
+
+      <p><strong>Các bước diễn ra bên trong:</strong></p>
+      <ol>
+        <li><strong>Nhận Lệnh</strong>: Từ một Domain Service (vd: <code>CatalogService</code>), lập trình viên gọi <code>getOrSet</code> và truyền vào một định danh (key) kèm theo một khối lệnh truy vấn DB: <code>() => this.prisma.product.findMany()</code>. Lưu ý: Lúc này khối lệnh Prisma <strong>chưa hề chạy</strong>.</li>
+        <li><strong>Kiểm Tra Trạng Thái (Cache Hit/Miss)</strong>: Logic nội bộ của <code>getOrSet</code> sẽ ưu tiên gọi <code>await this.cacheManager.get(key)</code> để tra cứu RAM.</li>
+        <li><strong>Thực Thi Callback Động (Lazy Execution)</strong>: Nếu dữ liệu đã tồn tại trong Redis, <code>getOrSet</code> sẽ in ra dòng log (⚡ Lấy [key] từ tủ lạnh Redis!), bỏ qua <code>fetchFunction</code> và trả về ngay kết quả. Nhưng nếu Redis trống (Cache Miss), nó sẽ in log (🐌 Xuống hầm tìm dữ liệu cho [key]...) và kích hoạt nòng súng: gọi <code>await fetchFunction()</code>. Ngay tại khoảnh khắc này, truy vấn Prisma mới thực sự đổ xuống PostgreSQL.</li>
+        <li><strong>Cập Nhật & Phản Hồi</strong>: Kết quả được hứng lại (<code>freshData</code>), lưu (set) vào Redis với thời hạn <code>ttl</code> đã định, trước khi được đóng gói trả về.</li>
+      </ol>
+      <p>Thiết kế kiến trúc này tạo ra ranh giới tách bạch tuyệt đối: Logic truy vấn DB (sự hiểu biết về bảng/cột) nằm ở Domain Service, trong khi Logic quản trị Bộ nhớ đệm (vòng đời, TTL, hit/miss) nằm ở Redis Service. Chúng không bị chồng chéo (coupled) lẫn nhau.</p>
+
+      <h2>3. Luồng Trả Về Và Đích Đến (Returns/Outputs)</h2>
+      <p>Bản thân <code>RedisService</code> đóng vai trò là một "kho trung chuyển".</p>
+      <ul>
+        <li><strong>Kết quả trả về</strong>: Khi một phương thức bên ngoài hoàn tất việc gọi <code>this.redisService.getOrSet(...)</code>, cái mà nó nhận lại được là một tập hợp dữ liệu JSON nguyên vẹn y hệt như những gì DB trả ra. Đối với người gọi, họ hoàn toàn "mù mờ" (transparency) - họ không cần biết dữ liệu này vừa được lôi ra từ kho Redis trên RAM tốc độ ánh sáng hay vừa phải đào bới từ ổ cứng PostgreSQL lên.</li>
+        <li><strong>Đích đến</strong>: Sau khi ra khỏi <code>RedisService</code>, tập dữ liệu này chảy ngược về cho <strong>Domain Service</strong> tương ứng (như <code>CatalogService</code>). Tại đây, dữ liệu cache có thể được trộn lẫn, lọc bớt, hay biến đổi thành các Data Transfer Object (DTO) an toàn trước khi Controller mang nó đi trả về dưới dạng JSON Response cho client/người dùng qua API.</li>
+      </ul>
+    </main>
+  </div>
+  <script>
+    function buildTOC() {
+      const sidebar = document.getElementById('sidebar');
+      const headings = document.querySelectorAll('h1, h2, h3, h4');
+      
+      const title = document.createElement('div');
+      title.className = 'sidebar-title';
+      title.innerText = 'Nội dung';
+      sidebar.appendChild(title);
+
+      headings.forEach(h => {
+        const id = h.innerText.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        h.id = id;
+
+        const a = document.createElement('a');
+        a.className = `toc-item toc-${h.tagName.toLowerCase()}`;
+        a.href = '#' + id;
+        a.innerText = h.innerText;
+        sidebar.appendChild(a);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      buildTOC();
+    });
+  </script>
+</body>
+</html>
