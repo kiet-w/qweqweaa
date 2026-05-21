@@ -3,13 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Giải Thích Chuyên Sâu - Module Common (src/common)</title>
+  <title>Giải Thích Chi Tiết Chuyên Sâu - Module Common</title>
   <style>
-/* === PASTE FULL CSS BLOCK BÊN DƯỚI === */
 /* ── VSCode Dark Theme ── */
-/* ═══════════════════════════════════════════
-   VSCode Dark Theme — NestJS Doc Renderer
-   ═══════════════════════════════════════════ */
 :root {
   --bg:            #1e1e1e;
   --bg-sidebar:    #252526;
@@ -25,18 +21,16 @@
   --text-bright:   #ffffff;
   --text-dim:      #6a6a6a;
 
-  /* VSCode syntax colors */
-  --kw:   #569cd6;   /* keywords: export, const, async, return */
-  --fn:   #dcdcaa;   /* function names */
-  --str:  #ce9178;   /* strings */
-  --typ:  #4ec9b0;   /* types, classes, interfaces */
-  --cmt:  #6a9955;   /* comments */
-  --num:  #b5cea8;   /* numbers */
-  --dec:  #c586c0;   /* decorators @Get @Injectable */
-  --prop: #9cdcfe;   /* properties, params */
-  --op:   #d4d4d4;   /* operators */
+  --kw:   #569cd6;
+  --fn:   #dcdcaa;
+  --str:  #ce9178;
+  --typ:  #4ec9b0;
+  --cmt:  #6a9955;
+  --num:  #b5cea8;
+  --dec:  #c586c0;
+  --prop: #9cdcfe;
+  --op:   #d4d4d4;
 
-  /* Semantic accent colors */
   --accent:  #007acc;
   --green:   #4ec9b0;
   --yellow:  #dcdcaa;
@@ -44,7 +38,6 @@
   --red:     #f44747;
   --purple:  #c586c0;
 
-  /* Lifecycle node colors */
   --node-guard:       #1a3a52;
   --node-guard-b:     #007acc;
   --node-pipe:        #1a3a28;
@@ -72,7 +65,6 @@ body {
   overflow-x: hidden;
 }
 
-/* ── LAYOUT ── */
 .page-wrap { display: flex; min-height: 100vh; }
 
 .sidebar {
@@ -109,20 +101,17 @@ body {
 }
 .toc-item:hover { background: var(--bg-hover); color: var(--text); }
 .toc-item.active { border-left-color: var(--accent); color: var(--text-bright); background: var(--bg-active); }
-.toc-h1 { font-weight: 600; color: var(--text); }
 .toc-h2 { padding-left: 24px; }
 .toc-h3 { padding-left: 36px; font-size: 11.5px; }
-.toc-h4 { padding-left: 48px; font-size: 11px; }
 
 .content {
   flex: 1;
-  max-width: 960px;
+  max-width: 100% !important;
   padding: 48px 52px 100px;
   min-width: 0;
 }
 
-/* ── HEADINGS ── */
-h1,h2,h3,h4,h5,h6 {
+h1,h2,h3,h4 {
   color: var(--text-bright);
   font-weight: 600;
   line-height: 1.3;
@@ -132,20 +121,11 @@ h1,h2,h3,h4,h5,h6 {
 h1 { font-size: 1.9em; border-bottom: 1px solid var(--border); padding-bottom: .4em; margin-top: 0; }
 h2 { font-size: 1.45em; border-bottom: 1px solid var(--border); padding-bottom: .3em; }
 h3 { font-size: 1.2em; color: var(--yellow); }
-h4 { font-size: 1.05em; color: var(--prop); }
 
-/* ── BODY TEXT ── */
 p { margin: .7em 0; }
 strong { color: var(--text-bright); font-weight: 600; }
-em { font-style: italic; color: var(--orange); }
-del { color: var(--text-muted); text-decoration: line-through; }
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
-hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
-
-/* ── INLINE CODE ── */
 code {
-  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
   font-size: .85em;
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -154,7 +134,6 @@ code {
   color: var(--prop);
 }
 
-/* ── CODE BLOCKS ── */
 pre {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -162,7 +141,6 @@ pre {
   padding: 0;
   margin: 1.2em 0;
   overflow: hidden;
-  position: relative;
 }
 .pre-header {
   display: flex;
@@ -172,675 +150,396 @@ pre {
   border-bottom: 1px solid var(--border);
   padding: 6px 14px;
 }
-.pre-lang {
-  font-family: monospace;
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: .08em;
-}
-.pre-filename {
-  font-family: monospace;
-  font-size: 11px;
-  color: var(--yellow);
-}
-pre code {
-  display: block;
-  background: none;
-  border: none;
-  padding: 18px 20px;
-  font-size: .875em;
-  line-height: 1.65;
-  color: var(--text);
-  overflow-x: auto;
-}
+.pre-lang { font-family: monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+.pre-filename { font-family: monospace; font-size: 11px; color: var(--yellow); }
+pre code { display: block; background: none; border: none; padding: 18px 20px; font-size: .875em; line-height: 1.65; color: var(--text); overflow-x: auto; }
 
-/* Syntax token colors */
-.kw  { color: var(--kw); }
-.fn  { color: var(--fn); }
-.str { color: var(--str); }
+.kw { color: var(--kw); }
+.fn { color: var(--fn); }
 .typ { color: var(--typ); }
-.cmt { color: var(--cmt); font-style: italic; }
-.num { color: var(--num); }
 .dec { color: var(--dec); }
-.prop{ color: var(--prop); }
+.prop { color: var(--prop); }
+.cmt { color: var(--cmt); font-style: italic; }
 
-/* Decorator annotation tooltip */
-.dec-ann {
-  position: relative;
-  display: inline;
-}
-.dec-ann .ann-tip {
-  display: none;
-  position: absolute;
-  left: 0; top: 1.6em;
-  background: var(--bg-surface2);
-  border: 1px solid var(--dec);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 11.5px;
-  color: var(--text);
-  white-space: nowrap;
-  z-index: 99;
-  min-width: 200px;
-  line-height: 1.5;
-  font-style: normal;
-  font-family: -apple-system, sans-serif;
-  pointer-events: none;
-}
-.dec-ann:hover .ann-tip { display: block; }
-.dec-ann > .dec { border-bottom: 1px dashed var(--dec); cursor: help; }
-
-/* ── LISTS ── */
-ul, ol { padding-left: 1.8em; margin: .7em 0; }
-li { margin: .3em 0; }
-li > ul, li > ol { margin: .25em 0; }
-
-/* ── TABLES ── */
 table { width: 100%; border-collapse: collapse; margin: 1.2em 0; font-size: 13px; }
 thead { background: var(--bg-surface2); }
 th { color: var(--text-bright); font-weight: 600; text-align: left; padding: 9px 14px; border: 1px solid var(--border); }
 td { padding: 7px 14px; border: 1px solid var(--border); }
-tr:hover td { background: var(--bg-hover); }
 
-/* ── BLOCKQUOTE ── */
-blockquote {
-  margin: 1em 0;
-  padding: 12px 18px;
-  border-left: 3px solid var(--accent);
-  background: var(--bg-surface);
-  border-radius: 0 6px 6px 0;
-  color: var(--text-muted);
-}
-blockquote p { margin: 0; }
-
-/* ── CALLOUT BOXES ── */
-.callout {
-  border-radius: 6px;
-  padding: 14px 18px;
-  margin: 1.2em 0;
-  border-left: 4px solid;
-  font-size: 13.5px;
-}
-.callout-note    { background: #0d2137; border-color: var(--accent); }
-.callout-warn    { background: #2d2207; border-color: var(--yellow); }
-.callout-danger  { background: #2d0a0a; border-color: var(--red); }
-.callout-tip     { background: #0d2117; border-color: var(--green); }
-.callout-title   { font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
-.callout-note .callout-title    { color: var(--accent); }
-.callout-warn .callout-title    { color: var(--yellow); }
-.callout-danger .callout-title  { color: var(--red); }
-.callout-tip .callout-title     { color: var(--green); }
-
-/* ═══════════════════════════════════════════
-   REQUEST LIFECYCLE CONTAINER (Interactive Split-Screen)
-   ═══════════════════════════════════════════ */
-.lifecycle-container {
-  display: flex;
-  flex-direction: column;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  margin: 2em 0;
-  overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
-}
-@media (min-width: 992px) {
-  .lifecycle-container {
-    flex-direction: row;
-    height: 520px;
-  }
-}
-.lc-flow-panel {
-  flex: 1.3;
-  padding: 24px;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  border-bottom: 1px solid var(--border);
-}
-@media (min-width: 992px) {
-  .lc-flow-panel {
-    border-bottom: none;
-    border-right: 1px solid var(--border);
-  }
-}
-.lifecycle-title {
-  font-size: 11px;
-  letter-spacing: .15em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 24px;
-  font-weight: 700;
-  border-bottom: 1px dashed var(--border);
-  padding-bottom: 12px;
-}
-.lc-flow-scroll {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  overflow-x: auto;
-  padding: 20px 0;
-}
-.lc-flow {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  min-width: max-content;
-  margin: auto;
-}
-.lc-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-.lc-node {
-  border-radius: 8px;
-  padding: 14px 18px;
-  min-width: 140px;
-  max-width: 180px;
-  text-align: center;
-  border: 1px solid;
-  position: relative;
-  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  user-select: none;
-}
-.lc-node:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,.4);
-}
-.lc-node.active {
-  transform: scale(1.05);
-  border-width: 2px;
-}
-.lc-node.guard  { background: var(--node-guard);  border-color: var(--node-guard-b); }
-.lc-node.pipe   { background: var(--node-pipe);   border-color: var(--node-pipe-b); }
-.lc-node.ctrl   { background: var(--node-ctrl);   border-color: var(--node-ctrl-b); }
-.lc-node.svc    { background: var(--node-svc);    border-color: var(--node-svc-b); }
-.lc-node.db     { background: var(--node-db);     border-color: var(--node-db-b); }
-.lc-node.cache  { background: var(--node-cache);  border-color: var(--node-cache-b); }
-.lc-node.err    { background: var(--node-err);    border-color: var(--node-err-b); }
-.lc-node.client { background: var(--bg-surface2); border-color: var(--border); }
-.lc-node.active.pipe   { box-shadow: 0 0 15px var(--node-pipe-b); }
-.lc-node.active.ctrl   { box-shadow: 0 0 15px var(--node-ctrl-b); }
-.lc-node.active.svc    { box-shadow: 0 0 15px var(--node-svc-b); }
-.lc-node.active.db     { box-shadow: 0 0 15px var(--node-db-b); }
-.lc-node.active.cache  { box-shadow: 0 0 15px var(--node-cache-b); }
-.lc-node.active.err    { box-shadow: 0 0 15px var(--node-err-b); }
-.lc-node-label { font-size: 12px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
-.lc-node-code  { font-size: 10.5px; font-family: monospace; color: var(--text-muted); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lc-node-desc  { font-size: 10px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.lc-node.guard .lc-node-label  { color: #58b3f0; }
-.lc-node.pipe .lc-node-label   { color: var(--green); }
-.lc-node.ctrl .lc-node-label   { color: var(--yellow); }
-.lc-node.svc .lc-node-label    { color: var(--purple); }
-.lc-node.db .lc-node-label     { color: var(--kw); }
-.lc-node.cache .lc-node-label  { color: var(--green); }
-.lc-node.err .lc-node-label    { color: var(--red); }
-.lc-node-ports {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-  padding-top: 6px;
-  border-top: 1px dashed rgba(255,255,255,0.08);
-  font-size: 9px;
-  font-family: monospace;
-}
-.lc-port { padding: 1px 4px; border-radius: 3px; }
-.lc-port.in { background: rgba(78, 201, 176, 0.1); color: var(--green); }
-.lc-port.out { background: rgba(0, 122, 204, 0.15); color: var(--kw); }
-.lc-connector {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-}
-.lc-line {
-  height: 2px;
-  width: 40px;
-  background: linear-gradient(90deg, var(--border), var(--accent));
-  position: relative;
-  overflow: hidden;
-}
-.lc-line::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0,122,204,.8), transparent);
-  animation: flow 2s infinite;
-}
-@keyframes flow {
-  0%   { left: -100%; }
-  100% { left: 100%; }
-}
-.lc-arrow {
-  width: 0; height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 6px solid var(--accent);
-  margin-left: -1px;
-}
-.lc-line.err-line {
-  background: none;
-  border-top: 2px dashed var(--red);
-  height: 0;
-}
-.lc-line.err-line::after { display: none; }
-.lc-step-num {
-  font-size: 10px;
-  color: var(--text-dim);
-  margin-top: 8px;
-  font-family: monospace;
-}
-.lc-detail-panel { flex: 1; padding: 24px; display: flex; flex-direction: column; }
-.lc-detail-empty { color: var(--text-muted); font-size: 13px; text-align: center; margin-top: 100px; }
-.lc-detail-header { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 16px; }
-.lc-detail-type { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
-.lc-detail-title { font-size: 18px; font-weight: 600; color: var(--text-bright); }
-.lc-detail-file { font-size: 12px; font-family: monospace; color: var(--text-muted); margin-top: 4px; }
-.lc-flow-card { background: var(--bg-surface2); border-radius: 6px; padding: 12px; margin-bottom: 12px; }
-.lc-flow-card-title { font-size: 10px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; }
-.lc-flow-card-code { font-family: monospace; font-size: 12px; color: var(--text-bright); margin-bottom: 4px; }
-.lc-flow-card-desc { font-size: 12px; color: var(--text-muted); }
-.lc-detail-decorators-container { margin: 16px 0; }
-.lc-detail-btn {
-  background: var(--accent);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  transition: opacity .2s;
-}
-.lc-detail-btn:hover { opacity: .9; }
-
-/* ── MODULE DETAIL PANEL ── */
-.module-panel {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 1.5em 0;
-}
-.module-panel-header {
-  background: var(--bg-surface2);
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid var(--border);
-}
-.module-panel-icon { font-size: 18px; }
-.module-panel-name { font-size: 15px; font-weight: 600; color: var(--text-bright); }
-.module-panel-path { font-size: 11px; font-family: monospace; color: var(--text-muted); margin-left: auto; }
-.file-tabs {
-  display: flex;
-  background: var(--bg-surface2);
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto;
-}
-.file-tab {
-  padding: 8px 18px;
-  font-size: 12px;
-  font-family: monospace;
-  color: var(--text-muted);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  white-space: nowrap;
-  transition: all .15s;
-  user-select: none;
-}
-.file-tab:hover { color: var(--text); background: var(--bg-hover); }
-.file-tab.active { color: var(--text-bright); border-bottom-color: var(--accent); background: var(--bg-surface); }
-.file-tab .ext-module { color: var(--green); }
-.file-tab .ext-ctrl   { color: var(--yellow); }
-.file-tab .ext-svc    { color: var(--purple); }
-.file-tab .ext-dto    { color: var(--kw); }
-.file-tab .ext-guard  { color: var(--red); }
-.file-pane { display: none; padding: 20px 24px; }
-.file-pane.active { display: block; }
-
-/* Decorator explanation card */
 .dec-card {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  background: var(--bg-surface2);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--dec);
-  border-radius: 6px;
-  padding: 12px 16px;
-  margin: 10px 0;
-  font-size: 13px;
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--bg-surface2); border: 1px solid var(--border);
+  border-left: 3px solid var(--dec); border-radius: 6px;
+  padding: 12px 16px; margin: 10px 0; font-size: 13px;
 }
-.dec-card-name { font-family: monospace; font-size: 13px; color: var(--dec); font-weight: 600; min-width: 130px; }
+.dec-card-name { font-family: monospace; font-size: 13px; color: var(--dec); font-weight: 600; min-width: 140px; }
 .dec-card-body { flex: 1; }
 .dec-card-desc { color: var(--text); margin-bottom: 4px; }
 .dec-card-effect { font-size: 12px; color: var(--text-muted); }
 .dec-card-effect b { color: var(--prop); font-weight: normal; }
 
-/* CRUD operation card */
 .crud-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin: 12px 0;
-  overflow: hidden;
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: 8px; margin: 12px 0; overflow: hidden;
 }
 .crud-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  background: var(--bg-surface2);
-  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+  background: var(--bg-surface2); border-bottom: 1px solid var(--border);
 }
-.crud-method {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  padding: 3px 10px;
-  border-radius: 4px;
-  font-family: monospace;
-}
-.method-get    { background: #1a3a28; color: #4ec9b0; }
-.method-post   { background: #1a2d0d; color: #89d185; }
-.method-put,
-.method-patch  { background: #2d2207; color: #dcdcaa; }
-.method-delete { background: #2d0a0a; color: #f44747; }
+.crud-method { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 4px; font-family: monospace; }
+.method-get { background: #1a3a28; color: #4ec9b0; }
 .crud-path { font-family: monospace; font-size: 13px; color: var(--text); }
-.crud-fn   { font-family: monospace; font-size: 12px; color: var(--fn); margin-left: auto; }
+.crud-fn { font-family: monospace; font-size: 12px; color: var(--fn); margin-left: auto; }
 .crud-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-.crud-col-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+.crud-col-title { font-size: 10px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
 .crud-col-content { font-size: 12px; color: var(--text); line-height: 1.55; }
-.crud-col-content code { font-size: 11.5px; }
-.crud-effects { padding: 0 16px 14px; }
-.crud-effects-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; }
-.effect-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: var(--bg-surface2);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 3px 10px;
-  font-size: 11.5px;
-  font-family: monospace;
-  margin: 3px 4px 3px 0;
-  color: var(--text-muted);
+
+.lifecycle-container {
+  display: flex; flex-direction: column; background: var(--bg-surface);
+  border: 1px solid var(--border); border-radius: 12px; margin: 2em 0;
+  overflow: hidden; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
 }
-.effect-tag.db-write  { border-color: var(--kw); color: var(--kw); }
-.effect-tag.db-read   { border-color: var(--green); color: var(--green); }
-.effect-tag.cache-inv { border-color: var(--yellow); color: var(--yellow); }
-.effect-tag.cache-set { border-color: var(--green); color: var(--green); }
-.effect-tag.emit      { border-color: var(--purple); color: var(--purple); }
-.effect-tag.guard     { border-color: var(--red); color: var(--red); }
-</style>
+@media (min-width: 992px) { .lifecycle-container { flex-direction: row; height: 520px; } }
+.lc-flow-panel { flex: 1.3; padding: 24px; overflow: auto; display: flex; flex-direction: column; border-right: 1px solid var(--border); }
+.lc-detail-panel { flex: 1; padding: 24px; background: var(--bg-sidebar); overflow-y: auto; }
+.lifecycle-title { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 24px; font-weight: 700; border-bottom: 1px dashed var(--border); padding-bottom: 12px; }
+.lc-flow-scroll { flex: 1; display: flex; align-items: center; overflow-x: auto; padding: 20px 0; }
+.lc-flow { display: flex; align-items: center; gap: 0; min-width: max-content; margin: auto; }
+.lc-step { display: flex; flex-direction: column; align-items: center; }
+.lc-node {
+  border-radius: 8px; padding: 12px 16px; min-width: 130px; text-align: center;
+  border: 1px solid; cursor: pointer; transition: all .2s;
+}
+.lc-node:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,.3); }
+.lc-node.active { transform: scale(1.05); border-width: 2px; }
+.lc-node.client { background: var(--bg-surface2); border-color: var(--border); }
+.lc-node.guard { background: var(--node-guard); border-color: var(--node-guard-b); }
+.lc-node.pipe { background: var(--node-pipe); border-color: var(--node-pipe-b); }
+.lc-node.ctrl { background: var(--node-ctrl); border-color: var(--node-ctrl-b); }
+.lc-node.svc { background: var(--node-svc); border-color: var(--node-svc-b); }
+.lc-node.db { background: var(--node-db); border-color: var(--node-db-b); }
+.lc-node.err { background: var(--node-err); border-color: var(--node-err-b); }
+.lc-node-label { font-size: 12px; font-weight: 600; color: var(--text-bright); }
+.lc-node-code { font-size: 10px; font-family: monospace; color: var(--text-muted); }
+.lc-node-ports { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.08); font-size: 9px; font-family: monospace; }
+.lc-port { padding: 1px 4px; border-radius: 3px; }
+.lc-port.in { background: rgba(78, 201, 176, 0.1); color: var(--green); }
+.lc-port.out { background: rgba(0, 122, 204, 0.15); color: var(--kw); }
+.lc-connector { display: flex; align-items: center; padding: 0 4px; }
+.lc-line { height: 2px; width: 30px; background: var(--accent); position: relative; }
+.lc-arrow { width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 6px solid var(--accent); }
+
+.lc-detail-header { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.lc-detail-type { font-size: 10px; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.lc-detail-title { font-size: 16px; font-weight: 600; color: var(--text-bright); }
+.lc-detail-file { font-size: 11px; font-family: monospace; color: var(--text-muted); margin-top: 4px; }
+.lc-flow-card { background: var(--bg-surface); border-radius: 6px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
+.lc-flow-card-title { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.lc-flow-card-code { font-family: monospace; font-size: 12px; color: var(--yellow); margin-bottom: 4px; }
+.lc-flow-card-desc { font-size: 12.5px; line-height: 1.5; }
+
+.summary-table { margin-top: 2em; }
+.summary-table .lc-node { padding: 4px 8px; min-width: 80px; font-size: 11px; display: inline-block; }
+  </style>
 </head>
 <body>
   <div class="page-wrap">
     <nav class="sidebar" id="sidebar"></nav>
     <main class="content">
-      <h1>Giải Thích Chuyên Sâu - Module Common (src/common)</h1>
+      <h1>Giải Thích Chi Tiết Chuyên Sâu - Module Common (src/common)</h1>
       <p>Khác với các module chứa logic nghiệp vụ cụ thể (như <code>user</code>, <code>cart</code>, <code>catalog</code>), <code>common</code> là module chứa các công cụ, tiện ích, cấu hình và các lớp bảo vệ dùng chung cho toàn bộ hệ thống. Mục tiêu cốt lõi của <code>common</code> là giảm thiểu code lặp lại (DRY - Don't Repeat Yourself), tăng tính nhất quán và chuẩn hóa toàn bộ ứng dụng NestJS.</p>
+      <p>Dưới đây là tài liệu đi sâu vào các cơ chế quan trọng nhất của <code>src/common</code>.</p>
 
-      <div class="summary-box" style="margin: 2em 0; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 8px; padding: 20px;">
-          <h3 style="margin-top: 0; color: var(--accent);">📊 Tổng quan Module Common</h3>
-          <table style="border-collapse: collapse; width: 100%;">
-              <thead>
-                  <tr>
-                      <th style="width: 25%;">Thành phần</th>
-                      <th style="width: 50%;">Sơ đồ trực quan</th>
-                      <th style="width: 25%;">Hành động</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr>
-                      <td><strong>Guards & Decorators</strong></td>
-                      <td>
-                          <div style="display:flex; gap:8px; align-items:center;">
-                              <div class="lc-node client" style="min-width:auto; padding:4px 8px; font-size:10px; border-radius:4px;">Request</div>
-                              <span style="color:var(--text-muted)">➔</span>
-                              <div class="lc-node guard" style="min-width:auto; padding:4px 8px; font-size:10px; border-radius:4px;">AuthGuard</div>
-                              <span style="color:var(--text-muted)">➔</span>
-                              <div class="lc-node guard" style="min-width:auto; padding:4px 8px; font-size:10px; border-radius:4px;">RolesGuard</div>
-                          </div>
-                      </td>
-                      <td><a href="#section-guards" style="padding: 6px 12px; background: var(--accent); color: white; border-radius: 4px; text-decoration: none; font-size: 12px;">Tới giải thích 👇</a></td>
-                  </tr>
-                  <tr>
-                      <td><strong>Filters (Error)</strong></td>
-                      <td>
-                          <div style="display:flex; gap:8px; align-items:center;">
-                              <div class="lc-node err" style="min-width:auto; padding:4px 8px; font-size:10px; border-radius:4px;">Exception</div>
-                              <span style="color:var(--text-muted)">➔</span>
-                              <div class="lc-node pipe" style="min-width:auto; padding:4px 8px; font-size:10px; border-radius:4px;">AllExceptionsFilter</div>
-                              <span style="color:var(--text-muted)">➔</span>
-                              <div class="lc-node client" style="min-width:auto; padding:4px 8px; font-size:10px; border-radius:4px;">JSON Response</div>
-                          </div>
-                      </td>
-                      <td><a href="#section-filters" style="padding: 6px 12px; background: var(--accent); color: white; border-radius: 4px; text-decoration: none; font-size: 12px;">Tới giải thích 👇</a></td>
-                  </tr>
-                  <tr>
-                      <td><strong>Utils & Interfaces</strong></td>
-                      <td>
-                          <div style="display:flex; gap:8px; align-items:center;">
-                              <div class="lc-node svc" style="min-width:auto; padding:4px 8px; font-size:10px; border-radius:4px;">Raw Data</div>
-                              <span style="color:var(--text-muted)">➔</span>
-                              <div class="lc-node pipe" style="min-width:auto; padding:4px 8px; font-size:10px; border-radius:4px;">success() wrapper</div>
-                              <span style="color:var(--text-muted)">➔</span>
-                              <div class="lc-node client" style="min-width:auto; padding:4px 8px; font-size:10px; border-radius:4px;">Standard API</div>
-                          </div>
-                      </td>
-                      <td><a href="#section-utils" style="padding: 6px 12px; background: var(--accent); color: white; border-radius: 4px; text-decoration: none; font-size: 12px;">Tới giải thích 👇</a></td>
-                  </tr>
-              </tbody>
-          </table>
+      <div class="summary-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Thành phần</th>
+              <th>Luồng xử lý chính</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Guards & Decorators</strong></td>
+              <td>
+                <div class="lc-flow">
+                  <div class="lc-node client">Request</div>
+                  <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                  <div class="lc-node guard">AuthGuard</div>
+                  <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                  <div class="lc-node guard">RolesGuard</div>
+                </div>
+              </td>
+              <td><a href="#section-1">Xem chi tiết</a></td>
+            </tr>
+            <tr>
+              <td><strong>Filters (Error Handling)</strong></td>
+              <td>
+                <div class="lc-flow">
+                  <div class="lc-node err">Exception</div>
+                  <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                  <div class="lc-node pipe">AllExceptionsFilter</div>
+                </div>
+              </td>
+              <td><a href="#section-2">Xem chi tiết</a></td>
+            </tr>
+            <tr>
+              <td><strong>Utils & Interfaces</strong></td>
+              <td>
+                <div class="lc-flow">
+                  <div class="lc-node svc">Raw Data</div>
+                  <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                  <div class="lc-node client">success() wrapper</div>
+                </div>
+              </td>
+              <td><a href="#section-3">Xem chi tiết</a></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <p>Dưới đây là tài liệu đi sâu vào các cơ chế quan trọng nhất của <code>src/common</code>.</p>
       <hr>
-      <h2 id="section-guards">1. Decorators & Guards: Hệ Thống Phân Quyền Xuyên Suốt</h2>
+
+      <h2 id="section-1">1. Decorators & Guards: Hệ Thống Phân Quyền Xuyên Suốt</h2>
       <p>Để bảo vệ các API khỏi những truy cập không hợp lệ, ứng dụng sử dụng cơ chế Decorator kết hợp với Guard. Đây là một quy trình tinh tế gồm 2 bước: "Dán nhãn" và "Kiểm tra nhãn".</p>
+
       <h3>@Roles() Decorator (src/common/decorators/roles.decorator.ts)</h3>
-      <p>Thay vì viết logic kiểm tra quyền hạn vào từng hàm xử lý (controller handler), ta tạo ra một Custom Decorator.</p>
+      <div class="dec-card">
+        <div class="dec-card-name">@Roles(...roles)</div>
+        <div class="dec-card-body">
+          <div class="dec-card-desc">Tạo ra một Custom Decorator để "dán nhãn" quyền hạn yêu cầu cho một API hoặc toàn bộ Controller.</div>
+          <div class="dec-card-effect"><b>Tác động:</b> Sử dụng <code>SetMetadata</code> để ghim danh sách <code>UserRole</code> vào metadata của method/class với key <code>ROLES_KEY</code>.</div>
+        </div>
+      </div>
       <ul>
         <li><strong>Hoạt động:</strong> Hàm <code>Roles(...roles: UserRole[])</code> nhận vào một danh sách các quyền (ví dụ <code>ADMIN</code>, <code>USER</code>).</li>
-        <li><strong>Bản chất:</strong> Nó sử dụng <code>SetMetadata</code> của NestJS để "ghim" ẩn một siêu dữ liệu (metadata) với từ khóa <code>ROLES_KEY</code> (<code>'roles'</code>) vào chính Class hoặc Method Controller đó.</li>
-        <li><strong>Ví dụ:</strong> Khi bạn gắn <code>@Roles(UserRole.ADMIN)</code> lên trên phương thức xóa người dùng, bạn mới chỉ "dán nhãn" yêu cầu cho nó, chứ chưa thực sự chặn ai cả.</li>
+        <li><strong>Bản chất:</strong> Nó không trực tiếp chặn truy cập mà chỉ cung cấp thông tin cho Guard.</li>
       </ul>
+
       <h3>RolesGuard (src/common/guards/roles.guard.ts)</h3>
       <p>Guard này đóng vai trò như một "nhân viên an ninh" thực thụ đứng trước các API.</p>
+      
+      <div class="lifecycle-container">
+        <div class="lc-flow-panel">
+          <div class="lifecycle-title">Request Lifecycle — Roles Authorization</div>
+          <div class="lc-flow-scroll">
+            <div class="lc-flow">
+              <div class="lc-step">
+                <div class="lc-node client active" data-node-name="Client Request" data-node-type="Client" data-node-file="Browser" data-flow-in="HTTP Request" data-why-in="Client gửi yêu cầu truy cập vào một API có bảo vệ." data-flow-out="Request with JWT" data-why-out="Request mang theo token xác thực trong Header hoặc Cookie.">
+                  <div class="lc-node-label">Client</div>
+                </div>
+                <div class="lc-step-num">1</div>
+              </div>
+              <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+              <div class="lc-step">
+                <div class="lc-node guard" data-node-name="AuthGuard" data-node-type="Guard" data-node-file="auth.guard.ts" data-flow-in="JWT Token" data-why-in="Nhận token từ request để giải mã." data-flow-out="req.user populated" data-why-out="Nếu hợp lệ, gắn thông tin user (id, role) vào đối tượng request.">
+                  <div class="lc-node-label">AuthGuard</div>
+                </div>
+                <div class="lc-step-num">2</div>
+              </div>
+              <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+              <div class="lc-step">
+                <div class="lc-node guard" data-node-name="RolesGuard" data-node-type="Guard" data-node-file="roles.guard.ts" data-flow-in="req.user.role + Metadata" data-why-in="Đọc role của user và so sánh với 'nhãn' từ @Roles()." data-flow-out="boolean (true/false)" data-why-out="Trả về true để cho phép vào Controller, hoặc ném 403 Forbidden để chặn.">
+                  <div class="lc-node-label">RolesGuard</div>
+                </div>
+                <div class="lc-step-num">3</div>
+              </div>
+              <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+              <div class="lc-step">
+                <div class="lc-node ctrl" data-node-name="Controller Handler" data-node-type="Controller" data-node-file="*.controller.ts" data-flow-in="Authorized Request" data-why-in="Request đã vượt qua mọi tầng bảo vệ." data-flow-out="Response Data" data-why-out="Thực hiện logic nghiệp vụ và trả về kết quả.">
+                  <div class="lc-node-label">Controller</div>
+                </div>
+                <div class="lc-step-num">4</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lc-detail-panel" id="lc-detail-guard">
+          <div class="lc-detail-empty">Click node để xem chi tiết luồng phân quyền.</div>
+          <div class="lc-detail-body" style="display: none;">
+            <div class="lc-detail-header">
+              <div class="lc-detail-type"></div>
+              <div class="lc-detail-title"></div>
+              <div class="lc-detail-file"></div>
+            </div>
+            <div class="lc-flow-card in-card">
+              <div class="lc-flow-card-title">📥 Dữ liệu vào (IN)</div>
+              <div class="lc-flow-card-code"></div>
+              <div class="lc-flow-card-desc"></div>
+            </div>
+            <div class="lc-flow-card out-card">
+              <div class="lc-flow-card-title">📤 Dữ liệu ra (OUT)</div>
+              <div class="lc-flow-card-code"></div>
+              <div class="lc-flow-card-desc"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <ul>
-        <li><strong>Luồng Xử Lý & Reflector:</strong>
-          <ol>
-            <li>Kế thừa <code>CanActivate</code> để lấy quyền cho phép/chặn request.</li>
-            <li>Sử dụng <code>Reflector</code> (công cụ đọc metadata của NestJS) quét qua Context (cả Class và Handler) để tìm xem API này có dán nhãn <code>ROLES_KEY</code> nào không.</li>
-            <li>Nếu <code>requiredRoles</code> trống, nó tự động cho qua (<code>return true</code>).</li>
-          </ol>
-        </li>
-        <li><strong>request.user đến từ đâu?:</strong>
-          <ul>
-            <li><code>RolesGuard</code> truy cập <code>request.user?.role</code>. Nhưng làm sao <code>user</code> lại nằm trong đối tượng <code>request</code>?</li>
-            <li>Thực tế, trong một vòng đời Request của NestJS, <strong>AuthGuard</strong> (thường kiểm tra JWT Token) sẽ chạy <em>trước</em> <code>RolesGuard</code>. Khi AuthGuard xác thực token thành công, nó sẽ giải mã payload (chứa <code>id</code>, <code>role</code>,...) và gắn trực tiếp (populate) đối tượng đó vào <code>request.user</code>.</li>
-          </ul>
-        </li>
-        <li><strong>Ra quyết định:</strong>
-          <ul>
-            <li>Nếu request không có thông tin user, hoặc <code>user.role</code> không nằm trong danh sách <code>requiredRoles</code> (nhãn dán từ Decorator), Guard lập tức ném ra lỗi <code>ForbiddenException</code> ("Bạn không có quyền thực hiện thao tác này"), trả về mã HTTP 403.</li>
-            <li>Nếu hợp lệ, nó trả về <code>true</code> cho phép request đi tiếp vào Controller.</li>
-          </ul>
-        </li>
+        <li><strong>Luồng Xử Lý & Reflector:</strong> Sử dụng <code>Reflector</code> để đọc metadata <code>ROLES_KEY</code> từ Class và Handler.</li>
+        <li><strong>request.user đến từ đâu?:</strong> Do <strong>AuthGuard</strong> chạy trước, xác thực thành công và gắn (populate) đối tượng user vào <code>request.user</code>.</li>
+        <li><strong>Ra quyết định:</strong> Nếu <code>user.role</code> không nằm trong <code>requiredRoles</code>, ném <code>ForbiddenException</code> (HTTP 403).</li>
       </ul>
-      <hr>
-      <h2 id="section-filters">2. Filters: Lưới Chống "Sập" Và Chuẩn Hóa Lỗi Toàn Cục</h2>
-      <p>Trong quá trình ứng dụng chạy, lỗi là điều không thể tránh khỏi (lỗi validate, lỗi database, lỗi logic). Việc bắt và định dạng lại lỗi này được giao cho <strong>AllExceptionsFilter</strong> (<code>src/common/filters/all-exceptions.filter.ts</code>).</p>
-      <h3>Đặc điểm Kỹ Thuật:</h3>
-      <ul>
-        <li>Sử dụng decorator <code>@Catch()</code> không truyền tham số để đóng vai trò làm "Catch-All Filter". Bất kể lỗi gì xảy ra trong hệ thống đều sẽ rơi vào mẻ lưới này.</li>
-      </ul>
+
+      <h2 id="section-2">2. Filters: Lưới Chống "Sập" Và Chuẩn Hóa Lỗi Toàn Cục</h2>
+      <p>Việc bắt và định dạng lại lỗi này được giao cho <strong>AllExceptionsFilter</strong> (<code>src/common/filters/all-exceptions.filter.ts</code>).</p>
+
+      <div class="lifecycle-container">
+        <div class="lc-flow-panel">
+          <div class="lifecycle-title">Exception Handling — AllExceptionsFilter</div>
+          <div class="lc-flow-scroll">
+            <div class="lc-flow">
+              <div class="lc-step">
+                <div class="lc-node err active" data-node-name="Exception Thrown" data-node-type="Error" data-node-file="Anywhere in App" data-flow-in="Error / Exception" data-why-in="Một lỗi xảy ra trong logic hoặc database." data-flow-out="Uncaught Exception" data-why-out="Lỗi bị bắn ra khỏi handler hiện tại.">
+                  <div class="lc-node-label">Exception</div>
+                </div>
+                <div class="lc-step-num">1</div>
+              </div>
+              <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+              <div class="lc-step">
+                <div class="lc-node pipe" data-node-name="AllExceptionsFilter" data-node-type="Filter" data-node-file="all-exceptions.filter.ts" data-flow-in="Raw Exception Object" data-why-in="Filter bắt được mọi lỗi nhờ @Catch()." data-flow-out="Standardized JSON" data-why-out="Phân loại lỗi, log ra console và định dạng lại response cho client.">
+                  <div class="lc-node-label">Filter</div>
+                </div>
+                <div class="lc-step-num">2</div>
+              </div>
+              <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+              <div class="lc-step">
+                <div class="lc-node client" data-node-name="Error Response" data-node-type="Client" data-node-file="Browser" data-flow-in="JSON {statusCode, message, path}" data-why-in="Nhận lỗi đã được chuẩn hóa." data-flow-out="UI Error Feedback" data-why-out="Hiển thị thông báo lỗi thân thiện cho người dùng.">
+                  <div class="lc-node-label">Client</div>
+                </div>
+                <div class="lc-step-num">3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lc-detail-panel" id="lc-detail-filter">
+          <div class="lc-detail-empty">Click node để xem luồng xử lý lỗi.</div>
+          <div class="lc-detail-body" style="display: none;">
+            <div class="lc-detail-header">
+              <div class="lc-detail-type"></div>
+              <div class="lc-detail-title"></div>
+              <div class="lc-detail-file"></div>
+            </div>
+            <div class="lc-flow-card in-card">
+              <div class="lc-flow-card-title">📥 Dữ liệu vào (IN)</div>
+              <div class="lc-flow-card-code"></div>
+              <div class="lc-flow-card-desc"></div>
+            </div>
+            <div class="lc-flow-card out-card">
+              <div class="lc-flow-card-title">📤 Dữ liệu ra (OUT)</div>
+              <div class="lc-flow-card-code"></div>
+              <div class="lc-flow-card-desc"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <h3>Cơ Chế Hoạt Động & JSON Format:</h3>
       <ol>
-        <li><strong>Phân Loại Lỗi:</strong> Filter xác định xem đây là lỗi có chủ đích (<code>HttpException</code> như NotFound, BadRequest) hay lỗi máy chủ sập ngoài ý muốn (<code>Internal Server Error</code>).</li>
-        <li><strong>Che Giấu Thông Tin (Security):</strong>
-          <ul>
-            <li>Với <code>HttpException</code>, filter sẽ lấy nội dung thông báo lỗi nguyên bản (ví dụ từ class Validator).</li>
-            <li>Với lỗi <code>HttpStatus.INTERNAL_SERVER_ERROR</code> (500), nó giấu đi lý do lỗi thực sự bằng một câu thông báo thân thiện với người dùng: <em>"Có sự cố xảy ra, chúng tôi đang xử lý. Xin lỗi bạn vì sự bất tiện này!"</em>. Điều này giúp tránh rò rỉ các lỗi truy vấn SQL hoặc cấu trúc mã nguồn ra ngoài cho hacker khai thác.</li>
-          </ul>
-        </li>
-        <li><strong>Logging Chi Tiết Dành Cho Dev:</strong>
-          <ul>
-            <li>Trong khi che giấu lỗi với client, filter dùng <code>Logger('CrisisManagementTeam')</code> in thẳng xuống Terminal (console) mọi ngóc ngách của lỗi.</li>
-            <li>Nó ghi lại: Đường dẫn API lỗi (<code>request.url</code>), Phương thức (<code>request.method</code>), và đặc biệt là chuỗi <strong>Stack Trace</strong> (lịch sử chuỗi các hàm gọi gây ra lỗi) để lập trình viên có thể fix bug ngay lập tức.</li>
-          </ul>
-        </li>
-        <li><strong>Cấu Trúc JSON Trả Về Client:</strong>
-          <ul>
-            <li>Thay vì mỗi lỗi trả về một kiểu khác nhau, nó ép tất cả exception thành một format duy nhất, thân thiện với Frontend:
-              <pre><code class="json">{
-  "statusCode": 403,
-  "timestamp": "2026-05-21T10:00:00.000Z",
-  "path": "/admin/products",
-  "message": "Bạn không có quyền thực hiện thao tác này"
+        <li><strong>Phân Loại Lỗi:</strong> Xác định <code>HttpException</code> vs <code>InternalServerError</code>.</li>
+        <li><strong>Che Giấu Thông Tin:</strong> Trả về thông báo lỗi thân thiện cho 500 Error để tránh rò rỉ thông tin nhạy cảm.</li>
+        <li><strong>Logging:</strong> Sử dụng <code>Logger('CrisisManagementTeam')</code> để ghi lại Stack Trace dành cho dev.</li>
+        <li><strong>Cấu Trúc JSON Chuẩn:</strong>
+          <pre><div class="pre-header"><span class="pre-lang">json</span></div><code>{
+  <span class="prop">"statusCode"</span>: 403,
+  <span class="prop">"timestamp"</span>: <span class="str">"2026-05-21T10:00:00.000Z"</span>,
+  <span class="prop">"path"</span>: <span class="str">"/admin/products"</span>,
+  <span class="prop">"message"</span>: <span class="str">"Bạn không có quyền thực hiện thao tác này"</span>
 }</code></pre>
-            </li>
-          </ul>
         </li>
       </ol>
-      <hr>
-      <h2 id="section-utils">3. Utils & Interfaces: Thống Nhất Giao Tiếp Backend - Frontend</h2>
-      <p>Trong các file <code>src/common/interfaces/api-response.interface.ts</code> và <code>src/common/utils/api-response.util.ts</code>, hệ thống định nghĩa các công cụ bọc dữ liệu (Wrapper).</p>
+
+      <h2 id="section-3">3. Utils & Interfaces: Thống Nhất Giao Tiếp Backend - Frontend</h2>
+      <p>Hệ thống định nghĩa các công cụ bọc dữ liệu (Wrapper) để đảm bảo mọi API trả về thành công đều tuân theo 1 trong 2 Interface chuẩn.</p>
+
+      <div class="crud-card">
+        <div class="crud-header">
+          <span class="crud-method method-get">HELPER</span>
+          <span class="crud-path">success(data)</span>
+          <span class="crud-fn">ApiResponse</span>
+        </div>
+        <div class="crud-body">
+          <div><div class="crud-col-title">Input</div><div class="crud-col-content"><code>any data</code></div></div>
+          <div><div class="crud-col-title">Logic</div><div class="crud-col-content">Bọc dữ liệu vào object có <code>success: true</code>.</div></div>
+          <div><div class="crud-col-title">Output</div><div class="crud-col-content"><code>{ success: true, data }</code></div></div>
+        </div>
+      </div>
+
+      <div class="crud-card">
+        <div class="crud-header">
+          <span class="crud-method method-get">HELPER</span>
+          <span class="crud-path">paginated(data, total, page, limit)</span>
+          <span class="crud-fn">PaginatedApiResponse</span>
+        </div>
+        <div class="crud-body">
+          <div><div class="crud-col-title">Input</div><div class="crud-col-content"><code>Array data, total, page, limit</code></div></div>
+          <div><div class="crud-col-title">Logic</div><div class="crud-col-content">Tính toán <code>totalPages</code> bằng <code>Math.ceil(total/limit)</code>.</div></div>
+          <div><div class="crud-col-title">Output</div><div class="crud-col-content"><code>{ success: true, data, meta }</code></div></div>
+        </div>
+      </div>
+
       <h3>Tại sao lại cần nó?</h3>
-      <p>Nếu một API trả về Array mảng sản phẩm <code>[]</code>, API khác trả về đối tượng <code>{ id, name }</code>, Frontend sẽ rất chật vật trong việc viết hàm bắt dữ liệu (fetch interceptor). Do đó, ứng dụng ép <strong>mọi API trả về thành công đều phải tuân theo 1 trong 2 Interface chuẩn</strong>.</p>
-      <h3>ApiResponse & Hàm success()</h3>
+      <p>Ép mọi API về một format duy nhất giúp Frontend viết hàm bắt dữ liệu (fetch interceptor) cực kỳ nhàn nhã.</p>
       <ul>
-        <li>Giao diện <code>ApiResponse<T></code> đảm bảo luôn luôn có một cờ <code>success: boolean</code> và dữ liệu thực sự sẽ nằm trọn trong thuộc tính <code>data</code>.</li>
-        <li>Hàm helper <code>success(data)</code> giúp các Controller bọc kết quả nhanh chóng thay vì phải tự viết JSON:
-          <pre><code>// Thay vì return user;
-return success(user); // Output: { success: true, data: { id: 1, ... } }</code></pre>
-        </li>
+        <li><strong>ApiResponse:</strong> Dữ liệu thực sự nằm trong thuộc tính <code>data</code>.</li>
+        <li><strong>PaginatedApiResponse:</strong> Cung cấp thêm block <code>meta</code> chứa thông số phân trang.</li>
       </ul>
-      <h3>PaginatedApiResponse & Hàm paginated()</h3>
-      <ul>
-        <li>Giao diện <code>PaginatedApiResponse<T></code> cung cấp thêm cục dữ liệu <code>meta</code> (<code>PaginatedMeta</code>) chứa toàn bộ các thông số để Frontend có thể dễ dàng vẽ thanh chuyển trang (Pagination Component).</li>
-        <li>Hàm helper <code>paginated(data, total, page, limit)</code> không chỉ bọc dữ liệu mà còn thông minh thực hiện luôn phép toán phân trang.</li>
-        <li><strong>Tính toán totalPages:</strong> Dùng thuật toán <code>Math.ceil(total / limit)</code>. Ví dụ: Có tổng cộng 25 sản phẩm (<code>total=25</code>), chia làm 10 sản phẩm mỗi trang (<code>limit=10</code>). Phép chia <code>25/10 = 2.5</code>, hàm <code>Math.ceil()</code> làm tròn lên thành <code>3</code>. Frontend sẽ biết để vẽ chính xác 3 nút trang! Nếu <code>total = 0</code>, hàm có cơ chế an toàn trả ngay về <code>0</code>.</li>
-      </ul>
-      <p>Tóm lại, <strong>src/common</strong> đóng vai trò là "bộ quy tắc thép" của ứng dụng, giúp hệ thống ổn định, an toàn và dễ dàng mở rộng, đồng thời mang lại sự "hạnh phúc" cho Frontend khi tích hợp API.</p>
+
+      <p>Tóm lại, <strong>src/common</strong> đóng vai trò là "bộ quy tắc thép" của ứng dụng, giúp hệ thống ổn định, an toàn và mang lại sự "hạnh phúc" cho Frontend khi tích hợp API.</p>
     </main>
   </div>
+
   <script>
-    // JS Logic to build TOC and init tabs
     function buildTOC() {
-        const toc = document.getElementById('sidebar');
-        const headings = document.querySelectorAll('h1, h2, h3, h4');
-        const tocTitle = document.createElement('div');
-        tocTitle.className = 'sidebar-title';
-        tocTitle.textContent = 'Mục Lục';
-        toc.appendChild(tocTitle);
-
-        headings.forEach(h => {
-            const id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
-            h.id = id;
-            const link = document.createElement('a');
-            link.className = `toc-item toc-${h.tagName.toLowerCase()}`;
-            link.textContent = h.textContent;
-            link.href = `#${id}`;
-            toc.appendChild(link);
-        });
-    }
-
-    function initTabs() {
-        document.querySelectorAll('.file-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const target = tab.getAttribute('data-target');
-                tab.parentElement.querySelectorAll('.file-tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                const panel = tab.closest('.module-panel');
-                panel.querySelectorAll('.file-pane').forEach(p => p.style.display = 'none');
-                document.getElementById(target).style.display = 'block';
-            });
-        });
-    }
-
-    // Interactive Lifecycle
-    function initLifecycle() {
-      document.querySelectorAll('.lc-node').forEach(node => {
-        node.addEventListener('click', () => {
-          document.querySelectorAll('.lc-node').forEach(n => n.classList.remove('active'));
-          node.classList.add('active');
-          const panel = node.closest('.lifecycle-container').querySelector('.lc-detail-panel');
-          panel.querySelector('.lc-detail-empty').style.display = 'none';
-          const body = panel.querySelector('.lc-detail-body');
-          body.style.display = 'block';
-          
-          body.querySelector('.lc-detail-type').textContent = node.dataset.nodeType;
-          body.querySelector('.lc-detail-title').textContent = node.dataset.nodeName;
-          body.querySelector('.lc-detail-file').textContent = node.dataset.nodeFile;
-          
-          const inCard = body.querySelector('.in-card');
-          inCard.querySelector('.lc-flow-card-code').textContent = node.dataset.flowIn;
-          inCard.querySelector('.lc-flow-card-desc').textContent = node.dataset.whyIn;
-          
-          const outCard = body.querySelector('.out-card');
-          outCard.querySelector('.lc-flow-card-code').textContent = node.dataset.flowOut;
-          outCard.querySelector('.lc-flow-card-desc').textContent = node.dataset.whyOut;
-          
-          const decContainer = body.querySelector('.lc-detail-decorators-container');
-          decContainer.innerHTML = '';
-          const decorators = JSON.parse(node.dataset.decorators || '[]');
-          decorators.forEach(d => {
-            const div = document.createElement('div');
-            div.className = 'dec-card';
-            div.innerHTML = `<div class="dec-card-name">${d.name}</div>
-                             <div class="dec-card-body"><div class="dec-card-desc">${d.desc}</div></div>`;
-            decContainer.appendChild(div);
-          });
-          
-          const targetId = node.dataset.targetId;
-          const btn = body.querySelector('.lc-detail-btn');
-          btn.onclick = () => {
-            document.querySelectorAll('.file-tab').forEach(t => t.classList.remove('active'));
-            const tab = document.querySelector(`[data-target="${node.dataset.targetTab}"]`);
-            if (tab) {
-                tab.click();
-                setTimeout(() => {
-                    const targetEl = document.getElementById(targetId);
-                    if (targetEl) {
-                        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        targetEl.classList.add('code-flash-highlight');
-                    }
-                }, 150);
-            }
-          };
-        });
+      const sidebar = document.getElementById('sidebar');
+      sidebar.innerHTML = '<div class="sidebar-title">Mục lục</div>';
+      document.querySelectorAll('h2, h3').forEach(h => {
+        const link = document.createElement('a');
+        link.href = '#' + h.id;
+        link.className = 'toc-item toc-' + h.tagName.toLowerCase();
+        link.textContent = h.textContent;
+        sidebar.appendChild(link);
       });
     }
 
-    function animateIn() {
-      const items = document.querySelectorAll('.lc-node, .dec-card, .crud-card, .module-panel, .lifecycle-container');
-      items.forEach((el, i) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(12px)';
-        el.style.transition = `opacity .4s ${i*0.05}s, transform .4s ${i*0.05}s`;
-        setTimeout(() => {
-          el.style.opacity = '1';
-          el.style.transform = 'translateY(0)';
-        }, 80 + i * 40);
+    function initLifecycle(containerId, detailId) {
+      const container = document.querySelector(containerId);
+      const nodes = container.querySelectorAll('.lc-node');
+      const detail = document.getElementById(detailId);
+      const body = detail.querySelector('.lc-detail-body');
+      const empty = detail.querySelector('.lc-detail-empty');
+
+      nodes.forEach(node => {
+        node.addEventListener('click', () => {
+          nodes.forEach(n => n.classList.remove('active'));
+          node.classList.add('active');
+          
+          empty.style.display = 'none';
+          body.style.display = 'block';
+          
+          const { nodeType, nodeName, nodeFile, flowIn, whyIn, flowOut, whyOut } = node.dataset;
+          
+          body.querySelector('.lc-detail-type').textContent = nodeType;
+          body.querySelector('.lc-detail-title').textContent = nodeName;
+          body.querySelector('.lc-detail-file').textContent = nodeFile;
+          
+          const inCard = body.querySelector('.in-card');
+          inCard.querySelector('.lc-flow-card-code').textContent = flowIn;
+          inCard.querySelector('.lc-flow-card-desc').textContent = whyIn;
+          
+          const outCard = body.querySelector('.out-card');
+          outCard.querySelector('.lc-flow-card-code').textContent = flowOut;
+          outCard.querySelector('.lc-flow-card-desc').textContent = whyOut;
+        });
       });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        buildTOC();
-        initTabs();
-        initLifecycle();
-        animateIn();
+      buildTOC();
+      initLifecycle('.lifecycle-container:nth-of-type(1)', 'lc-detail-guard');
+      initLifecycle('.lifecycle-container:nth-of-type(2)', 'lc-detail-filter');
     });
   </script>
 </body>

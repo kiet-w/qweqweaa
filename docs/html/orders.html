@@ -106,7 +106,7 @@ body {
 
 .content {
   flex: 1;
-  max-width: 960px;
+  max-width: 100% !important;
   padding: 48px 52px 100px;
   min-width: 0;
 }
@@ -194,13 +194,30 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
 .crud-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 .crud-col-title { font-size: 10px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
 .crud-col-content { font-size: 12px; color: var(--text); line-height: 1.55; }
+.crud-effects { padding: 0 16px 14px; }
+.crud-effects-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; }
+.effect-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-family: monospace;
+  margin: 3px 4px 3px 0;
+  color: var(--text-muted);
+}
+.effect-tag.db-write { border-color: var(--kw); color: var(--kw); }
+.effect-tag.db-read { border-color: var(--green); color: var(--green); }
 
 .lifecycle-container {
   display: flex; flex-direction: column; background: var(--bg-surface);
   border: 1px solid var(--border); border-radius: 12px; margin: 2em 0;
   overflow: hidden; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
 }
-@media (min-width: 992px) { .lifecycle-container { flex-direction: row; height: 500px; } }
+@media (min-width: 992px) { .lifecycle-container { flex-direction: row; height: 520px; } }
 .lc-flow-panel { flex: 1.3; padding: 24px; overflow: auto; display: flex; flex-direction: column; border-right: 1px solid var(--border); }
 .lc-detail-panel { flex: 1; padding: 24px; background: var(--bg-sidebar); overflow-y: auto; }
 .lifecycle-title { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 24px; font-weight: 700; border-bottom: 1px dashed var(--border); padding-bottom: 12px; }
@@ -220,6 +237,11 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
 .lc-node.svc { background: var(--node-svc); border-color: var(--node-svc-b); }
 .lc-node.db { background: var(--node-db); border-color: var(--node-db-b); }
 .lc-node-label { font-size: 12px; font-weight: 600; color: var(--text-bright); }
+.lc-node-code { font-size: 10px; font-family: monospace; color: var(--text-muted); }
+.lc-node-ports { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.08); font-size: 9px; font-family: monospace; }
+.lc-port { padding: 1px 4px; border-radius: 3px; }
+.lc-port.in { background: rgba(78, 201, 176, 0.1); color: var(--green); }
+.lc-port.out { background: rgba(0, 122, 204, 0.15); color: var(--kw); }
 .lc-connector { display: flex; align-items: center; padding: 0 4px; }
 .lc-line { height: 2px; width: 30px; background: var(--accent); position: relative; }
 .lc-arrow { width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 6px solid var(--accent); }
@@ -227,6 +249,7 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
 .lc-detail-header { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
 .lc-detail-type { font-size: 10px; text-transform: uppercase; color: var(--accent); font-weight: 700; }
 .lc-detail-title { font-size: 16px; font-weight: 600; color: var(--text-bright); }
+.lc-detail-file { font-size: 11px; font-family: monospace; color: var(--text-muted); margin-top: 4px; }
 .lc-flow-card { background: var(--bg-surface); border-radius: 6px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
 .lc-flow-card-title { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
 .lc-flow-card-code { font-family: monospace; font-size: 12px; color: var(--yellow); margin-bottom: 4px; }
@@ -241,7 +264,7 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
     <nav class="sidebar" id="sidebar"></nav>
     <main class="content">
       <h1>Giải thích chi tiết Module Orders</h1>
-      <p>Tài liệu này cung cấp một cái nhìn sâu sắc (deep dive) vào sự tương tác giữa Controller và Service trong module <code>orders</code>. Nó sẽ đi sâu vào cách các endpoint hoạt động, cách xử lý transaction an toàn và định dạng dữ liệu trả về cho client.</p>
+      <p>Tài liệu này cung cấp một cái nhìn sâu sắc (deep dive) vào sự tương tác giữa Controller và Service trong module <code>orders</code> của hệ thống. Nó sẽ đi sâu vào cách các endpoint hoạt động, cách chúng giao tiếp với service, cách xử lý transaction an toàn với cơ sở dữ liệu và cách định dạng dữ liệu trả về cho client.</p>
 
       <div class="summary-table">
         <table>
@@ -249,31 +272,51 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
             <tr>
               <th>Thành phần</th>
               <th>Cơ chế cốt lõi</th>
-              <th>Chi tiết</th>
+              <th>Hành động</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><strong>Controllers</strong></td>
-              <td><div class="lc-node guard">AuthGuard</div> → <div class="lc-node pipe">ParseIntPipe</div></td>
-              <td><a href="#controllers">Xem chi tiết</a></td>
+              <td>
+                <div class="lc-flow">
+                  <div class="lc-node guard">AuthGuard</div>
+                  <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                  <div class="lc-node pipe">ParseIntPipe</div>
+                </div>
+              </td>
+              <td><a href="#section-1">Xem chi tiết</a></td>
             </tr>
             <tr>
               <td><strong>Services</strong></td>
-              <td><div class="lc-node db">$transaction</div> → <div class="lc-node db">updateMany</div></td>
-              <td><a href="#services">Xem chi tiết</a></td>
+              <td>
+                <div class="lc-flow">
+                  <div class="lc-node db">$transaction</div>
+                  <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                  <div class="lc-node db">updateMany</div>
+                </div>
+              </td>
+              <td><a href="#section-2">Xem chi tiết</a></td>
             </tr>
             <tr>
               <td><strong>Output Flow</strong></td>
-              <td><div class="lc-node svc">Serializer</div> → <div class="lc-node client">success()</div></td>
-              <td><a href="#output">Xem chi tiết</a></td>
+              <td>
+                <div class="lc-flow">
+                  <div class="lc-node svc">Serializer</div>
+                  <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                  <div class="lc-node client">success()</div>
+                </div>
+              </td>
+              <td><a href="#section-3">Xem chi tiết</a></td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <h2 id="controllers">1. Controllers (Bộ điều khiển)</h2>
-      <p>File <code>src/orders/orders.controller.ts</code> đóng vai trò là cửa ngõ nhận các HTTP request, xử lý kiểm tra bảo mật ban đầu và chuyển tiếp dữ liệu đến Service.</p>
+      <hr>
+
+      <h2 id="section-1">1. Controllers (Bộ điều khiển)</h2>
+      <p>File <code>src/orders/orders.controller.ts</code> đóng vai trò là cửa ngõ nhận các HTTP request liên quan đến đơn hàng, xử lý kiểm tra bảo mật ban đầu và chuyển tiếp dữ liệu đến Service.</p>
 
       <h3>Các Endpoints</h3>
       <div class="crud-card">
@@ -283,11 +326,12 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
           <span class="crud-fn">checkout()</span>
         </div>
         <div class="crud-body">
-          <div><div class="crud-col-title">Input</div><div class="crud-col-content"><code>CheckoutDto</code></div></div>
-          <div><div class="crud-col-title">Xử lý</div><div class="crud-col-content">Tạo đơn hàng từ giỏ hàng</div></div>
-          <div><div class="crud-col-title">Output</div><div class="crud-col-content"><code>OrderResponse</code></div></div>
+          <div><div class="crud-col-title">Input (vào)</div><div class="crud-col-content"><code>CheckoutDto</code> (thông tin thanh toán)</div></div>
+          <div><div class="crud-col-title">Logic (trong service)</div><div class="crud-col-content">Tạo Order, Item, trừ stock, đổi status cart.</div></div>
+          <div><div class="crud-col-title">Output (ra)</div><div class="crud-col-content"><code>OrderResponse</code> object.</div></div>
         </div>
       </div>
+
       <div class="crud-card">
         <div class="crud-header">
           <span class="crud-method method-get">GET</span>
@@ -295,9 +339,22 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
           <span class="crud-fn">findOrders()</span>
         </div>
         <div class="crud-body">
-          <div><div class="crud-col-title">Input</div><div class="crud-col-content"><code>userId</code></div></div>
-          <div><div class="crud-col-title">Xử lý</div><div class="crud-col-content">Lấy danh sách đơn hàng user</div></div>
-          <div><div class="crud-col-title">Output</div><div class="crud-col-content"><code>OrderResponse[]</code></div></div>
+          <div><div class="crud-col-title">Input (vào)</div><div class="crud-col-content"><code>userId</code> (từ JWT)</div></div>
+          <div><div class="crud-col-title">Logic (trong service)</div><div class="crud-col-content">Lấy danh sách đơn hàng đã mua của user.</div></div>
+          <div><div class="crud-col-title">Output (ra)</div><div class="crud-col-content">Array <code>OrderResponse</code>.</div></div>
+        </div>
+      </div>
+
+      <div class="crud-card">
+        <div class="crud-header">
+          <span class="crud-method method-get">GET</span>
+          <span class="crud-path">/orders/:id</span>
+          <span class="crud-fn">findOrderById()</span>
+        </div>
+        <div class="crud-body">
+          <div><div class="crud-col-title">Input (vào)</div><div class="crud-col-content"><code>orderId</code>, <code>userId</code></div></div>
+          <div><div class="crud-col-title">Logic (trong service)</div><div class="crud-col-content">Tìm chi tiết 1 đơn hàng cụ thể (bảo mật IDOR).</div></div>
+          <div><div class="crud-col-title">Output (ra)</div><div class="crud-col-content">Single <code>OrderResponse</code>.</div></div>
         </div>
       </div>
 
@@ -305,76 +362,69 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
       <div class="dec-card">
         <div class="dec-card-name">@UseGuards(AuthGuard)</div>
         <div class="dec-card-body">
-          <div class="dec-card-desc">Bảo vệ API, giải mã JWT và gán <code>request.user</code>.</div>
+          <div class="dec-card-desc">Bảo vệ API, chỉ cho phép user đã đăng nhập.</div>
+          <div class="dec-card-effect"><b>Tác động:</b> Gắn thông tin payload của JWT vào <code>request.user</code>.</div>
         </div>
       </div>
       <div class="dec-card">
         <div class="dec-card-name">ParseIntPipe</div>
         <div class="dec-card-body">
-          <div class="dec-card-desc">Chuyển URL string sang number và validate 400 Bad Request.</div>
+          <div class="dec-card-desc">Biến đổi string ID sang number và validate tính hợp lệ.</div>
+          <div class="dec-card-effect"><b>Tác động:</b> Ném <code>400 Bad Request</code> nếu ID không phải là số.</div>
         </div>
       </div>
 
-      <h2 id="services">2. Services (Lớp Logic Nghiệp Vụ)</h2>
-      <p>File <code>src/orders/orders.service.ts</code> chứa toàn bộ logic kinh doanh cốt lõi của module orders.</p>
+      <h2 id="section-2">2. Services (Lớp Logic Nghiệp Vụ)</h2>
+      <p>File <code>src/orders/orders.service.ts</code> chứa toàn bộ logic kinh doanh (business logic) cốt lõi của module orders.</p>
 
       <h3>Deep dive: Phương thức checkout</h3>
-      <p>Phương thức <code>checkout</code> xử lý quá trình chuyển đổi một giỏ hàng thành đơn hàng thông qua 5 bước bọc trong <code>$transaction</code>.</p>
+      <p>Phương thức <code>checkout</code> là trái tim của module này, xử lý quá trình chuyển đổi một giỏ hàng thành đơn hàng thông qua 5 bước bọc trong <code>$transaction</code>.</p>
       <ol>
-        <li>Lấy Giỏ hàng & Kiểm tra (Validation)</li>
-        <li>Tính toán Tổng tiền (Sử dụng <code>Prisma.Decimal</code>)</li>
-        <li>Tạo Đơn hàng (Snapshot giá sản phẩm tại thời điểm mua)</li>
-        <li>Trừ Tồn kho (Deduct Stock an toàn)</li>
-        <li>Hoàn tất Giỏ hàng (COMPLETED)</li>
+        <li><strong>Lấy Giỏ hàng & Kiểm tra:</strong> Đảm bảo giỏ hàng có hàng và sản phẩm vẫn đang ACTIVE.</li>
+        <li><strong>Tính toán Tổng tiền:</strong> Sử dụng <code>Prisma.Decimal</code> để đảm bảo độ chính xác tài chính.</li>
+        <li><strong>Tạo Đơn hàng:</strong> Snapshot giá và tên sản phẩm tại thời điểm mua.</li>
+        <li><strong>Trừ Tồn kho:</strong> Sử dụng <code>updateMany</code> an toàn.</li>
+        <li><strong>Hoàn tất Giỏ hàng:</strong> Đổi trạng thái sang <code>COMPLETED</code>.</li>
       </ol>
 
-      <div class="dec-card">
-        <div class="dec-card-name">Prisma $transaction</div>
-        <div class="dec-card-body">
-          <div class="dec-card-desc">Đảm bảo tính ACID: Thành công tất cả hoặc Rollback tất cả.</div>
-        </div>
-      </div>
-
-      <h3>Cơ chế Khóa Lạc quan với updateMany</h3>
-      <pre><div class="pre-header"><span class="pre-lang">typescript</span></div><code><span class="kw">const</span> updated = <span class="kw">await</span> tx.product.<span class="fn">updateMany</span>({
+      <pre><div class="pre-header"><span class="pre-lang">typescript</span><span class="pre-filename">orders.service.ts</span></div><code><span class="kw">await</span> tx.product.<span class="fn">updateMany</span>({
   where: {
     id: item.productId,
     stock: { gte: item.quantity }, <span class="cmt">// ĐIỀU KIỆN THEN CHỐT</span>
   },
   data: { stock: { decrement: item.quantity } }
 });</code></pre>
-      <p>Cơ chế này ngăn chặn <strong>Race Condition</strong> bằng cách sử dụng Row-level lock của Database. Nếu tồn kho không đủ, <code>count</code> trả về 0 và throw exception để hủy transaction.</p>
 
-      <h2 id="output">3. Returns và Outputs: Luồng Dữ liệu và Tác động Chéo</h2>
-
+      <h2 id="section-3">3. Returns và Outputs: Luồng Dữ liệu (Data Flow) và Tác động Chéo</h2>
+      
       <div class="lifecycle-container">
         <div class="lc-flow-panel">
           <div class="lifecycle-title">Request Lifecycle — POST /orders/checkout</div>
           <div class="lc-flow-scroll">
             <div class="lc-flow">
               <div class="lc-step">
-                <div class="lc-node client active" data-type="Client" data-title="Client Browser" data-in="N/A" data-out="POST /checkout" data-desc="Gửi yêu cầu thanh toán giỏ hàng.">
+                <div class="lc-node client active" data-node-name="Client Browser" data-node-type="Client" data-node-file="Browser" data-flow-in="N/A" data-why-in="Người dùng bấm nút thanh toán." data-flow-out="POST /orders/checkout" data-why-out="Gửi request kèm token xác thực.">
                   <div class="lc-node-label">Client</div>
                 </div>
                 <div class="lc-step-num">1</div>
               </div>
               <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
               <div class="lc-step">
-                <div class="lc-node db" data-type="Transaction" data-title="Prisma $transaction" data-in="CUD Operations" data-out="Success / Rollback" data-desc="Thực hiện các bước Create Order, Deduct Stock, Complete Cart.">
+                <div class="lc-node db" data-node-name="Prisma $transaction" data-node-type="Database" data-node-file="PostgreSQL" data-flow-in="ACID Operations" data-why-in="Thực hiện chuỗi lệnh DB đồng thời." data-flow-out="Order Records" data-why-out="Commit dữ liệu mới và trả về bản ghi thô.">
                   <div class="lc-node-label">$transaction</div>
                 </div>
                 <div class="lc-step-num">2</div>
               </div>
               <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
               <div class="lc-step">
-                <div class="lc-node svc" data-type="Service" data-title="Serializer" data-in="Raw Decimal Data" data-out="Stringified DTO" data-desc="Chuyển đổi Decimal sang String để bảo toàn độ chính xác.">
+                <div class="lc-node svc" data-node-name="serializeOrder()" data-node-type="Service" data-node-file="orders.service.ts" data-flow-in="Raw Prisma Models" data-why-in="Nhận dữ liệu thô (Decimal) từ DB." data-flow-out="OrderResponseDto" data-why-out="Ép kiểu Decimal sang string và lọc dữ liệu thừa.">
                   <div class="lc-node-label">Serializer</div>
                 </div>
                 <div class="lc-step-num">3</div>
               </div>
               <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
               <div class="lc-step">
-                <div class="lc-node ctrl" data-type="Controller" data-title="success() Wrapper" data-in="DTO object" data-out="JSON Response" data-desc="Bọc dữ liệu vào chuẩn API response chung.">
+                <div class="lc-node ctrl" data-node-name="success() Wrapper" data-node-type="Utility" data-node-file="api-response.util.ts" data-flow-in="DTO object" data-why-in="Nhận DTO đã được định dạng." data-flow-out="JSON Response" data-why-out="Bọc vào chuẩn success/data để trả về client.">
                   <div class="lc-node-label">Wrapper</div>
                 </div>
                 <div class="lc-step-num">4</div>
@@ -383,14 +433,32 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
           </div>
         </div>
         <div class="lc-detail-panel" id="lc-detail">
-          <div class="lc-detail-empty">Click node để xem chi tiết luồng dữ liệu.</div>
+          <div class="lc-detail-empty">Click vào một node để xem chi tiết luồng dữ liệu.</div>
+          <div class="lc-detail-body" style="display: none;">
+            <div class="lc-detail-header">
+              <div class="lc-detail-type"></div>
+              <div class="lc-detail-title"></div>
+              <div class="lc-detail-file"></div>
+            </div>
+            <div class="lc-flow-card in-card">
+              <div class="lc-flow-card-title">📥 Dữ liệu vào (IN)</div>
+              <div class="lc-flow-card-code"></div>
+              <div class="lc-flow-card-desc"></div>
+            </div>
+            <div class="lc-flow-card out-card">
+              <div class="lc-flow-card-title">📤 Dữ liệu ra (OUT)</div>
+              <div class="lc-flow-card-code"></div>
+              <div class="lc-flow-card-desc"></div>
+            </div>
+          </div>
         </div>
       </div>
 
       <h3>Chi tiết Luồng Truyền tải Dữ liệu</h3>
       <ul>
-        <li><strong>Serialization</strong>: Hàm <code>serializeOrder()</code> ép kiểu <code>Prisma.Decimal</code> về <code>string</code> để tránh sai số khi truyền qua JSON.</li>
-        <li><strong>Wrapping</strong>: Controller dùng <code>success()</code> để đồng nhất cấu trúc <code>{ success: true, data: { ... } }</code>.</li>
+        <li><strong>Từ Transaction ra Service:</strong> Dữ liệu thô từ Prisma Decimal.</li>
+        <li><strong>Serialization:</strong> Chuyển <code>Prisma.Decimal</code> sang <code>string</code>.</li>
+        <li><strong>Wrapping:</strong> Controller dùng <code>success()</code> để đồng nhất JSON format.</li>
       </ul>
 
       <pre><div class="pre-header"><span class="pre-lang">json</span></div><code>{
@@ -420,28 +488,30 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
     function initLifecycle() {
       const nodes = document.querySelectorAll('.lc-node');
       const detail = document.getElementById('lc-detail');
-      
+      const body = detail.querySelector('.lc-detail-body');
+      const empty = detail.querySelector('.lc-detail-empty');
+
       nodes.forEach(node => {
         node.addEventListener('click', () => {
           nodes.forEach(n => n.classList.remove('active'));
           node.classList.add('active');
           
-          const { type, title, in: input, out, desc } = node.dataset;
-          detail.innerHTML = `
-            <div class="lc-detail-header">
-              <div class="lc-detail-type">${type}</div>
-              <div class="lc-detail-title">${title}</div>
-            </div>
-            <div class="lc-flow-card">
-              <div class="lc-flow-card-title">Dữ liệu vào (IN)</div>
-              <div class="lc-flow-card-code">${input}</div>
-            </div>
-            <div class="lc-flow-card">
-              <div class="lc-flow-card-title">Dữ liệu ra (OUT)</div>
-              <div class="lc-flow-card-code">${out}</div>
-              <div class="lc-flow-card-desc">${desc}</div>
-            </div>
-          `;
+          empty.style.display = 'none';
+          body.style.display = 'block';
+          
+          const { nodeType, nodeName, nodeFile, flowIn, whyIn, flowOut, whyOut } = node.dataset;
+          
+          body.querySelector('.lc-detail-type').textContent = nodeType;
+          body.querySelector('.lc-detail-title').textContent = nodeName;
+          body.querySelector('.lc-detail-file').textContent = nodeFile;
+          
+          const inCard = body.querySelector('.in-card');
+          inCard.querySelector('.lc-flow-card-code').textContent = flowIn;
+          inCard.querySelector('.lc-flow-card-desc').textContent = whyIn;
+          
+          const outCard = body.querySelector('.out-card');
+          outCard.querySelector('.lc-flow-card-code').textContent = flowOut;
+          outCard.querySelector('.lc-flow-card-desc').textContent = whyOut;
         });
       });
     }

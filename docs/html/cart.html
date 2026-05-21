@@ -17,7 +17,7 @@
 body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; font-size: 14px; line-height: 1.7; }
 .page-wrap { display: flex; min-height: 100vh; }
 .sidebar { width: 260px; flex-shrink: 0; background: var(--bg-sidebar); border-right: 1px solid var(--border); position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 16px 0; }
-.content { flex: 1; max-width: 1000px; padding: 48px 52px 100px; }
+.content { flex: 1; max-width: 100% !important; padding: 40px 60px 100px; }
 h1, h2, h3 { color: var(--text-bright); margin: 2em 0 0.6em; scroll-margin-top: 20px; }
 h1 { font-size: 2em; border-bottom: 1px solid var(--border); padding-bottom: 0.4em; }
 h2 { font-size: 1.5em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
@@ -62,12 +62,32 @@ code { font-family: monospace; background: var(--bg-surface); padding: 0.2em 0.4
       <h2>Tóm tắt các thành phần</h2>
       <table class="summary-table">
         <thead>
-          <tr><th>Thành phần</th><th>Mô tả</th><th>Liên kết</th></tr>
+          <tr>
+            <th>Thành phần</th>
+            <th>Mô tả</th>
+            <th>Kiến trúc Flow</th>
+            <th>Liên kết</th>
+          </tr>
         </thead>
         <tbody>
-          <tr><td><strong>CartController</strong></td><td>Cửa ngõ tiếp nhận request, bảo vệ bởi AuthGuard.</td><td><a href="#1-controller">Chi tiết</a></td></tr>
-          <tr><td><strong>CartService</strong></td><td>Logic nghiệp vụ phức tạp, tối ưu hóa với Redis.</td><td><a href="#2-service">Chi tiết</a></td></tr>
-          <tr><td><strong>Data Flow</strong></td><td>Luồng xử lý, Serialization và tác động chéo.</td><td><a href="#3-flow">Chi tiết</a></td></tr>
+          <tr>
+            <td><strong>CartController</strong></td>
+            <td>Cửa ngõ tiếp nhận request, bảo vệ bởi AuthGuard.</td>
+            <td><code style="color:var(--kw)">Auth</code> → <code style="color:var(--fn)">Ctrl</code> → <code style="color:var(--typ)">UserReq</code></td>
+            <td><a href="#1-controller">Chi tiết</a></td>
+          </tr>
+          <tr>
+            <td><strong>CartService</strong></td>
+            <td>Logic nghiệp vụ phức tạp, tối ưu hóa với Redis.</td>
+            <td><code style="color:var(--fn)">Svc</code> → <code style="color:var(--purple)">Redis</code> → <code style="color:var(--prop)">DB</code></td>
+            <td><a href="#2-service">Chi tiết</a></td>
+          </tr>
+          <tr>
+            <td><strong>Data Flow</strong></td>
+            <td>Luồng xử lý, Serialization và tác động chéo.</td>
+            <td><code style="color:var(--typ)">Decimal</code> → <code style="color:var(--str)">String</code> → <code style="color:var(--accent)">JSON</code></td>
+            <td><a href="#3-flow">Chi tiết</a></td>
+          </tr>
         </tbody>
       </table>
 
@@ -103,49 +123,72 @@ code { font-family: monospace; background: var(--bg-surface); padding: 0.2em 0.4
       </div>
 
       <h2 id="2-service">2. Tầng Nghiệp Vụ (Services): CartService</h2>
-      <p><code>CartService</code> là nơi chứa toàn bộ logic nghiệp vụ phức tạp, ứng dụng Redis Caching.</p>
+      <p><code>CartService</code> là nơi chứa toàn bộ logic nghiệp vụ phức tạp, ứng dụng mạnh mẽ Redis Caching để giảm tải cho Database.</p>
 
-      <h3>Các Phương Thức Public</h3>
+      <h3>Các Phương Thức Public (Public Methods)</h3>
       <ul>
-        <li><strong>getCart</strong>: Lấy từ cache hoặc DB (pattern getOrSet).</li>
-        <li><strong>addItem</strong>: Kiểm tra tồn kho, cộng dồn số lượng, làm mới cache.</li>
-        <li><strong>updateItem</strong>: Bảo mật quyền sở hữu (findOwnedCartItem), cập nhật số lượng.</li>
-        <li><strong>removeItem / clearCart</strong>: Dọn dẹp item và đồng bộ lại cache.</li>
+        <li><strong>getCart(userId: number)</strong>: Lấy giỏ hàng qua pattern <code>getOrSet</code> của Redis. Nếu Cache Miss, gọi <code>getCartWithItems</code> để query DB và lưu lại cache.</li>
+        <li><strong>addItem(userId, dto)</strong>: 
+          <ul>
+            <li>Kiểm tra <code>validateProductAvailability</code> (tồn tại, ACTIVE, đủ stock).</li>
+            <li>Tìm/tạo giỏ hàng ACTIVE qua <code>getOrCreateActiveCart</code>.</li>
+            <li>Cộng dồn số lượng nếu sản phẩm đã có hoặc tạo mới CartItem.</li>
+            <li>Gọi <code>refreshCart</code> để đồng bộ dữ liệu.</li>
+          </ul>
+        </li>
+        <li><strong>updateItem(userId, itemId, dto)</strong>: Bảo mật quyền sở hữu qua <code>findOwnedCartItem</code>, kiểm tra tồn kho và cập nhật số lượng.</li>
+        <li><strong>removeItem(userId, itemId)</strong>: Xác nhận quyền sở hữu và xóa item khỏi Database.</li>
+        <li><strong>clearCart(userId)</strong>: Xóa toàn bộ CartItems liên kết với giỏ hàng ACTIVE.</li>
       </ul>
 
-      <h3>Các Phương Thức Private</h3>
+      <h3>Các Phương Thức Private (Private Helper Methods)</h3>
       <div class="dec-card">
-        <div class="dec-card-name">refreshCart()</div>
-        <div class="dec-card-body">Xóa cache Redis cũ và fetch lại dữ liệu mới nhất.</div>
+        <div class="dec-card-name">refreshCart(userId)</div>
+        <div class="dec-card-body">Xóa cache Redis hiện tại (<code>redisService.del</code>) để lần gọi sau fetch lại dữ liệu mới nhất.</div>
       </div>
       <div class="dec-card">
-        <div class="dec-card-name">validateProduct()</div>
-        <div class="dec-card-body">Kiểm tra sản phẩm: tồn tại, ACTIVE, và đủ stock.</div>
+        <div class="dec-card-name">getOrCreateActiveCart(userId)</div>
+        <div class="dec-card-body">Tìm giỏ hàng đang <code>ACTIVE</code> hoặc tự động khởi tạo nếu chưa có.</div>
+      </div>
+      <div class="dec-card">
+        <div class="dec-card-name">validateProductAvailability(productId, qty)</div>
+        <div class="dec-card-body">Kiểm tra tính hợp lệ: Sản phẩm phải tồn tại, ACTIVE và đủ số lượng <code>stock</code>.</div>
+      </div>
+      <div class="dec-card">
+        <div class="dec-card-name">findOwnedCartItem(userId, itemId)</div>
+        <div class="dec-card-body">Bảo mật cấp độ dữ liệu: Kiểm tra item có thuộc về giỏ hàng ACTIVE của user hiện tại không.</div>
+      </div>
+      <div class="dec-card">
+        <div class="dec-card-name">serializeCart(cart)</div>
+        <div class="dec-card-body">Tính toán tổng giá trị bằng <code>Prisma.Decimal</code> và convert kết quả sang <code>String</code>.</div>
       </div>
 
-      <h2 id="3-flow">3. Theo Dấu Dữ Liệu: Trả Về & Tác Động Chéo</h2>
-      <p>Phân tích luồng từ Database thô đến JSON Response gọn gàng.</p>
+      <h2 id="3-flow">3. Theo Dấu Dữ Liệu: Trả Về & Tác Động Chéo (Cross-Module)</h2>
+      <p>Làm thế nào dữ liệu thô từ Database trở thành một JSON Response gọn gàng gửi cho Client?</p>
 
       <div class="lifecycle-container">
         <div class="lc-flow-panel">
-          <div class="lifecycle-title">Request Lifecycle - Add to Cart</div>
+          <div class="lifecycle-title">Request Lifecycle - Update Cart</div>
           <div class="lc-flow-scroll">
             <div class="lc-flow">
-              <div class="lc-node" data-node-name="Client" data-flow-in="DTO" data-flow-out="Request">
-                <div class="lc-node-label">Client</div>
-                <div class="lc-node-code">Browser</div>
+              <div class="lc-node" data-node-name="Service" data-flow-in="updateItem(dto)" data-flow-out="DB Update">
+                <div class="lc-node-label">Logic & Validation</div>
+                <div class="lc-node-code">validateProductAvailability</div>
               </div>
-              <div class="lc-node" data-node-name="AuthGuard" data-flow-in="Token" data-flow-out="userId">
-                <div class="lc-node-label">Guard</div>
-                <div class="lc-node-code">Verify JWT</div>
+              <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+              <div class="lc-node" data-node-name="Redis" data-flow-in="cart:userId" data-flow-out="Invalidate">
+                <div class="lc-node-label">Cache Invalidation</div>
+                <div class="lc-node-code">redisService.del</div>
               </div>
-              <div class="lc-node" data-node-name="CartService" data-flow-in="userId, dto" data-flow-out="Update DB">
-                <div class="lc-node-label">Service</div>
-                <div class="lc-node-code">Business Logic</div>
+              <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+              <div class="lc-node" data-node-name="Serialization" data-flow-in="Prisma.Decimal" data-flow-out="String (ResponseDto)">
+                <div class="lc-node-label">serializeCart</div>
+                <div class="lc-node-code">Decimal -> String</div>
               </div>
-              <div class="lc-node" data-node-name="Redis" data-flow-in="Key" data-flow-out="Invalidate">
-                <div class="lc-node-label">Redis</div>
-                <div class="lc-node-code">Cache Management</div>
+              <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+              <div class="lc-node" data-node-name="Client" data-flow-in="JSON Success" data-flow-out="UI Render">
+                <div class="lc-node-label">Browser</div>
+                <div class="lc-node-code">HTTP 200 OK</div>
               </div>
             </div>
           </div>
@@ -161,12 +204,21 @@ code { font-family: monospace; background: var(--bg-surface); padding: 0.2em 0.4
       </div>
 
       <h3>Lược Đồ Chuyển Đổi (Prisma.Decimal -> String)</h3>
-      <p>Để đảm bảo độ chính xác tuyệt đối, mọi phép toán tiền tệ được thực hiện qua <code>Prisma.Decimal</code>. Hàm <code>serializeCart</code> sẽ chuyển đổi kết quả cuối cùng sang <code>String</code> để tránh sai số dấu phẩy động trên trình duyệt.</p>
-
-      <h2 id="4-lib">4. Tích Hợp Thư Viện</h2>
+      <p>Khi lấy dữ liệu từ Database qua Prisma, mọi trường liên quan đến giá tiền đều được biểu diễn bằng <code>Prisma.Decimal</code> để triệt tiêu lỗi dấu phẩy động.</p>
       <ul>
-        <li><strong>Prisma</strong>: Ràng buộc duy nhất <code>cartId_productId</code> đảm bảo tính toàn vẹn dữ liệu.</li>
-        <li><strong>Redis</strong>: Tối ưu hiệu suất qua cơ chế Cache Hit/Miss.</li>
+        <li><strong>Tính toán chính xác</strong>: Sử dụng các method <code>.mul()</code> và <code>.plus()</code> để nhân đơn giá và tính tổng.</li>
+        <li><strong>Ép sang String</strong>: Trước khi tạo object trả về, mọi <code>Decimal</code> bắt buộc phải được chuyển đổi thành chuỗi qua <code>.toString()</code>. Điều này đảm bảo JSON trả về không bị làm tròn sai lệch, giúp Frontend nhận được con số chính xác tuyệt đối.</li>
+      </ul>
+
+      <h2 id="4-lib">4. Tích Hợp Thư Viện Bên Thứ Ba</h2>
+      <ul>
+        <li><strong>Prisma (Postgres Relations)</strong>: 
+          <ul>
+            <li>Ràng buộc duy nhất <code>cartId_productId</code> đảm bảo tính toàn vẹn dữ liệu.</li>
+            <li>Truy vấn lồng nhau (<code>include</code>) để lấy toàn bộ Cây Giỏ Hàng chỉ với một lời gọi.</li>
+          </ul>
+        </li>
+        <li><strong>Redis</strong>: Tối ưu hiệu suất qua cơ chế Cache Hit/Miss và chủ động xóa cache (Invalidation) khi có thay đổi.</li>
       </ul>
     </main>
   </div>

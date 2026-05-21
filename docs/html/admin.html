@@ -65,7 +65,7 @@ body {
 .toc-h2 { padding-left: 24px; }
 .toc-h3 { padding-left: 36px; font-size: 11.5px; }
 
-.content { flex: 1; max-width: 1000px; padding: 48px 52px 100px; min-width: 0; }
+.content { flex: 1; max-width: 100% !important; padding: 40px 60px 100px; min-width: 0; }
 
 h1, h2, h3, h4 { color: var(--text-bright); font-weight: 600; margin: 2em 0 0.6em; scroll-margin-top: 20px; }
 h1 { font-size: 2em; border-bottom: 1px solid var(--border); padding-bottom: .4em; margin-top: 0; }
@@ -146,6 +146,7 @@ pre { background: var(--bg-surface); border: 1px solid var(--border); border-rad
           <tr>
             <th>Thành phần</th>
             <th>Mô tả</th>
+            <th>Kiến trúc Flow</th>
             <th>Liên kết</th>
           </tr>
         </thead>
@@ -153,16 +154,19 @@ pre { background: var(--bg-surface); border: 1px solid var(--border); border-rad
           <tr>
             <td><strong>AdminController</strong></td>
             <td>Điều phối request, bảo vệ bằng AuthGuard & RolesGuard.</td>
+            <td><code style="color:var(--kw)">Guard</code> → <code style="color:var(--fn)">Ctrl</code> → <code style="color:var(--typ)">DTO</code></td>
             <td><a href="#1-controller">Chi tiết</a></td>
           </tr>
           <tr>
             <td><strong>AdminService</strong></td>
             <td>Xử lý logic nghiệp vụ, quản lý cache và log kiểm toán.</td>
+            <td><code style="color:var(--fn)">Svc</code> → <code style="color:var(--prop)">DB</code> → <code style="color:var(--purple)">Cache</code></td>
             <td><a href="#2-service">Chi tiết</a></td>
           </tr>
           <tr>
             <td><strong>Lưu trữ & Trả về</strong></td>
             <td>Quy trình đóng gói dữ liệu và tác động chéo đến cache.</td>
+            <td><code style="color:var(--typ)">DTO</code> → <code style="color:var(--str)">JSON</code> → <code style="color:var(--accent)">Client</code></td>
             <td><a href="#3-outputs">Chi tiết</a></td>
           </tr>
         </tbody>
@@ -309,24 +313,78 @@ pre { background: var(--bg-surface); border: 1px solid var(--border); border-rad
       </div>
 
       <h2 id="2-service">2. Service: "Khối óc" xử lý nghiệp vụ (admin.service.ts)</h2>
-      <p><code>AdminService</code> đảm nhận logic cốt lõi, tách biệt các hàm public xử lý luồng chính và các hàm private kiểm tra nghiệp vụ.</p>
+      <p>Nếu Controller là lễ tân, thì <code>AdminService</code> chính là những chuyên gia phía sau xử lý logic cốt lõi. Nơi đây quyết định dữ liệu có được lưu trữ hay không. Thiết kế cốt lõi của Service là việc tách biệt các luồng thao tác chính thành các hàm public và các kiểm tra nghiệp vụ (business validation) thành các hàm private (helper methods).</p>
 
-      <h3>2.1. Chi tiết các Public Methods</h3>
+      <h3>2.1. Chi tiết các Public Methods (Luồng xử lý chính)</h3>
+      <p>Các hàm public là những API được gọi trực tiếp từ Controller, đảm nhận toàn bộ vòng đời của một tác vụ quản trị.</p>
+      
       <ul>
-        <li><strong>createCategory</strong>: Kiểm tra trùng slug, tạo DB, dọn cache <code>CATEGORIES</code>, ghi log.</li>
-        <li><strong>updateCategory</strong>: Kiểm tra tồn tại, kiểm tra slug mới, cập nhật DB, dọn cache.</li>
-        <li><strong>createProduct</strong>: Kiểm tra Category, kiểm tra slug, xử lý quan hệ <code>create</code> mảng ảnh, dọn cache Catalog, ghi log.</li>
-        <li><strong>updateProduct</strong>: Kiểm tra tồn tại, xử lý xóa ảnh cũ/tạo ảnh mới (chiến thuật đồng bộ nhanh), dọn cache cho cả slug cũ và mới.</li>
-        <li><strong>softDeleteProduct</strong>: Đánh dấu <code>deletedAt</code>, dọn cache theo slug.</li>
-        <li><strong>findOrders</strong>: Lấy danh sách kèm <code>include</code> đầy đủ thông tin User/Address, mapping sang <code>AdminOrderResponseDto</code>.</li>
-        <li><strong>updateOrderStatus</strong>: Kiểm tra tồn tại, cập nhật trạng thái, ghi log chi tiết "Old -> New".</li>
+        <li><strong>createCategory(adminUserId, dto)</strong>:
+          <ul>
+            <li>Tạo danh mục mới.</li>
+            <li>Kiểm tra <code>ensureUniqueCategorySlug</code> để tránh trùng lặp slug.</li>
+            <li>Gọi Prisma tạo dữ liệu, sau đó chạy <code>invalidateCategoryCache</code> để xóa bộ nhớ đệm (cache) phía client và log lại hành động của Admin.</li>
+          </ul>
+        </li>
+        <li><strong>updateCategory(adminUserId, id, dto)</strong>:
+          <ul>
+            <li>Cập nhật danh mục có sẵn.</li>
+            <li>Đầu tiên kiểm tra <code>ensureCategoryExists</code>, sau đó nếu có thay đổi slug, kiểm tra tiếp <code>ensureUniqueCategorySlug</code> (bỏ qua id hiện tại).</li>
+            <li>Cập nhật database, dọn dẹp cache và lưu log.</li>
+          </ul>
+        </li>
+        <li><strong>createProduct(adminUserId, dto)</strong>:
+          <ul>
+            <li>Thêm một sản phẩm mới vào hệ thống.</li>
+            <li>Phải vượt qua các chốt chặn <code>ensureCategoryExists</code> và <code>ensureUniqueProductSlug</code> trước khi gọi database.</li>
+            <li>Xử lý mảng <code>images</code> bằng toán tử tạo liên kết (<code>create</code>) của Prisma.</li>
+            <li>Xóa cache sản phẩm theo slug và lưu log kiểm toán.</li>
+          </ul>
+        </li>
+        <li><strong>updateProduct(adminUserId, id, dto)</strong>:
+          <ul>
+            <li>Cập nhật thông tin sản phẩm. DTO đưa vào có thể chỉ chứa một vài trường cần cập nhật (do tính <code>Partial</code>).</li>
+            <li>Đi qua các vòng kiểm tra: <code>ensureProductExists</code>, <code>ensureCategoryExists</code> (nếu đổi danh mục) và <code>ensureUniqueProductSlug</code> (nếu đổi slug).</li>
+            <li>Tách các trường qua toán tử spread (<code>...rest</code>).</li>
+            <li>Xử lý ảnh là một chiến thuật đặc biệt: thay vì đối chiếu tìm xem ảnh nào xóa/thêm/sửa, Service xóa toàn bộ ảnh cũ và tạo mới danh sách ảnh (<code>deleteMany: {}</code> tiếp theo là <code>create</code>).</li>
+            <li>Cuối cùng, tiến hành dọn cache bằng cách gọi <code>invalidateProductCache</code> với cả slug cũ và slug mới, rồi lưu log.</li>
+          </ul>
+        </li>
+        <li><strong>softDeleteProduct(adminUserId, id)</strong>:
+          <ul>
+            <li>Xóa mềm (soft delete) sản phẩm thay vì xóa hoàn toàn khỏi database.</li>
+            <li>Gọi <code>ensureProductExists</code> để kiểm tra.</li>
+            <li>Cập nhật trường <code>deletedAt</code> thành thời gian hiện tại (<code>new Date()</code>).</li>
+            <li>Xóa cache theo slug của sản phẩm và lưu log.</li>
+          </ul>
+        </li>
+        <li><strong>findOrders(query)</strong>:
+          <ul>
+            <li>Lấy danh sách đơn hàng có phân trang và lọc theo trạng thái (<code>query.status</code>).</li>
+            <li>Sử dụng <code>Promise.all([findMany, count])</code> để tối ưu hóa hiệu suất.</li>
+            <li>Data trả về từ database được làm sạch qua lớp <code>AdminOrderResponseDto</code> trước khi trả về cho Controller.</li>
+          </ul>
+        </li>
+        <li><strong>updateOrderStatus(adminUserId, orderId, dto)</strong>:
+          <ul>
+            <li>Cập nhật trạng thái của đơn hàng (ví dụ từ PENDING sang SHIPPED).</li>
+            <li>Kiểm tra sự tồn tại của đơn hàng bằng một truy vấn <code>findUnique</code>. Nếu không có, ném ra lỗi <code>NotFoundException</code>.</li>
+            <li>Cập nhật trạng thái mới, tự động include danh sách sản phẩm và thông tin user để định dạng lại phản hồi.</li>
+            <li>Trả về đối tượng đã map qua <code>AdminOrderResponseDto</code> và lưu log kiểm toán.</li>
+          </ul>
+        </li>
       </ul>
 
-      <h3>2.2. Chi tiết các Private Helpers</h3>
+      <h3>2.2. Chi tiết các Private Helpers (Hàm hỗ trợ và kiểm tra nghiệp vụ)</h3>
+      <p>Các helper methods giúp tách biệt các logic kiểm tra phức tạp, làm cho các hàm public ngắn gọn, tập trung hoàn toàn vào luồng chính (Happy Path).</p>
+      
       <div class="rel-diagram">
-        <div class="rel-row"><span class="rel-from">ensureCategoryExists</span><div class="rel-arrow-anim"></div><span class="rel-to">NotFoundException if missing</span></div>
-        <div class="rel-row"><span class="rel-from">ensureUniqueProductSlug</span><div class="rel-arrow-anim"></div><span class="rel-to">ConflictException if exists</span></div>
-        <div class="rel-row"><span class="rel-from">invalidateProductCache</span><div class="rel-arrow-anim"></div><span class="rel-to">Redis.del(slug) + Catalog Cache</span></div>
+        <div class="rel-row"><span class="rel-from">ensureCategoryExists(id)</span><div class="rel-arrow-anim"></div><span class="rel-to">NotFoundException(404) if missing</span></div>
+        <div class="rel-row"><span class="rel-from">ensureProductExists(id)</span><div class="rel-arrow-anim"></div><span class="rel-to">NotFoundException(404) if missing</span></div>
+        <div class="rel-row"><span class="rel-from">ensureUniqueCategorySlug(slug, excludeId?)</span><div class="rel-arrow-anim"></div><span class="rel-to">ConflictException(409) if duplicate</span></div>
+        <div class="rel-row"><span class="rel-from">ensureUniqueProductSlug(slug, excludeId?)</span><div class="rel-arrow-anim"></div><span class="rel-to">ConflictException(409) if duplicate</span></div>
+        <div class="rel-row"><span class="rel-from">invalidateCategoryCache()</span><div class="rel-arrow-anim"></div><span class="rel-to">Redis.del(CATEGORIES) + reset()</span></div>
+        <div class="rel-row"><span class="rel-from">invalidateProductCache(oldSlug?, newSlug?)</span><div class="rel-arrow-anim"></div><span class="rel-to">Redis.del(slugs) + Catalog Sync</span></div>
       </div>
 
       <h2 id="3-outputs">3. Quản lý Kết quả trả về (Outputs & Returns)</h2>

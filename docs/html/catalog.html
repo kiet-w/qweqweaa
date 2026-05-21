@@ -106,7 +106,7 @@ body {
 
 .content {
   flex: 1;
-  max-width: 960px;
+  max-width: 100% !important;
   padding: 48px 52px 100px;
   min-width: 0;
 }
@@ -193,13 +193,31 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
 .crud-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 .crud-col-title { font-size: 10px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
 .crud-col-content { font-size: 12px; color: var(--text); line-height: 1.55; }
+.crud-effects { padding: 0 16px 14px; }
+.crud-effects-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; }
+.effect-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-family: monospace;
+  margin: 3px 4px 3px 0;
+  color: var(--text-muted);
+}
+.effect-tag.db-read { border-color: var(--green); color: var(--green); }
+.effect-tag.cache-set { border-color: var(--green); color: var(--green); }
+.effect-tag.cache-inv { border-color: var(--yellow); color: var(--yellow); }
 
 .lifecycle-container {
   display: flex; flex-direction: column; background: var(--bg-surface);
   border: 1px solid var(--border); border-radius: 12px; margin: 2em 0;
   overflow: hidden; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
 }
-@media (min-width: 992px) { .lifecycle-container { flex-direction: row; height: 500px; } }
+@media (min-width: 992px) { .lifecycle-container { flex-direction: row; height: 520px; } }
 .lc-flow-panel { flex: 1.3; padding: 24px; overflow: auto; display: flex; flex-direction: column; border-right: 1px solid var(--border); }
 .lc-detail-panel { flex: 1; padding: 24px; background: var(--bg-sidebar); overflow-y: auto; }
 .lifecycle-title { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 24px; font-weight: 700; border-bottom: 1px dashed var(--border); padding-bottom: 12px; }
@@ -221,6 +239,10 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
 .lc-node.cache { background: var(--node-cache); border-color: var(--node-cache-b); }
 .lc-node-label { font-size: 12px; font-weight: 600; color: var(--text-bright); }
 .lc-node-code { font-size: 10px; font-family: monospace; color: var(--text-muted); }
+.lc-node-ports { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.08); font-size: 9px; font-family: monospace; }
+.lc-port { padding: 1px 4px; border-radius: 3px; }
+.lc-port.in { background: rgba(78, 201, 176, 0.1); color: var(--green); }
+.lc-port.out { background: rgba(0, 122, 204, 0.15); color: var(--kw); }
 .lc-connector { display: flex; align-items: center; padding: 0 4px; }
 .lc-line { height: 2px; width: 30px; background: var(--accent); position: relative; }
 .lc-arrow { width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 6px solid var(--accent); }
@@ -228,6 +250,7 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
 .lc-detail-header { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
 .lc-detail-type { font-size: 10px; text-transform: uppercase; color: var(--accent); font-weight: 700; }
 .lc-detail-title { font-size: 16px; font-weight: 600; color: var(--text-bright); }
+.lc-detail-file { font-size: 11px; font-family: monospace; color: var(--text-muted); margin-top: 4px; }
 .lc-flow-card { background: var(--bg-surface); border-radius: 6px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
 .lc-flow-card-title { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
 .lc-flow-card-code { font-family: monospace; font-size: 12px; color: var(--yellow); margin-bottom: 4px; }
@@ -243,6 +266,7 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
     <main class="content">
       <h1>Giải Thích Chi Tiết Chuyên Sâu - Module Catalog (src/catalog)</h1>
       <p>Module Catalog là "quầy trưng bày" của hệ thống e-commerce, chịu trách nhiệm xử lý các luồng dữ liệu liên quan đến danh mục, sản phẩm, tìm kiếm và lọc. Đặc thù của module này là <strong>lượng truy cập đọc (read-heavy) rất lớn</strong>, do đó kiến trúc của nó tập trung tối đa vào tối ưu hoá hiệu năng (Performance) và bộ nhớ đệm (Caching).</p>
+      <p>Tài liệu này sẽ đi sâu vào sự tương tác giữa Controller và Service, cách xử lý luồng dữ liệu, và các pattern thiết kế được áp dụng.</p>
 
       <div class="summary-table">
         <table>
@@ -256,33 +280,60 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
           <tbody>
             <tr>
               <td><strong>Controllers</strong></td>
-              <td><div class="lc-node pipe">@Query</div> → <div class="lc-node ctrl">Dto</div></td>
-              <td><a href="#controllers">Xem chi tiết</a></td>
+              <td>
+                <div class="lc-flow">
+                  <div class="lc-node pipe">@Query</div>
+                  <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                  <div class="lc-node ctrl">Dto</div>
+                </div>
+              </td>
+              <td><a href="#section-1">Xem chi tiết</a></td>
             </tr>
             <tr>
               <td><strong>Services</strong></td>
-              <td><div class="lc-node cache">Redis</div> → <div class="lc-node db">Prisma</div></td>
-              <td><a href="#services">Xem chi tiết</a></td>
+              <td>
+                <div class="lc-flow">
+                  <div class="lc-node cache">Redis</div>
+                  <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                  <div class="lc-node db">Prisma</div>
+                </div>
+              </td>
+              <td><a href="#section-2">Xem chi tiết</a></td>
             </tr>
             <tr>
               <td><strong>Output Flow</strong></td>
-              <td><div class="lc-node svc">Logic</div> → <div class="lc-node client">paginated()</div></td>
-              <td><a href="#output">Xem chi tiết</a></td>
+              <td>
+                <div class="lc-flow">
+                  <div class="lc-node svc">Logic</div>
+                  <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                  <div class="lc-node client">paginated()</div>
+                </div>
+              </td>
+              <td><a href="#section-3">Xem chi tiết</a></td>
             </tr>
             <tr>
               <td><strong>Performance</strong></td>
-              <td><div class="lc-node db">Promise.all</div> → <div class="lc-node cache">Cache-Aside</div></td>
-              <td><a href="#performance">Xem chi tiết</a></td>
+              <td>
+                <div class="lc-flow">
+                  <div class="lc-node db">Promise.all</div>
+                  <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                  <div class="lc-node cache">Cache-Aside</div>
+                </div>
+              </td>
+              <td><a href="#section-4">Xem chi tiết</a></td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <h2 id="controllers">1. Controllers: Lớp Giao Tiếp Đầu Vào (catalog.controller.ts)</h2>
+      <hr>
+
+      <h2 id="section-1">1. Controllers: Lớp Giao Tiếp Đầu Vào (catalog.controller.ts)</h2>
       <p><code>CatalogController</code> là điểm chạm đầu tiên tiếp nhận các request từ client.</p>
 
       <h3>1.1 Chi Tiết Endpoint và Xử Lý Dữ Liệu</h3>
       <p>Module có 3 endpoints chính:</p>
+
       <div class="crud-card">
         <div class="crud-header">
           <span class="crud-method method-get">GET</span>
@@ -291,10 +342,11 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
         </div>
         <div class="crud-body">
           <div><div class="crud-col-title">Input</div><div class="crud-col-content">N/A</div></div>
-          <div><div class="crud-col-title">Xử lý</div><div class="crud-col-content">Gọi service lấy danh mục</div></div>
+          <div><div class="crud-col-title">Logic</div><div class="crud-col-content">Lấy toàn bộ danh mục sản phẩm từ cache/DB.</div></div>
           <div><div class="crud-col-title">Output</div><div class="crud-col-content">List Categories JSON</div></div>
         </div>
       </div>
+
       <div class="crud-card">
         <div class="crud-header">
           <span class="crud-method method-get">GET</span>
@@ -302,11 +354,12 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
           <span class="crud-fn">findProducts()</span>
         </div>
         <div class="crud-body">
-          <div><div class="crud-col-title">Input</div><div class="crud-col-content"><code>ProductQueryDto</code></div></div>
-          <div><div class="crud-col-title">Xử lý</div><div class="crud-col-content">Phân trang, lọc, tìm kiếm</div></div>
-          <div><div class="crud-col-title">Output</div><div class="crud-col-content">Paginated Products</div></div>
+          <div><div class="crud-col-title">Input</div><div class="crud-col-content"><code>@Query() query: ProductQueryDto</code></div></div>
+          <div><div class="crud-col-title">Logic</div><div class="crud-col-content">Phân trang, lọc theo giá/danh mục, tìm kiếm text.</div></div>
+          <div><div class="crud-col-title">Output</div><div class="crud-col-content">Paginated Products JSON</div></div>
         </div>
       </div>
+
       <div class="crud-card">
         <div class="crud-header">
           <span class="crud-method method-get">GET</span>
@@ -314,8 +367,8 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
           <span class="crud-fn">findProductBySlug()</span>
         </div>
         <div class="crud-body">
-          <div><div class="crud-col-title">Input</div><div class="crud-col-content"><code>slug: string</code></div></div>
-          <div><div class="crud-col-title">Xử lý</div><div class="crud-col-content">Tìm chi tiết sản phẩm</div></div>
+          <div><div class="crud-col-title">Input</div><div class="crud-col-content"><code>@Param('slug') slug: string</code></div></div>
+          <div><div class="crud-col-title">Logic</div><div class="crud-col-content">Tìm chi tiết sản phẩm theo slug duy nhất.</div></div>
           <div><div class="crud-col-title">Output</div><div class="crud-col-content">Product Detail JSON</div></div>
         </div>
       </div>
@@ -324,23 +377,28 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
       <div class="dec-card">
         <div class="dec-card-name">@Query()</div>
         <div class="dec-card-body">
-          <div class="dec-card-desc">Lấy tham số từ URL Query String và map vào object.</div>
-          <div class="dec-card-effect"><b>Tác động:</b> Tự động instantiate <code>ProductQueryDto</code> thông qua ValidationPipe.</div>
+          <div class="dec-card-desc">Tự động ánh xạ các tham số từ URL Query String (ví dụ: ?search=iphone) vào đối tượng DTO.</div>
+          <div class="dec-card-effect"><b>Tác động:</b> Sử dụng <code>class-transformer</code> để convert kiểu dữ liệu và <code>class-validator</code> để kiểm tra tính hợp lệ trước khi vào Controller.</div>
         </div>
       </div>
-      <p>Trong endpoint <code>GET /products</code>, NestJS sử dụng <strong>Global ValidationPipe</strong> để tự động khởi tạo object. <code>ProductQueryDto</code> kế thừa từ <code>PaginationQueryDto</code> giúp tái sử dụng logic phân trang hệ thống.</p>
-
-      <h2 id="services">2. Services: Lõi Logic Trọng Tâm (catalog.service.ts)</h2>
-      <p><code>CatalogService</code> thực thi Business Logic, tách biệt public API và private helpers.</p>
-
-      <h3>2.1 Các Phương Thức Public</h3>
+      <p>Trong endpoint <code>GET /products</code>, tham số <code>@Query() query: ProductQueryDto</code> là một minh chứng rõ ràng cho sức mạnh của NestJS.</p>
       <ul>
-        <li><strong>findCategories()</strong>: Trả về danh mục, tận dụng Redis <code>getOrSet</code>.</li>
-        <li><strong>findProducts(query)</strong>: Điều phối phân trang, tạo cache key, thực thi song song Prisma query qua <code>Promise.all</code>.</li>
-        <li><strong>findProductBySlug(slug)</strong>: Lấy chi tiết qua Cache, validate trạng thái ACTIVE.</li>
+        <li><strong>Cách thức hoạt động:</strong> Dựa vào <strong>Global ValidationPipe</strong>, NestJS tự động khởi tạo (instantiate) object của class <code>ProductQueryDto</code>.</li>
+        <li><strong>Kế thừa (Inheritance):</strong> <code>ProductQueryDto</code> kế thừa từ <code>PaginationQueryDto</code> giúp tái sử dụng logic phân trang mặc định.</li>
+        <li><strong>Lợi ích:</strong> Đảm bảo controller nhận được một đối tượng an toàn, đã được xác thực kiểu dữ liệu.</li>
       </ul>
 
-      <pre><div class="pre-header"><span class="pre-lang">typescript</span><span class="pre-filename">catalog.service.ts</span></div><code><span class="kw">async</span> <span class="fn">findProducts</span>(query: <span class="typ">ProductQueryDto</span>) {
+      <h2 id="section-2">2. Services: Lõi Logic Trọng Tâm (catalog.service.ts)</h2>
+      <p><code>CatalogService</code> là nơi thực thi toàn bộ Business Logic, sử dụng pattern tách biệt public API và private helpers.</p>
+
+      <h3>2.1 Các Phương Thức Public (Public Methods)</h3>
+      <ul>
+        <li><strong>findCategories()</strong>: Trả về danh sách danh mục, tận dụng Redis (<code>getOrSet</code>) để tối ưu tốc độ cho dữ liệu ít thay đổi.</li>
+        <li><strong>findProducts(query: ProductQueryDto)</strong>: Điều phối phân trang, tạo cache key duy nhất, và thực thi song song truy vấn Prisma.</li>
+        <li><strong>findProductBySlug(slug: string)</strong>: Lấy chi tiết sản phẩm qua Cache, validate trạng thái ACTIVE, ném <code>NotFoundException</code> nếu cần.</li>
+      </ul>
+
+      <pre><div class="pre-header"><span class="pre-lang">typescript</span><span class="pre-filename">src/catalog/catalog.service.ts</span></div><code><span class="kw">async</span> <span class="fn">findProducts</span>(query: <span class="typ">ProductQueryDto</span>) {
   <span class="kw">const</span> { page = 1, limit = 10 } = query;
   <span class="kw">const</span> skip = (page - 1) * limit;
   <span class="kw">const</span> cacheKey = <span class="kw">this</span>.<span class="fn">getProductsCacheKey</span>(query, page, limit);
@@ -348,7 +406,11 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
   <span class="kw">return</span> <span class="kw">this</span>.redisService.<span class="fn">getOrSet</span>(cacheKey, <span class="kw">async</span> () => {
     <span class="kw">const</span> where = <span class="kw">this</span>.<span class="fn">buildProductWhere</span>(query);
     <span class="kw">const</span> [items, total] = <span class="kw">await</span> <span class="typ">Promise</span>.<span class="fn">all</span>([
-      <span class="kw">this</span>.prisma.product.<span class="fn">findMany</span>({ where, skip, take: limit }),
+      <span class="kw">this</span>.prisma.product.<span class="fn">findMany</span>({
+        where, skip, take: limit,
+        include: { category: <span class="kw">true</span>, images: <span class="kw">true</span> },
+        orderBy: <span class="kw">this</span>.<span class="fn">getProductOrderBy</span>(query.sort)
+      }),
       <span class="kw">this</span>.prisma.product.<span class="fn">count</span>({ where })
     ]);
     <span class="kw">return</span> { data: items.<span class="fn">map</span>(p => <span class="kw">this</span>.<span class="fn">serializeProduct</span>(p)), total, page, limit };
@@ -356,20 +418,25 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
 }</code></pre>
 
       <h3>2.2 Tương Tác Với Các Private Helpers</h3>
-      <div class="dec-card">
-        <div class="dec-card-name">serializeProduct</div>
-        <div class="dec-card-body">
-          <div class="dec-card-desc">Data Mapper chuẩn hóa dữ liệu Prisma sang JSON.</div>
-          <div class="dec-card-effect"><b>Quan trọng:</b> Biến đổi <code>Decimal</code> sang <code>string</code> để bảo toàn độ chính xác tài chính.</div>
-        </div>
-      </div>
+      <p>Việc chia nhỏ logic vào các hàm private giúp code dễ đọc và tuân thủ SRP.</p>
       <ul>
-        <li><code>buildProductWhere</code>: Chuyển DTO sang <code>Prisma.ProductWhereInput</code>.</li>
-        <li><code>getProductOrderBy</code>: Dịch enum sort sang Prisma order object.</li>
-        <li><code>getProductsCacheKey</code>: Sinh unique key dựa trên query params.</li>
+        <li><code>buildProductWhere</code>: Chuyển đổi DTO sang định dạng <code>Prisma.ProductWhereInput</code>.</li>
+        <li><code>getProductOrderBy</code>: Dịch enum/chuỗi truyền từ người dùng thành object định hướng sắp xếp.</li>
+        <li><code>getProductsCacheKey</code>: Sinh ra chuỗi định danh duy nhất cho Redis.</li>
+        <li><code>serializeProduct</code>: 
+          <div class="dec-card">
+            <div class="dec-card-name">serializeProduct</div>
+            <div class="dec-card-body">
+              <div class="dec-card-desc">Data Mapper đóng vai trò chuẩn hoá dữ liệu thô từ Prisma Client.</div>
+              <div class="dec-card-effect"><b>Tác động:</b> Biến đổi kiểu <code>Decimal</code> của thuộc tính <code>price</code> sang chuỗi <code>string</code> để bảo toàn độ chính xác tài chính khi trả về JSON.</div>
+            </div>
+          </div>
+        </li>
       </ul>
 
-      <h2 id="output">3. Quản Lý Đầu Ra và Dòng Chảy Dữ Liệu</h2>
+      <h2 id="section-3">3. Quản Lý Đầu Ra (Returns/Outputs) và Dòng Chảy Dữ Liệu</h2>
+
+      <h3>3.1 Luồng Xử Lý Đầu Ra Rõ Ràng (Explicit Output Flow)</h3>
       
       <div class="lifecycle-container">
         <div class="lc-flow-panel">
@@ -377,35 +444,35 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
           <div class="lc-flow-scroll">
             <div class="lc-flow">
               <div class="lc-step">
-                <div class="lc-node client active" data-type="Client" data-title="Client Browser" data-in="N/A" data-out="HTTP GET /products?search=..." data-desc="Gửi request tìm kiếm sản phẩm.">
+                <div class="lc-node client active" data-node-name="Client Browser" data-node-type="Client" data-node-file="Browser" data-flow-in="N/A" data-why-in="Người dùng gửi yêu cầu lấy danh sách sản phẩm." data-flow-out="GET /products?search=..." data-why-out="Gửi các tham số lọc lên server.">
                   <div class="lc-node-label">Client</div>
                 </div>
                 <div class="lc-step-num">1</div>
               </div>
               <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
               <div class="lc-step">
-                <div class="lc-node ctrl" data-type="Controller" data-title="CatalogController" data-in="Query Params" data-out="findProducts(dto)" data-desc="Nhận và validate query parameters.">
+                <div class="lc-node ctrl" data-node-name="CatalogController" data-node-type="Controller" data-node-file="catalog.controller.ts" data-flow-in="Query Params" data-why-in="Nhận dữ liệu lọc từ URL." data-flow-out="findProducts(query)" data-why-out="Chuyển tiếp yêu cầu xử lý logic cho Service.">
                   <div class="lc-node-label">Controller</div>
                 </div>
                 <div class="lc-step-num">2</div>
               </div>
               <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
               <div class="lc-step">
-                <div class="lc-node cache" data-type="Cache" data-title="Redis Service" data-in="Cache Key" data-out="Data (if Hit) / Next (if Miss)" data-desc="Kiểm tra dữ liệu trong bộ nhớ đệm RAM.">
+                <div class="lc-node cache" data-node-name="Redis Service" data-node-type="Cache" data-node-file="redis.service.ts" data-flow-in="Cache Key" data-why-in="Kiểm tra xem kết quả truy vấn đã có trong RAM chưa." data-flow-out="Data (Hit) / DB Query (Miss)" data-why-out="Nếu có, trả ngay kết quả. Nếu không, bắt buộc query database.">
                   <div class="lc-node-label">Redis</div>
                 </div>
                 <div class="lc-step-num">3</div>
               </div>
               <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
               <div class="lc-step">
-                <div class="lc-node db" data-type="DB" data-title="Prisma / PostgreSQL" data-in="SQL Query" data-out="Raw Data" data-desc="Truy vấn database nếu cache miss.">
+                <div class="lc-node db" data-node-name="Prisma / DB" data-node-type="Database" data-node-file="PostgreSQL" data-flow-in="SQL Query" data-why-in="Thực thi truy vấn lấy dữ liệu thô." data-flow-out="Raw Data Items" data-why-out="Trả về dữ liệu từ đĩa cứng PostgreSQL.">
                   <div class="lc-node-label">Database</div>
                 </div>
                 <div class="lc-step-num">4</div>
               </div>
               <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
               <div class="lc-step">
-                <div class="lc-node svc" data-type="Service" data-title="paginated() Wrapper" data-in="Raw Object" data-out="Standard JSON Response" data-desc="Đóng gói dữ liệu vào chuẩn success/data/meta.">
+                <div class="lc-node svc" data-node-name="paginated() Wrapper" data-node-type="Utility" data-node-file="api-response.util.ts" data-flow-in="Raw Object {data, total}" data-why-in="Nhận kết quả thô từ Service." data-flow-out="Standard JSON Response" data-why-out="Đóng gói vào chuẩn success/data/meta để Frontend dễ xử lý.">
                   <div class="lc-node-label">Wrapper</div>
                 </div>
                 <div class="lc-step-num">5</div>
@@ -414,34 +481,70 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
           </div>
         </div>
         <div class="lc-detail-panel" id="lc-detail">
-          <div class="lc-detail-header">
-            <div class="lc-detail-type">Client</div>
-            <div class="lc-detail-title">Client Browser</div>
-          </div>
-          <div class="lc-flow-card">
-            <div class="lc-flow-card-title">Dữ liệu ra (OUT)</div>
-            <div class="lc-flow-card-code">HTTP GET /products?search=...</div>
-            <div class="lc-flow-card-desc">Gửi request tìm kiếm sản phẩm.</div>
+          <div class="lc-detail-empty">Click vào một node để xem chi tiết luồng dữ liệu.</div>
+          <div class="lc-detail-body" style="display: none;">
+            <div class="lc-detail-header">
+              <div class="lc-detail-type"></div>
+              <div class="lc-detail-title"></div>
+              <div class="lc-detail-file"></div>
+            </div>
+            <div class="lc-flow-card in-card">
+              <div class="lc-flow-card-title">📥 Dữ liệu vào (IN)</div>
+              <div class="lc-flow-card-code"></div>
+              <div class="lc-flow-card-desc"></div>
+            </div>
+            <div class="lc-flow-card out-card">
+              <div class="lc-flow-card-title">📤 Dữ liệu ra (OUT)</div>
+              <div class="lc-flow-card-code"></div>
+              <div class="lc-flow-card-desc"></div>
+            </div>
           </div>
         </div>
       </div>
 
-      <h3 id="cross-impacts">3.2 Tác Động Chéo Giữa Các Module</h3>
-      <p>Module Catalog phụ thuộc hoàn toàn vào <strong>Redis Cache</strong>. Trách nhiệm làm mới dữ liệu thuộc về <strong>Admin Module</strong>. Khi Admin thực hiện CUD, Admin Service sẽ invalidate cache keys tương ứng.</p>
+      <h3>3.2 Tác Động Chéo Giữa Các Module (Cross-Module Impacts)</h3>
+      <p>Module Catalog phụ thuộc hoàn toàn vào trạng thái của <strong>Redis Cache</strong>. Dữ liệu mà khách hàng nhìn thấy không phải lúc nào cũng query trực tiếp từ Database.</p>
+      <ul>
+        <li>Trách nhiệm làm mới dữ liệu thuộc về <strong>Admin Module</strong>.</li>
+        <li>Khi Admin thực hiện CUD, Admin Service sẽ invalidate các Cache Key tương ứng.</li>
+      </ul>
 
-      <h3>3.5 Cấu Trúc JSON Trả Về Client</h3>
+      <h3>3.4 Tại Sao Lại Dùng paginated()?</h3>
+      <p>Hàm <code>paginated(data, total, page, limit)</code> tạo ra một chuẩn phản hồi thống nhất toàn hệ thống. Nó giúp Frontend luôn biết cách đọc dữ liệu và hiển thị phân trang chính xác.</p>
+
+      <h3>3.5 Cấu Trúc JSON Chính Xác Trả Về Client</h3>
       <pre><div class="pre-header"><span class="pre-lang">json</span></div><code>{
   <span class="prop">"success"</span>: <span class="kw">true</span>,
-  <span class="prop">"data"</span>: [{ <span class="prop">"id"</span>: 1, <span class="prop">"name"</span>: <span class="str">"Sản phẩm A"</span>, <span class="prop">"price"</span>: <span class="str">"1000.00"</span> }],
-  <span class="prop">"meta"</span>: { <span class="prop">"total"</span>: 150, <span class="prop">"page"</span>: 1, <span class="prop">"limit"</span>: 10, <span class="prop">"totalPages"</span>: 15 }
+  <span class="prop">"data"</span>: [
+    {
+      <span class="prop">"id"</span>: 1,
+      <span class="prop">"name"</span>: <span class="str">"Sản phẩm A"</span>,
+      <span class="prop">"price"</span>: <span class="str">"1000.00"</span>,
+      <span class="prop">"category"</span>: { <span class="prop">"name"</span>: <span class="str">"Điện thoại"</span> },
+      <span class="prop">"images"</span>: [{ <span class="prop">"url"</span>: <span class="str">"..."</span> }]
+    }
+  ],
+  <span class="prop">"meta"</span>: {
+    <span class="prop">"total"</span>: 150,
+    <span class="prop">"page"</span>: 1,
+    <span class="prop">"limit"</span>: 10,
+    <span class="prop">"totalPages"</span>: 15
+  }
 }</code></pre>
 
-      <h2 id="performance">4. Tích Hợp Third-Party & Thư Viện</h2>
+      <h2 id="section-4">4. Tích Hợp Third-Party & Thư Viện</h2>
+      
       <h3>4.1 Tối Ưu Bằng Promise.all Với Prisma</h3>
       <p>Sử dụng <code>Promise.all()</code> để thực thi song song <code>findMany</code> và <code>count</code>, giảm gần một nửa thời gian chờ I/O.</p>
-      
+
       <h3>4.2 Pattern Cache-Aside Với redisService.getOrSet</h3>
-      <p>Cơ chế: Kiểm tra Redis (Hit) -> Trả ngay. Nếu Miss -> Query DB -> Lưu Redis (TTL) -> Trả dữ liệu. Đảm bảo hệ thống "đỡ" được traffic CCU lớn.</p>
+      <p>Cơ chế hoạt động:</p>
+      <ol>
+        <li><strong>Kiểm tra Cache:</strong> RAM Redis có dữ liệu không?</li>
+        <li><strong>Cache Hit:</strong> Trả ngay kết quả (< 5ms).</li>
+        <li><strong>Cache Miss:</strong> Query Database -> Serialize dữ liệu -> Lưu ngược vào Redis (TTL) -> Trả về Client.</li>
+      </ol>
+      <p>Mô hình này giúp ứng dụng "đỡ" được traffic CCU cực lớn mà không làm sập Database.</p>
     </main>
   </div>
 
@@ -461,28 +564,30 @@ td { padding: 7px 14px; border: 1px solid var(--border); }
     function initLifecycle() {
       const nodes = document.querySelectorAll('.lc-node');
       const detail = document.getElementById('lc-detail');
-      
+      const body = detail.querySelector('.lc-detail-body');
+      const empty = detail.querySelector('.lc-detail-empty');
+
       nodes.forEach(node => {
         node.addEventListener('click', () => {
           nodes.forEach(n => n.classList.remove('active'));
           node.classList.add('active');
           
-          const { type, title, in: input, out, desc } = node.dataset;
-          detail.innerHTML = `
-            <div class="lc-detail-header">
-              <div class="lc-detail-type">${type}</div>
-              <div class="lc-detail-title">${title}</div>
-            </div>
-            <div class="lc-flow-card">
-              <div class="lc-flow-card-title">Dữ liệu vào (IN)</div>
-              <div class="lc-flow-card-code">${input}</div>
-            </div>
-            <div class="lc-flow-card">
-              <div class="lc-flow-card-title">Dữ liệu ra (OUT)</div>
-              <div class="lc-flow-card-code">${out}</div>
-              <div class="lc-flow-card-desc">${desc}</div>
-            </div>
-          `;
+          empty.style.display = 'none';
+          body.style.display = 'block';
+          
+          const { nodeType, nodeName, nodeFile, flowIn, whyIn, flowOut, whyOut } = node.dataset;
+          
+          body.querySelector('.lc-detail-type').textContent = nodeType;
+          body.querySelector('.lc-detail-title').textContent = nodeName;
+          body.querySelector('.lc-detail-file').textContent = nodeFile;
+          
+          const inCard = body.querySelector('.in-card');
+          inCard.querySelector('.lc-flow-card-code').textContent = flowIn;
+          inCard.querySelector('.lc-flow-card-desc').textContent = whyIn;
+          
+          const outCard = body.querySelector('.out-card');
+          outCard.querySelector('.lc-flow-card-code').textContent = flowOut;
+          outCard.querySelector('.lc-flow-card-desc').textContent = whyOut;
         });
       });
     }

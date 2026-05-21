@@ -17,7 +17,7 @@
 body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; font-size: 14px; line-height: 1.7; }
 .page-wrap { display: flex; min-height: 100vh; }
 .sidebar { width: 260px; flex-shrink: 0; background: var(--bg-sidebar); border-right: 1px solid var(--border); position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 16px 0; }
-.content { flex: 1; max-width: 1000px; padding: 48px 52px 100px; }
+.content { flex: 1; max-width: 100% !important; padding: 40px 60px 100px; }
 h1, h2, h3 { color: var(--text-bright); margin: 2em 0 0.6em; scroll-margin-top: 20px; }
 h1 { font-size: 2em; border-bottom: 1px solid var(--border); padding-bottom: 0.4em; }
 h2 { font-size: 1.5em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
@@ -62,12 +62,32 @@ code { font-family: monospace; background: var(--bg-surface); padding: 0.2em 0.4
       <h2>Tóm tắt các thành phần</h2>
       <table class="summary-table">
         <thead>
-          <tr><th>Thành phần</th><th>Mô tả</th><th>Liên kết</th></tr>
+          <tr>
+            <th>Thành phần</th>
+            <th>Mô tả</th>
+            <th>Kiến trúc Flow</th>
+            <th>Liên kết</th>
+          </tr>
         </thead>
         <tbody>
-          <tr><td><strong>Controller</strong></td><td>Tiếp nhận request, xử lý Serialization và Cookies.</td><td><a href="#1-controller">Chi tiết</a></td></tr>
-          <tr><td><strong>Service</strong></td><td>Logic nghiệp vụ chính: bcrypt, JWT, và quản lý phiên.</td><td><a href="#2-service">Chi tiết</a></td></tr>
-          <tr><td><strong>Data Trace</strong></td><td>Luồng truyền tải Token và làm sạch dữ liệu DTO.</td><td><a href="#3-trace">Chi tiết</a></td></tr>
+          <tr>
+            <td><strong>AuthController</strong></td>
+            <td>Cửa ngõ giao tiếp, xử lý Serialization và Cookies.</td>
+            <td><code style="color:var(--fn)">Ctrl</code> → <code style="color:var(--purple)">Interceptor</code> → <code style="color:var(--str)">Cookie</code></td>
+            <td><a href="#1-controller">Chi tiết</a></td>
+          </tr>
+          <tr>
+            <td><strong>AuthService</strong></td>
+            <td>Logic nghiệp vụ chính: bcrypt, JWT, và quản lý phiên.</td>
+            <td><code style="color:var(--fn)">Svc</code> → <code style="color:var(--typ)">JWT</code> → <code style="color:var(--kw)">Bcrypt</code></td>
+            <td><a href="#2-service">Chi tiết</a></td>
+          </tr>
+          <tr>
+            <td><strong>Data Trace</strong></td>
+            <td>Luồng truyền tải Token và làm sạch dữ liệu DTO.</td>
+            <td><code style="color:var(--typ)">DTO</code> → <code style="color:var(--red)">Exclude</code> → <code style="color:var(--str)">JSON</code></td>
+            <td><a href="#3-trace">Chi tiết</a></td>
+          </tr>
         </tbody>
       </table>
 
@@ -89,45 +109,57 @@ code { font-family: monospace; background: var(--bg-surface); padding: 0.2em 0.4
       </div>
 
       <h2 id="2-service">2. Service (src/auth/auth.service.ts)</h2>
-      <p><code>AuthService</code> chứa logic cốt lõi: băm mật khẩu, sinh token và thiết lập cookies.</p>
+      <p><code>AuthService</code> là trái tim của hệ thống Auth. Nó chứa toàn bộ logic xử lý, từ việc băm mật khẩu, so sánh dữ liệu, cho đến thao tác sinh token và thiết lập cookies, bằng cách gọi qua <code>UserService</code>.</p>
       
-      <h3>2.1. Các Phương Thức Public</h3>
+      <h3>2.1. Các Phương Thức Public (Luồng Nghiệp Vụ Chính)</h3>
       <ul>
-        <li><strong>register</strong>: Kiểm tra email, băm mật khẩu qua bcrypt, lưu user mới.</li>
-        <li><strong>login</strong>: So khớp password, sinh cặp Access/Refresh Token, thiết lập Cookies.</li>
-        <li><strong>handleRefresh</strong>: Kiểm tra Refresh Token trong DB (chống Token Hijacking), cấp mới cặp token.</li>
-        <li><strong>handleLogout</strong>: Vô hiệu hóa token trong DB và xóa Cookies trình duyệt.</li>
+        <li><strong>register(data: RegisterDto)</strong>: Kiểm tra email tồn tại, băm mật khẩu người dùng, và giao cho <code>UserService</code> lưu vào CSDL.</li>
+        <li><strong>login(data: LoginDto, response: Response)</strong>: Tìm user theo email, so sánh mật khẩu qua <code>bcrypt</code>, sinh cặp Token mới, lưu Refresh Token vào DB và thiết lập HttpOnly Cookies.</li>
+        <li><strong>handleRefresh(refreshToken, response)</strong>: Xác thực Refresh Token, kiểm tra tính hợp lệ trong DB (chống Token Hijacking), sau đó cấp mới cặp Token.</li>
+        <li><strong>handleLogout(accessToken, response)</strong>: Xác định user, xóa Refresh Token trong DB và gỡ bỏ Cookies trên trình duyệt.</li>
+        <li><strong>validateAccessToken(token)</strong>: Giải mã và xác thực tính hợp lệ của Access Token, trả về payload nếu thành công.</li>
       </ul>
 
-      <h3>2.2. Các Phương Thức Private</h3>
+      <h3>2.2. Các Phương Thức Private (Helpers)</h3>
       <div class="dec-card">
-        <div class="dec-card-name">setCookies()</div>
-        <div class="dec-card-body">Cấu hình bảo mật Cookie: <code>httpOnly</code>, <code>secure</code>, <code>sameSite</code>.</div>
+        <div class="dec-card-name">setCookies(response, tokens)</div>
+        <div class="dec-card-body">Cấu hình bảo mật Cookie: <code>httpOnly: true</code>, <code>secure</code>, <code>sameSite: 'lax'</code>.</div>
       </div>
       <div class="dec-card">
-        <div class="dec-card-name">generateTokens()</div>
+        <div class="dec-card-name">generateTokens(userId, email, role)</div>
         <div class="dec-card-body">Sử dụng <code>jsonwebtoken</code> để ký mã với Secret Key và TTL tương ứng.</div>
+      </div>
+      <div class="dec-card">
+        <div class="dec-card-name">updateRefreshToken(userId, token)</div>
+        <div class="dec-card-body">Băm Refresh Token bằng <code>bcrypt</code> trước khi yêu cầu lưu vào Database.</div>
       </div>
 
       <h2 id="3-trace">3. Theo Dấu Dữ Liệu Trả Về (Returns & Outputs Trace)</h2>
-      <p>Luồng truyền tải Token và bảo mật XSS qua HttpOnly Cookies.</p>
+      <p>Để hiểu rõ ứng dụng hoạt động thế nào, ta cần theo dõi cách Token và DTO được luân chuyển từ Service ra đến ngoài Client một cách tường minh:</p>
 
       <div class="lifecycle-container">
         <div class="lc-flow-panel">
           <div class="lifecycle-title">Request Lifecycle - Login Flow</div>
           <div class="lc-flow-scroll">
             <div class="lc-flow">
-              <div class="lc-node" data-node-name="Client" data-flow-in="Credentials" data-flow-out="POST /auth/login">
-                <div class="lc-node-label">Client</div>
-                <div class="lc-node-code">Browser</div>
-              </div>
-              <div class="lc-node" data-node-name="AuthService" data-flow-in="LoginDto" data-flow-out="AuthResponseDto">
+              <div class="lc-node" data-node-name="Service" data-flow-in="LoginDto" data-flow-out="AuthResponseDto + Cookies">
                 <div class="lc-node-label">AuthService</div>
-                <div class="lc-node-code">bcrypt + JWT</div>
+                <div class="lc-node-code">generateTokens()</div>
               </div>
-              <div class="lc-node" data-node-name="Interceptor" data-flow-in="Raw User" data-flow-out="Clean JSON">
+              <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+              <div class="lc-node" data-node-name="Cookies" data-flow-in="TokenDto" data-flow-out="HttpOnly Header">
+                <div class="lc-node-label">Header Set-Cookie</div>
+                <div class="lc-node-code">XSS Protection</div>
+              </div>
+              <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+              <div class="lc-node" data-node-name="Interceptor" data-flow-in="Raw Entity" data-flow-out="Clean JSON">
                 <div class="lc-node-label">Serializer</div>
-                <div class="lc-node-code">@Exclude()</div>
+                <div class="lc-node-code">class-transformer</div>
+              </div>
+              <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+              <div class="lc-node" data-node-name="Client" data-flow-in="JSON + Headers" data-flow-out="Secure Session">
+                <div class="lc-node-label">Browser</div>
+                <div class="lc-node-code">Final Response</div>
               </div>
             </div>
           </div>
@@ -142,11 +174,35 @@ code { font-family: monospace; background: var(--bg-surface); padding: 0.2em 0.4
         </div>
       </div>
 
+      <h3>Hành trình chi tiết:</h3>
+      <ol>
+        <li><strong>Khởi nguồn Token</strong>: <code>accessToken</code> và <code>refreshToken</code> ra đời tại <code>generateTokens()</code> trong Service.</li>
+        <li><strong>HttpOnly Cookies</strong>: Service gọi <code>setCookies()</code> để nhét token vào Header <code>Set-Cookie</code>. Trình duyệt tự động lưu lại, chặn đứng tấn công XSS.</li>
+        <li><strong>Serialization</strong>: <code>ClassSerializerInterceptor</code> đánh chặn DTO trên đường ra, dùng <code>class-transformer</code> để xóa các trường <code>@Exclude()</code> (password, refreshToken).</li>
+        <li><strong>JSON Cuối Cùng</strong>: Client nhận được JSON sạch sẽ, an toàn cùng với trạng thái phiên được bảo mật trong Cookie.</li>
+      </ol>
+
       <h2 id="4-lib">4. Vai Trò Cốt Lõi Của Các Thư Viện</h2>
       <ul>
-        <li><strong>bcryptjs</strong>: Mã hóa mật khẩu một chiều với salt rounds = 10 (cân bằng bảo mật/hiệu suất).</li>
-        <li><strong>jsonwebtoken</strong>: Cơ chế Stateless Session với Access Token (15m) và Refresh Token (7d).</li>
-        <li><strong>class-transformer</strong>: Lá chắn bảo mật cuối cùng giúp ngăn chặn rò rỉ dữ liệu nhạy cảm.</li>
+        <li><strong>bcryptjs (Mã hóa một chiều)</strong>:
+          <ul>
+            <li>Đảm bảo an toàn cho Mật khẩu và Refresh Token.</li>
+            <li>Salt rounds = 10: Mức cân bằng hoàn hảo giữa hiệu suất server và độ bảo mật chống Brute-force.</li>
+          </ul>
+        </li>
+        <li><strong>jsonwebtoken (Cơ chế Token)</strong>:
+          <ul>
+            <li>Tạo và xác thực thẻ thông hành chuẩn RFC 7519.</li>
+            <li>Stateless Session: Không cần lưu giữ phiên đăng nhập ở bộ nhớ server.</li>
+            <li>Sử dụng Secret Keys độc lập cho Access Token (15 phút) và Refresh Token (7 ngày).</li>
+          </ul>
+        </li>
+        <li><strong>class-transformer & class-validator (Lá chắn dữ liệu)</strong>:
+          <ul>
+            <li><code>class-validator</code>: Phòng thủ đầu tiên cản bước các cuộc tấn công chèn mã độc ngay tại DTO.</li>
+            <li><code>class-transformer</code>: Cung cấp <code>@Exclude()</code>, chốt chặn bảo mật cuối cùng ngăn chặn rò rỉ dữ liệu nhạy cảm.</li>
+          </ul>
+        </li>
       </ul>
     </main>
   </div>
