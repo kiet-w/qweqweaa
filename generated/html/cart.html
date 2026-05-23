@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giải Thích Chuyên Sâu - Module Cart</title>
+  <style>
+/* === VSCode Dark Theme - NestJS Doc Renderer === */
+:root {
+  --bg: #1e1e1e; --bg-sidebar: #252526; --bg-surface: #2d2d30; --bg-surface2: #3c3c3c;
+  --bg-hover: #2a2d2e; --bg-active: #37373d; --border: #404040; --border-light: #3c3c3c;
+  --text: #d4d4d4; --text-muted: #858585; --text-bright: #ffffff; --text-dim: #6a6a6a;
+  --kw: #569cd6; --fn: #dcdcaa; --str: #ce9178; --typ: #4ec9b0; --cmt: #6a9955;
+  --num: #b5cea8; --dec: #c586c0; --prop: #9cdcfe; --accent: #007acc; --green: #4ec9b0;
+  --yellow: #dcdcaa; --orange: #ce9178; --red: #f44747; --purple: #c586c0;
+  --node-guard: #1a3a52; --node-guard-b: #007acc; --node-pipe: #1a3a28; --node-pipe-b: #4ec9b0;
+  --node-ctrl: #2d2516; --node-ctrl-b: #dcdcaa; --node-svc: #2d1e35; --node-svc-b: #c586c0;
+  --node-db: #1a2535; --node-db-b: #569cd6; --node-cache: #1a2a1a; --node-cache-b: #4ec9b0;
+  --node-err: #3a1a1a; --node-err-b: #f44747;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.7; }
+.page-wrap { display: flex; min-height: 100vh; }
+.sidebar { width: 260px; flex-shrink: 0; background: var(--bg-sidebar); border-right: 1px solid var(--border); position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 16px 0; }
+.content { flex: 1; max-width: 960px; padding: 48px 52px 100px; }
+h1, h2, h3 { color: var(--text-bright); margin: 2em 0 0.6em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+h1 { font-size: 1.9em; } h2 { font-size: 1.45em; } h3 { font-size: 1.2em; color: var(--yellow); }
+code { font-family: monospace; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 4px; padding: .15em .45em; color: var(--prop); }
+pre { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; margin: 1.2em 0; overflow: hidden; }
+pre code { display: block; padding: 18px 20px; color: var(--text); overflow-x: auto; }
+.pre-header { background: var(--bg-surface2); padding: 6px 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 11px; }
+.pre-filename { color: var(--yellow); font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <nav class="sidebar">
+      <div style="padding: 16px; font-weight: bold;">TOC</div>
+      <a href="#cart-module" class="toc-item">Module Cart</a>
+      <a href="#controller" class="toc-item">Controllers</a>
+      <a href="#service" class="toc-item">Services</a>
+      <a href="#data-flow" class="toc-item">Data Flow</a>
+    </nav>
+    <main class="content">
+      <h1 id="cart-module">Giải Thích Chuyên Sâu - Module Cart (src/cart)</h1>
+      <p>Module <code>cart</code> là trái tim của hệ thống thương mại điện tử...</p>
+      
+      <h2 id="controller">1. Tầng Giao Tiếp (Controllers): CartController</h2>
+      <p>CartController (cart.controller.ts) là cửa ngõ tiếp nhận các HTTP request...</p>
+
+      <h2 id="service">2. Tầng Nghiệp Vụ (Services): CartService</h2>
+      <p>CartService (cart.service.ts) là nơi chứa toàn bộ logic nghiệp vụ phức tạp.</p>
+
+      <h2 id="data-flow">3. Theo Dấu Dữ Liệu</h2>
+      <pre>
+        <div class="pre-header"><span class="pre-lang">mermaid</span><span class="pre-filename">Cart data flow</span></div>
+        <code>
+sequenceDiagram
+    participant C as Client
+    participant Ctrl as CartController
+    participant Serv as CartService
+    participant Redis as Redis Cache
+    participant DB as Postgres (Prisma)
+    C->>Ctrl: PATCH /cart/items/:id { quantity: 2 }
+    Ctrl->>Serv: updateItem(userId, itemId, dto)
+    Serv->>DB: findOwnedCartItem(userId, itemId)
+    DB-->>Serv: CartItem
+    Serv->>DB: Prisma.cartItem.update(...)
+    Serv->>Redis: del(`cart:${userId}`)
+    Serv->>Redis: set(`cart:${userId}`, CartResponseDto)
+    Serv-->>Ctrl: CartResponseDto
+    Ctrl-->>C: HTTP 200 OK
+        </code>
+      </pre>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giải Thích Chuyên Sâu - Module Prisma</title>
+  <style>
+/* === CSS BLOCK (Self-contained) === */
+:root {
+  --bg:            #1e1e1e;
+  --bg-sidebar:    #252526;
+  --bg-surface:    #2d2d30;
+  --bg-surface2:   #3c3c3c;
+  --bg-hover:      #2a2d2e;
+  --bg-active:     #37373d;
+  --border:        #404040;
+  --border-light:  #3c3c3c;
+  --text:          #d4d4d4;
+  --text-muted:    #858585;
+  --text-bright:   #ffffff;
+  --text-dim:      #6a6a6a;
+  --kw:   #569cd6;
+  --fn:   #dcdcaa;
+  --str:  #ce9178;
+  --typ:  #4ec9b0;
+  --cmt:  #6a9955;
+  --num:  #b5cea8;
+  --dec:  #c586c0;
+  --prop: #9cdcfe;
+  --accent: #007acc;
+  --green: #4ec9b0;
+  --yellow: #dcdcaa;
+  --orange: #ce9178;
+  --red: #f44747;
+  --purple: #c586c0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.7; }
+.page-wrap { display: flex; min-height: 100vh; }
+.sidebar { width: 260px; flex-shrink: 0; background: var(--bg-sidebar); border-right: 1px solid var(--border); position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 16px 0; }
+.content { flex: 1; max-width: 960px; padding: 48px 52px 100px; }
+h1, h2, h3 { color: var(--text-bright); margin: 1.5em 0 0.5em; }
+h1 { border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+h2 { border-bottom: 1px solid var(--border); padding-bottom: 0.2em; }
+pre { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; margin: 1.2em 0; overflow-x: auto; }
+code { font-family: 'Cascadia Code', monospace; background: var(--bg-surface); padding: 0.2em 0.4em; border-radius: 4px; }
+pre code { display: block; padding: 15px; color: var(--text); }
+.kw { color: var(--kw); } .typ { color: var(--typ); } .fn { color: var(--fn); } .str { color: var(--str); }
+ul { padding-left: 1.8em; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <nav class="sidebar">
+    <div style="padding: 16px; font-weight: bold; color: var(--text-bright);">Module Prisma</div>
+    <a href="#1-kien-truc-toan-cuc-pristmamodulets" style="display:block; padding: 5px 16px; color: var(--text);">1. Kiến trúc toàn cục</a>
+    <a href="#2-di-sau-vao-prismaservice-prismaservicets" style="display:block; padding: 5px 16px; color: var(--text);">2. PrismaService</a>
+    <a href="#3-luong-tra-ve-du-lieu-returnsoutputs" style="display:block; padding: 5px 16px; color: var(--text);">3. Luồng trả về</a>
+  </nav>
+  <main class="content">
+    <h1>Giải Thích Chuyên Sâu - Module Prisma (<code>src/prisma</code>)</h1>
+    <p>Module Prisma trong dự án NestJS này được thiết kế theo chuẩn Enterprise với kiến trúc kết nối tối ưu.</p>
+
+    <h2 id="1-kien-truc-toan-cuc-pristmamodulets">1. Kiến Trúc Toàn Cục (<code>prisma.module.ts</code>)</h2>
+    <p>Module này được đánh dấu bằng decorator <code class="dec">@Global()</code>:</p>
+    <ul>
+      <li><strong>Tái sử dụng liền mạch</strong>: Import 1 lần, dùng khắp nơi.</li>
+      <li><strong>Single Source of Truth</strong>: Quản lý vòng đời tại một nơi duy nhất.</li>
+    </ul>
+
+    <h2 id="2-di-sau-vao-prismaservice-prismaservicets">2. Đi Sâu Vào <code>PrismaService</code> (<code>prisma.service.ts</code>)</h2>
+    <p><code>PrismaService</code> kế thừa <code>PrismaClient</code> và triển khai <code>OnModuleInit</code>.</p>
+    
+    <h3>2.1. Constructor</h3>
+    <pre><code><span class="kw">constructor</span>(<span class="kw">private</span> <span class="kw">readonly</span> configService: ConfigService) { ... }</code></pre>
+    <p>Sử dụng <code>pg</code> Pool và Driver Adapter để tối ưu kết nối, ngăn chặn cạn kiệt kết nối.</p>
+
+    <h3>2.2. onModuleInit</h3>
+    <pre><code>async <span class="fn">onModuleInit</span>() {
+  await this.<span class="fn">$connect</span>();
+}</code></pre>
+    <p>Ép kết nối ngay lúc khởi động server (Eager Connection), giúp báo lỗi sớm nếu DB cấu hình sai.</p>
+
+    <h2 id="3-luong-tra-ve-du-lieu-returnsoutputs">3. Luồng Trả Về Dữ Liệu</h2>
+    <p>Kết quả từ <code>PrismaService</code> là dữ liệu thô (Entities), không trả thẳng ra HTTP. Dữ liệu sẽ được xử lý tại <strong>Domain Services</strong> trước khi ánh xạ sang DTO.</p>
+  </main>
+</div>
+</body>
+</html>

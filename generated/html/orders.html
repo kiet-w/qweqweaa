@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giải thích chi tiết Module Orders</title>
+  <style>
+/* === PASTE FULL CSS BLOCK BÊN DƯỚI === */
+/* ── VSCode Dark Theme ── */
+/* ═══════════════════════════════════════════
+   VSCode Dark Theme — NestJS Doc Renderer
+   ═══════════════════════════════════════════ */
+:root {
+  --bg:            #1e1e1e;
+  --bg-sidebar:    #252526;
+  --bg-surface:    #2d2d30;
+  --bg-surface2:   #3c3c3c;
+  --bg-hover:      #2a2d2e;
+  --bg-active:     #37373d;
+  --border:        #404040;
+  --border-light:  #3c3c3c;
+
+  --text:          #d4d4d4;
+  --text-muted:    #858585;
+  --text-bright:   #ffffff;
+  --text-dim:      #6a6a6a;
+
+  /* VSCode syntax colors */
+  --kw:   #569cd6;   /* keywords: export, const, async, return */
+  --fn:   #dcdcaa;   /* function names */
+  --str:  #ce9178;   /* strings */
+  --typ:  #4ec9b0;   /* types, classes, interfaces */
+  --cmt:  #6a9955;   /* comments */
+  --num:  #b5cea8;   /* numbers */
+  --dec:  #c586c0;   /* decorators @Get @Injectable */
+  --prop: #9cdcfe;   /* properties, params */
+  --op:   #d4d4d4;   /* operators */
+
+  /* Semantic accent colors */
+  --accent:  #007acc;
+  --green:   #4ec9b0;
+  --yellow:  #dcdcaa;
+  --orange:  #ce9178;
+  --red:     #f44747;
+  --purple:  #c586c0;
+
+  /* Lifecycle node colors */
+  --node-guard:       #1a3a52;
+  --node-guard-b:     #007acc;
+  --node-pipe:        #1a3a28;
+  --node-pipe-b:      #4ec9b0;
+  --node-ctrl:        #2d2516;
+  --node-ctrl-b:      #dcdcaa;
+  --node-svc:         #2d1e35;
+  --node-svc-b:       #c586c0;
+  --node-db:          #1a2535;
+  --node-db-b:        #569cd6;
+  --node-cache:       #1a2a1a;
+  --node-cache-b:     #4ec9b0;
+  --node-err:         #3a1a1a;
+  --node-err-b:       #f44747;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── LAYOUT ── */
+.page-wrap { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 16px 0;
+}
+.sidebar-title {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0 16px 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.toc-item {
+  display: block;
+  padding: 5px 16px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all .15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toc-item:hover { background: var(--bg-hover); color: var(--text); }
+.toc-item.active { border-left-color: var(--accent); color: var(--text-bright); background: var(--bg-active); }
+.toc-h1 { font-weight: 600; color: var(--text); }
+.toc-h2 { padding-left: 24px; }
+.toc-h3 { padding-left: 36px; font-size: 11.5px; }
+.toc-h4 { padding-left: 48px; font-size: 11px; }
+
+.content {
+  flex: 1;
+  max-width: 960px;
+  padding: 48px 52px 100px;
+  min-width: 0;
+}
+
+/* ── HEADINGS ── */
+h1,h2,h3,h4,h5,h6 {
+  color: var(--text-bright);
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 2.2em 0 0.6em;
+  scroll-margin-top: 20px;
+}
+h1 { font-size: 1.9em; border-bottom: 1px solid var(--border); padding-bottom: .4em; margin-top: 0; }
+h2 { font-size: 1.45em; border-bottom: 1px solid var(--border); padding-bottom: .3em; }
+h3 { font-size: 1.2em; color: var(--yellow); }
+h4 { font-size: 1.05em; color: var(--prop); }
+
+/* ── BODY TEXT ── */
+p { margin: .7em 0; }
+strong { color: var(--text-bright); font-weight: 600; }
+em { font-style: italic; color: var(--orange); }
+del { color: var(--text-muted); text-decoration: line-through; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+
+/* ── INLINE CODE ── */
+code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: .85em;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: .15em .45em;
+  color: var(--prop);
+}
+
+/* ── CODE BLOCKS ── */
+pre {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0;
+  margin: 1.2em 0;
+  overflow: hidden;
+  position: relative;
+}
+.pre-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface2);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 14px;
+}
+.pre-lang {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.pre-filename {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--yellow);
+}
+pre code {
+  display: block;
+  background: none;
+  border: none;
+  padding: 18px 20px;
+  font-size: .875em;
+  line-height: 1.65;
+  color: var(--text);
+  overflow-x: auto;
+}
+
+/* Syntax token colors */
+.kw  { color: var(--kw); }
+.fn  { color: var(--fn); }
+.str { color: var(--str); }
+.typ { color: var(--typ); }
+.cmt { color: var(--cmt); font-style: italic; }
+.num { color: var(--num); }
+.dec { color: var(--dec); }
+.prop{ color: var(--prop); }
+
+/* Decorator annotation tooltip */
+.dec-ann {
+  position: relative;
+  display: inline;
+}
+.dec-ann .ann-tip {
+  display: none;
+  position: absolute;
+  left: 0; top: 1.6em;
+  background: var(--bg-surface2);
+  border: 1px solid var(--dec);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 11.5px;
+  color: var(--text);
+  white-space: nowrap;
+  z-index: 99;
+  min-width: 200px;
+  line-height: 1.5;
+  font-style: normal;
+  font-family: -apple-system, sans-serif;
+  pointer-events: none;
+}
+.dec-ann:hover .ann-tip { display: block; }
+.dec-ann > .dec { border-bottom: 1px dashed var(--dec); cursor: help; }
+
+/* ── LISTS ── */
+ul, ol { padding-left: 1.8em; margin: .7em 0; }
+li { margin: .3em 0; }
+li > ul, li > ol { margin: .25em 0; }
+
+/* ── TABLES ── */
+table { width: 100%; border-collapse: collapse; margin: 1.2em 0; font-size: 13px; }
+thead { background: var(--bg-surface2); }
+th { color: var(--text-bright); font-weight: 600; text-align: left; padding: 9px 14px; border: 1px solid var(--border); }
+td { padding: 7px 14px; border: 1px solid var(--border); }
+tr:hover td { background: var(--bg-hover); }
+
+/* ── BLOCKQUOTE ── */
+blockquote {
+  margin: 1em 0;
+  padding: 12px 18px;
+  border-left: 3px solid var(--accent);
+  background: var(--bg-surface);
+  border-radius: 0 6px 6px 0;
+  color: var(--text-muted);
+}
+blockquote p { margin: 0; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 1.2em 0;
+  border-left: 4px solid;
+  font-size: 13.5px;
+}
+.callout-note    { background: #0d2137; border-color: var(--accent); }
+.callout-warn    { background: #2d2207; border-color: var(--yellow); }
+.callout-danger  { background: #2d0a0a; border-color: var(--red); }
+.callout-tip     { background: #0d2117; border-color: var(--green); }
+.callout-title   { font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+.callout-note .callout-title    { color: var(--accent); }
+.callout-warn .callout-title    { color: var(--yellow); }
+.callout-danger .callout-title  { color: var(--red); }
+.callout-tip .callout-title     { color: var(--green); }
+
+/* ═══════════════════════════════════════════
+   REQUEST LIFECYCLE CONTAINER
+   ═══════════════════════════════════════════ */
+.lifecycle-container {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin: 2em 0;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+}
+@media (min-width: 992px) {
+  .lifecycle-container {
+    flex-direction: row;
+    height: 520px;
+  }
+}
+.lc-flow-panel {
+  flex: 1.3;
+  padding: 24px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border);
+}
+@media (min-width: 992px) {
+  .lc-flow-panel {
+    border-bottom: none;
+    border-right: 1px solid var(--border);
+  }
+}
+.lifecycle-title {
+  font-size: 11px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  font-weight: 700;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 12px;
+}
+.lc-flow-scroll {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  padding: 20px 0;
+}
+.lc-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: max-content;
+  margin: auto;
+}
+.lc-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.lc-node {
+  border-radius: 8px;
+  padding: 14px 18px;
+  min-width: 140px;
+  max-width: 180px;
+  text-align: center;
+  border: 1px solid;
+  position: relative;
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+}
+.lc-node:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+.lc-node.active {
+  transform: scale(1.05);
+  border-width: 2px;
+}
+.lc-node.guard  { background: var(--node-guard);  border-color: var(--node-guard-b); }
+.lc-node.pipe   { background: var(--node-pipe);   border-color: var(--node-pipe-b); }
+.lc-node.ctrl   { background: var(--node-ctrl);   border-color: var(--node-ctrl-b); }
+.lc-node.svc    { background: var(--node-svc);    border-color: var(--node-svc-b); }
+.lc-node.db     { background: var(--node-db);     border-color: var(--node-db-b); }
+.lc-node.cache  { background: var(--node-cache);  border-color: var(--node-cache-b); }
+.lc-node.err    { background: var(--node-err);    border-color: var(--node-err-b); }
+.lc-node.client { background: var(--bg-surface2); border-color: var(--border); }
+.lc-node-label  { font-size: 12px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
+.lc-node-code   { font-size: 10.5px; font-family: monospace; color: var(--text-muted); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lc-node-desc   { font-size: 10px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.lc-node.guard .lc-node-label  { color: #58b3f0; }
+.lc-node.pipe .lc-node-label   { color: var(--green); }
+.lc-node.ctrl .lc-node-label   { color: var(--yellow); }
+.lc-node.svc .lc-node-label    { color: var(--purple); }
+.lc-node.db .lc-node-label     { color: var(--kw); }
+.lc-node.cache .lc-node-label  { color: var(--green); }
+.lc-node.err .lc-node-label    { color: var(--red); }
+.lc-node-ports {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(255,255,255,0.08);
+  font-size: 9px;
+  font-family: monospace;
+}
+.lc-port { padding: 1px 4px; border-radius: 3px; }
+.lc-port.in { background: rgba(78, 201, 176, 0.1); color: var(--green); }
+.lc-port.out { background: rgba(0, 122, 204, 0.15); color: var(--kw); }
+.lc-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+.lc-line {
+  height: 2px;
+  width: 40px;
+  background: linear-gradient(90deg, var(--border), var(--accent));
+  position: relative;
+  overflow: hidden;
+}
+.lc-line::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0,122,204,.8), transparent);
+  animation: flow 2s infinite;
+}
+@keyframes flow {
+  0%   { left: -100%; }
+  100% { left: 100%; }
+}
+.lc-arrow {
+  width: 0; height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 6px solid var(--accent);
+  margin-left: -1px;
+}
+.lc-step-num {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 8px;
+  font-family: monospace;
+}
+.lc-detail-panel { flex: 1; padding: 24px; overflow-y: auto; }
+.lc-detail-empty { color: var(--text-muted); text-align: center; margin-top: 100px; font-size: 13px; }
+.lc-detail-header { margin-bottom: 20px; }
+.lc-detail-type { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-muted); }
+.lc-detail-title { font-size: 20px; font-weight: 600; color: var(--text-bright); }
+.lc-detail-file { font-size: 12px; font-family: monospace; color: var(--accent); }
+.lc-flow-card { background: var(--bg-surface2); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.lc-flow-card-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 8px; }
+.lc-flow-card-code { font-family: monospace; font-size: 12px; color: var(--prop); margin-bottom: 6px; }
+.lc-flow-card-desc { font-size: 13px; color: var(--text); line-height: 1.5; }
+.lc-detail-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.lc-detail-btn:hover { background: #0086dd; }
+
+/* ── MODULE DETAIL PANEL ── */
+.module-panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1.5em 0;
+}
+.module-panel-header {
+  background: var(--bg-surface2);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.module-panel-name { font-size: 15px; font-weight: 600; color: var(--text-bright); }
+.module-panel-path { font-size: 11px; font-family: monospace; color: var(--text-muted); margin-left: auto; }
+.file-tabs { display: flex; background: var(--bg-surface2); border-bottom: 1px solid var(--border); }
+.file-tab { padding: 8px 18px; font-size: 12px; font-family: monospace; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
+.file-tab.active { color: var(--text-bright); border-bottom-color: var(--accent); background: var(--bg-surface); }
+.file-pane { display: none; padding: 20px 24px; }
+.file-pane.active { display: block; }
+.dec-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--dec);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  font-size: 13px;
+}
+.dec-card-name { font-family: monospace; font-size: 13px; color: var(--dec); font-weight: 600; min-width: 130px; }
+.crud-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 12px 0;
+  overflow: hidden;
+}
+.crud-header { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--bg-surface2); border-bottom: 1px solid var(--border); }
+.crud-method { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 4px; font-family: monospace; }
+.method-get    { background: #1a3a28; color: #4ec9b0; }
+.method-post   { background: #1a2d0d; color: #89d185; }
+.crud-path { font-family: monospace; font-size: 13px; color: var(--text); }
+.crud-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.crud-col-title { font-size: 10px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+.crud-col-content { font-size: 12px; color: var(--text); line-height: 1.55; }
+.effect-tag { display: inline-flex; background: var(--bg-surface2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 10px; font-size: 11.5px; font-family: monospace; margin: 3px 4px 3px 0; color: var(--text-muted); }
+.effect-tag.db-write  { border-color: var(--kw); color: var(--kw); }
+.rel-diagram { background: var(--bg-surface2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 12px 0; font-size: 12.5px; }
+.rel-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-family: monospace; }
+.rel-from { color: var(--yellow); min-width: 180px; }
+.rel-arrow-anim { flex: 1; height: 1px; background: var(--border); position: relative; }
+.rel-arrow-anim::after { content: '→'; position: absolute; left: -20px; color: var(--accent); animation: slide 2.5s infinite; font-size: 14px; top: -10px; }
+@keyframes slide { 0% { left: -20px; opacity: 0; } 50% { opacity: 1; } 100% { left: 100%; opacity: 0; } }
+.rel-to { color: var(--purple); min-width: 180px; text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-title">Mục lục</div>
+    </nav>
+    <main class="content">
+      <h1>Giải thích chi tiết Module Orders</h1>
+      <p>Tài liệu này cung cấp một cái nhìn sâu sắc (deep dive) vào sự tương tác giữa Controller và Service trong module <code>orders</code> của hệ thống.</p>
+
+      <h2 id="controllers">1. Controllers (Bộ điều khiển)</h2>
+      <p>File <code>src/orders/orders.controller.ts</code> đóng vai trò là cửa ngõ nhận các HTTP request...</p>
+      
+      <div class="dec-card">
+        <div class="dec-card-name">@UseGuards(AuthGuard)</div>
+        <div class="dec-card-body">
+            <div class="dec-card-desc">Toàn bộ controller được bảo vệ bởi <code>AuthGuard</code>.</div>
+        </div>
+      </div>
+
+      <h2 id="services">2. Services (Lớp Logic Nghiệp Vụ)</h2>
+      <p>File <code>src/orders/orders.service.ts</code> chứa toàn bộ logic kinh doanh.</p>
+      
+      <div class="lifecycle-container">
+          <div class="lc-flow-panel">
+            <div class="lifecycle-title">Request Lifecycle — POST /orders/checkout</div>
+            <div class="lc-flow-scroll">
+              <div class="lc-flow">
+                <div class="lc-step">
+                  <div class="lc-node client active" data-node-name="Client">
+                    <div class="lc-node-label">Client</div>
+                    <div class="lc-node-code">POST /checkout</div>
+                  </div>
+                </div>
+                <div class="lc-connector"><div class="lc-line"></div><div class="lc-arrow"></div></div>
+                <div class="lc-step">
+                  <div class="lc-node guard" data-node-name="AuthGuard">
+                    <div class="lc-node-label">AuthGuard</div>
+                    <div class="lc-node-code">check JWT</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lc-detail-panel">
+            <div class="lc-detail-empty">Click vào node để xem chi tiết.</div>
+          </div>
+      </div>
+
+      <div class="crud-card">
+        <div class="crud-header">
+            <span class="crud-method method-post">POST</span>
+            <span class="crud-path">/orders/checkout</span>
+        </div>
+        <div class="crud-body">
+            <div>
+                <div class="crud-col-title">Input</div>
+                <div class="crud-col-content">CheckoutDto</div>
+            </div>
+            <div>
+                <div class="crud-col-title">Xử lý</div>
+                <div class="crud-col-content">Transaction check stock</div>
+            </div>
+            <div>
+                <div class="crud-col-title">Output</div>
+                <div class="crud-col-content">OrderResponseDto</div>
+            </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+  <script>
+    function buildTOC() {
+        const toc = document.getElementById('sidebar');
+        const headings = document.querySelectorAll('h1, h2, h3');
+        headings.forEach(h => {
+            const item = document.createElement('a');
+            item.className = 'toc-item toc-' + h.tagName.toLowerCase();
+            item.href = '#' + h.id;
+            item.innerText = h.innerText;
+            toc.appendChild(item);
+        });
+    }
+    document.addEventListener('DOMContentLoaded', buildTOC);
+  </script>
+</body>
+</html>

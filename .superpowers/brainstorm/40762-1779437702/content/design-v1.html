@@ -1,0 +1,37 @@
+<h2>Thiết kế lại tài liệu Auth Module</h2>
+<p class="subtitle">Cập nhật docs/html/auth.html với chi tiết chuyên sâu và sơ đồ riêng biệt cho từng hàm.</p>
+
+<div class="options">
+  <div class="option" data-choice="structure" onclick="toggleSelect(this)">
+    <div class="letter">S</div>
+    <div class="content">
+      <h3>Cấu trúc đề xuất</h3>
+      <ul>
+        <li><strong>THÔNG TIN MODULE</strong>: Bảng metadata ở đầu.</li>
+        <li><strong>TỔNG QUAN</strong>: Giới thiệu ngắn gọn và sơ đồ tổng quát.</li>
+        <li><strong>AUTH CONTROLLER</strong>: Mỗi handler (register, login, refresh, logout, me) có bảng thông số và sơ đồ Mermaid riêng.</li>
+        <li><strong>AUTH SERVICE (PUBLIC)</strong>: Mỗi method (register, login, handleRefresh...) có bảng thông số và sơ đồ Mermaid riêng.</li>
+        <li><strong>AUTH SERVICE (PRIVATE)</strong>: Mỗi helper (setCookies, generateTokens...) có bảng thông số và sơ đồ Mermaid riêng.</li>
+        <li><strong>STYLE</strong>: VSCode Dark Theme.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">Preview: Tech Card cho mỗi hàm</div>
+  <div class="mockup-body">
+    <div style="background: #252526; border: 1px solid #404040; border-radius: 8px; padding: 20px; font-family: 'Segoe UI', sans-serif; color: #d4d4d4;">
+      <h3 style="color: #dcdcaa; margin-top: 0;">register(@Body() data: RegisterDto)</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px;">
+        <div><span style="color: #858585; font-size: 11px; text-transform: uppercase;">Method + Path</span><br/><code>POST /auth/register</code></div>
+        <div><span style="color: #858585; font-size: 11px; text-transform: uppercase;">Function</span><br/>Đăng ký người dùng mới</div>
+        <div><span style="color: #858585; font-size: 11px; text-transform: uppercase;">Input</span><br/>RegisterDto</div>
+        <div><span style="color: #858585; font-size: 11px; text-transform: uppercase;">Output</span><br/>AuthResponseDto</div>
+      </div>
+      <div style="margin-top: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px; text-align: center; color: #4ec9b0; font-family: monospace;">
+        [Mermaid Diagram here]
+      </div>
+    </div>
+  </div>
+</div>
