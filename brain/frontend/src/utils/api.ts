@@ -6,6 +6,7 @@ export interface Note {
   status: 'PROCESSING' | 'COMPLETED' | 'FAILED';
   title?: string;
   summary?: string;
+  bullets?: string[];
   category?: string;
   createdAt: string;
 }
