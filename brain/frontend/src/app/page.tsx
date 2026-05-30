@@ -1,12 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import NoteInput from '@/components/NoteInput';
 import { api, Note } from '@/utils/api';
+import { useSSE } from '@/hooks/useSSE';
 
 export default function Home() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const handleNoteUpdated = useCallback((updatedNote: Note) => {
+    setNotes((prev) =>
+      prev.map((n) => (n.id === updatedNote.id ? updatedNote : n))
+    );
+  }, []);
+
+  useSSE(handleNoteUpdated);
 
   useEffect(() => {
     api.getNotes()
