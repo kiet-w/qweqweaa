@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Note } from '@/utils/api';
+import { Note, normalizeNote } from '@/utils/api';
 
-const SSE_URL = 'http://localhost:3000/api/notes/events';
+const SSE_URL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/notes/events` : 'http://localhost:3001/notes/events';
 
 export function useSSE(onNoteUpdated: (note: Note) => void) {
   useEffect(() => {
@@ -11,7 +11,7 @@ export function useSSE(onNoteUpdated: (note: Note) => void) {
 
     eventSource.addEventListener('note-updated', (event) => {
       try {
-        const updatedNote = JSON.parse(event.data);
+        const updatedNote = normalizeNote(JSON.parse(event.data));
         onNoteUpdated(updatedNote);
       } catch (error) {
         console.error('Failed to parse SSE data:', error);
@@ -19,8 +19,9 @@ export function useSSE(onNoteUpdated: (note: Note) => void) {
     });
 
     eventSource.onerror = (error) => {
-      console.error('SSE Error:', error);
-      eventSource.close();
+      if (eventSource.readyState === EventSource.CLOSED) {
+        console.warn('SSE connection closed:', error);
+      }
     };
 
     return () => {
