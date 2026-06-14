@@ -1,0 +1,337 @@
+/* ─── Reusable Component Styles ─── */
+
+/* Layout & Shell */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-primary);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--transition-base);
+  flex-shrink: 0;
+}
+
+.sidebar.collapsed {
+  width: var(--sidebar-collapsed);
+}
+
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Prevents overflow issues */
+}
+
+.header {
+  height: var(--header-height);
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-lg);
+}
+
+.page-container {
+  padding: var(--space-lg);
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+/* Glassmorphism Cards */
+.card {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.card:hover {
+  border-color: var(--border-secondary);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-primary);
+  box-shadow: var(--accent-glow);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--accent-gradient);
+  color: var(--text-primary);
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  box-shadow: var(--accent-glow);
+}
+
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-secondary);
+}
+
+.btn-danger {
+  background-color: var(--status-error);
+  color: var(--text-primary);
+}
+
+.btn-danger:hover {
+  opacity: 0.9;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Inputs & Form Fields */
+.form-group {
+  margin-bottom: var(--space-md);
+}
+
+.form-label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  transition: border-color var(--transition-fast);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+.form-error {
+  font-size: var(--text-xs);
+  color: var(--status-error);
+  margin-top: var(--space-xs);
+}
+
+/* Data Tables */
+.table-container {
+  overflow-x: auto;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-card);
+}
+
+.data-table {
+  width: 100%;
+  text-align: left;
+}
+
+.data-table th {
+  background-color: var(--bg-tertiary);
+  padding: var(--space-md);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.data-table td {
+  padding: var(--space-md);
+  font-size: var(--text-sm);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tbody tr:hover td {
+  background-color: var(--bg-hover);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Delivery Order Statuses */
+.badge-pending { background-color: var(--badge-pending-bg); color: var(--badge-pending-text); }
+.badge-assigned { background-color: var(--badge-assigned-bg); color: var(--badge-assigned-text); }
+.badge-picked_up { background-color: var(--badge-transit-bg); color: var(--badge-transit-text); }
+.badge-in_transit { background-color: var(--badge-transit-bg); color: var(--badge-transit-text); }
+.badge-delivered { background-color: var(--badge-delivered-bg); color: var(--badge-delivered-text); }
+.badge-failed { background-color: var(--badge-failed-bg); color: var(--badge-failed-text); }
+.badge-cancelled { background-color: var(--badge-cancelled-bg); color: var(--badge-cancelled-text); }
+
+/* Delivery Batch Statuses */
+.badge-planning { background-color: var(--badge-planning-bg); color: var(--badge-planning-text); }
+.badge-optimized { background-color: var(--badge-optimized-bg); color: var(--badge-optimized-text); }
+.badge-in_progress { background-color: var(--badge-progress-bg); color: var(--badge-progress-text); }
+.badge-completed { background-color: var(--badge-completed-bg); color: var(--badge-completed-text); }
+
+/* Transaction Types */
+.badge-import { background-color: var(--badge-import-bg); color: var(--badge-import-text); }
+.badge-export { background-color: var(--badge-export-bg); color: var(--badge-export-text); }
+.badge-adjustment { background-color: var(--badge-adjustment-bg); color: var(--badge-adjustment-text); }
+.badge-return { background-color: var(--badge-return-bg); color: var(--badge-return-text); }
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background-color: var(--surface-modal);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  width: 100%;
+  max-width: 500px;
+  box-shadow: var(--shadow-xl);
+  animation: modal-fade-in 200ms ease-out;
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Toasts */
+.toast-container {
+  position: fixed;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  z-index: 2000;
+  max-width: 400px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  animation: toast-slide-in 200ms ease-out;
+  border-left: 4px solid transparent;
+}
+
+.toast-success {
+  background-color: var(--bg-secondary);
+  border-color: var(--status-success);
+}
+.toast-success .toast-icon { color: var(--status-success); }
+
+.toast-error {
+  background-color: var(--bg-secondary);
+  border-color: var(--status-error);
+}
+.toast-error .toast-icon { color: var(--status-error); }
+
+.toast-warning {
+  background-color: var(--bg-secondary);
+  border-color: var(--status-warning);
+}
+.toast-warning .toast-icon { color: var(--status-warning); }
+
+.toast-info {
+  background-color: var(--bg-secondary);
+  border-color: var(--status-info);
+}
+.toast-info .toast-icon { color: var(--status-info); }
+
+.toast-icon {
+  font-weight: bold;
+  font-size: var(--text-lg);
+}
+
+.toast-message {
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+@keyframes toast-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Loader */
+.loader {
+  border: 4px solid var(--border-primary);
+  border-top: 4px solid var(--accent-primary);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+

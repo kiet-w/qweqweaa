@@ -1,0 +1,1 @@
+import React from 'react'; export default function WarehouseStockPage() { return <div className='card p-lg'><h2 className='mb-md'>WarehouseStockPage</h2><p className='text-secondary'>Placeholder content for WarehouseStockPage</p></div>; }

@@ -1,0 +1,1 @@
+import React from 'react'; export default function CreateOrderPage() { return <div className='card p-lg'><h2 className='mb-md'>CreateOrderPage</h2><p className='text-secondary'>Placeholder content for CreateOrderPage</p></div>; }

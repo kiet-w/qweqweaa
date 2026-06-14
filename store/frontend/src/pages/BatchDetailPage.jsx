@@ -1,0 +1,1 @@
+import React from 'react'; export default function BatchDetailPage() { return <div className='card p-lg'><h2 className='mb-md'>BatchDetailPage</h2><p className='text-secondary'>Placeholder content for BatchDetailPage</p></div>; }

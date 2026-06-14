@@ -1,0 +1,1 @@
+import React from 'react'; export default function ShipperPerformancePage() { return <div className='card p-lg'><h2 className='mb-md'>ShipperPerformancePage</h2><p className='text-secondary'>Placeholder content for ShipperPerformancePage</p></div>; }

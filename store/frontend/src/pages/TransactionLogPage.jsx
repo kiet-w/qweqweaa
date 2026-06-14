@@ -1,0 +1,1 @@
+import React from 'react'; export default function TransactionLogPage() { return <div className='card p-lg'><h2 className='mb-md'>TransactionLogPage</h2><p className='text-secondary'>Placeholder content for TransactionLogPage</p></div>; }

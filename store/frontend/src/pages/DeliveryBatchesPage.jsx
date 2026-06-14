@@ -1,0 +1,1 @@
+import React from 'react'; export default function DeliveryBatchesPage() { return <div className='card p-lg'><h2 className='mb-md'>DeliveryBatchesPage</h2><p className='text-secondary'>Placeholder content for DeliveryBatchesPage</p></div>; }

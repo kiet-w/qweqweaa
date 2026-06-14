@@ -1,0 +1,1 @@
+import React from 'react'; export default function InventoryReportPage() { return <div className='card p-lg'><h2 className='mb-md'>InventoryReportPage</h2><p className='text-secondary'>Placeholder content for InventoryReportPage</p></div>; }
